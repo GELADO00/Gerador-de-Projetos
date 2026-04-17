@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Projeto Básico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --ink: #1a1714;
+            --ink-2: #4a4640;
+            --ink-3: #9a948e;
+            --paper: #f7f4ef;
+            --paper-2: #eeeae3;
+            --paper-3: #e3ddd4;
+            --accent: #2d5a3d;
+            --accent-light: #e8f0eb;
+            --accent-mid: #4a7c5f;
+            --danger: #8b2e2e;
+            --rule: #d4cfc8;
+            --font-display: 'Fraunces', Georgia, serif;
+            --font-mono: 'DM Mono', monospace;
+            --font-doc: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            grid-template-rows: auto 1fr;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            padding: 2rem 3rem 1.5rem;
+            border-bottom: 1px solid var(--rule);
+            display: flex;
+            align-items: baseline;
+            gap: 1.5rem;
+            background: var(--paper);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo-text { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--accent); }
+        .logo-sub { font-size: 0.78rem; font-weight: 300; font-style: italic; color: var(--ink-3); letter-spacing: 0.03em; }
+        .header-rule { flex: 1; height: 1px; background: var(--rule); }
+        .header-badge { font-family: var(--font-mono); font-size: 0.65rem; background: var(--accent-light); color: var(--accent); padding: 4px 10px; border-radius: 2px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+        aside {
+            grid-column: 1; grid-row: 2;
+            padding: 2rem 2rem 2rem 3rem;
+            border-right: 1px solid var(--rule);
+            overflow-y: auto;
+            height: calc(100vh - 74px);
+            position: sticky;
+            top: 74px;
+        }
+
+        .form-section { margin-bottom: 2rem; }
+        .form-section-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--rule); }
+
+        .field { margin-bottom: 1.2rem; }
+        .field label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--ink-2); margin-bottom: 5px; letter-spacing: 0.01em; }
+        .field input[type=text], .field textarea, .field select {
+            width: 100%; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 3px;
+            padding: 8px 11px; font-family: var(--font-display); font-size: 0.88rem; font-weight: 300;
+            color: var(--ink); outline: none; transition: border-color 0.15s, background 0.15s;
+        }
+        .field input:focus, .field textarea:focus { border-color: var(--accent-mid); background: #fff; }
+        .field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+        .logo-upload-area { border: 1px dashed var(--rule); border-radius: 4px; padding: 12px; background: var(--paper-2); display: flex; flex-direction: column; gap: 8px; }
+        .logo-upload-row { display: flex; align-items: center; gap: 10px; }
+        .btn-upload-logo { background: none; border: 1px solid var(--rule); border-radius: 3px; padding: 6px 12px; font-family: var(--font-display); font-size: 0.78rem; font-weight: 300; color: var(--ink-2); cursor: pointer; white-space: nowrap; transition: border-color 0.15s, background 0.15s; }
+        .btn-upload-logo:hover { border-color: var(--accent-mid); background: #fff; }
+        #logo-file-input { display: none; }
+        .logo-upload-status { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-3); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .logo-upload-status.ok { color: var(--accent); }
+        .logo-preview-wrap { display: none; align-items: center; gap: 8px; }
+        .logo-preview-wrap.visible { display: flex; }
+        #logo-preview-img { height: 32px; width: auto; border: 1px solid var(--rule); border-radius: 2px; background: white; padding: 2px; }
+        .btn-remove-logo { background: none; border: none; cursor: pointer; color: var(--ink-3); font-size: 0.9rem; padding: 2px 4px; border-radius: 2px; transition: color 0.15s; }
+        .btn-remove-logo:hover { color: var(--danger); }
+
+        .toggle-field { display: flex; align-items: center; gap: 12px; padding: 10px 0; margin-bottom: 1rem; }
+        .toggle-field label { font-size: 0.88rem; font-weight: 500; color: var(--ink); cursor: pointer; flex: 1; }
+        .switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; background: var(--paper-3); border-radius: 22px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--rule); }
+        .slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+        .switch input:checked + .slider { background: var(--accent); border-color: var(--accent); }
+        .switch input:checked + .slider:before { transform: translateX(18px); }
+
+        #items-wrapper { display: none; background: var(--accent-light); border: 1px solid #c3d9c9; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; }
+        #items-wrapper.visible { display: block; }
+        .items-header { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem; }
+        .item-row { display: grid; grid-template-columns: 44px 1fr 28px; gap: 6px; align-items: center; margin-bottom: 6px; }
+        .item-num-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); font-weight: 400; text-align: right; padding-right: 4px; }
+        .item-row input { background: white; border: 1px solid #c3d9c9; border-radius: 3px; padding: 7px 10px; font-family: var(--font-display); font-size: 0.83rem; font-weight: 300; color: var(--ink); outline: none; }
+        .item-row input:focus { border-color: var(--accent); }
+        .item-remove { background: none; border: none; cursor: pointer; color: var(--ink-3); font-size: 1rem; line-height: 1; padding: 2px; border-radius: 2px; transition: color 0.15s; }
+        .item-remove:hover { color: var(--danger); }
+        .btn-add-item { width: 100%; background: none; border: 1px dashed #a3c4ab; border-radius: 3px; padding: 7px; font-family: var(--font-display); font-size: 0.8rem; font-weight: 300; color: var(--accent); cursor: pointer; margin-top: 4px; transition: background 0.15s; }
+        .btn-add-item:hover { background: white; }
+
+        .models-panel { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 4px; padding: 0.8rem; margin-bottom: 4px; }
+        .models-list { display: flex; flex-direction: column; gap: 4px; }
+        .model-opt { display: flex; align-items: flex-start; gap: 8px; padding: 6px 8px; background: white; border: 1px solid var(--rule); border-radius: 3px; cursor: pointer; font-size: 0.78rem; font-weight: 300; color: var(--ink-2); line-height: 1.4; transition: border-color 0.15s, background 0.15s; }
+        .model-opt:has(input:checked) { background: var(--accent-light); border-color: #a3c4ab; color: var(--accent); }
+        .model-opt input { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+        .model-opt .model-label { flex: 1; }
+
+        .items-wrapper-sub { background: var(--accent-light); border: 1px solid #c3d9c9; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; }
+        .item-row-sub { display: grid; grid-template-columns: 52px 1fr 28px; gap: 6px; align-items: start; margin-bottom: 6px; }
+        .item-row-sub .item-num-label { padding-top: 9px; }
+        .item-row-sub textarea { background: white; border: 1px solid #c3d9c9; border-radius: 3px; padding: 7px 10px; font-family: var(--font-display); font-size: 0.83rem; font-weight: 300; color: var(--ink); outline: none; resize: vertical; min-height: 64px; line-height: 1.5; width: 100%; }
+        .item-row-sub textarea:focus { border-color: var(--accent); }
+        .item-row-sub .item-remove { padding-top: 8px; background: none; border: none; cursor: pointer; color: var(--ink-3); font-size: 1rem; line-height: 1; border-radius: 2px; transition: color 0.15s; }
+        .item-row-sub .item-remove:hover { color: var(--danger); }
+        .item-row-sub .item-remove[disabled] { opacity: 0.2; cursor: default; pointer-events: none; }
+
+        .setores-grid { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+        .setor-option { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 3px; cursor: pointer; transition: border-color 0.15s, background 0.15s; font-size: 0.88rem; font-weight: 300; color: var(--ink); }
+        .setor-option:has(input:checked) { background: var(--accent-light); border-color: #a3c4ab; color: var(--accent); font-weight: 500; }
+        .setor-option input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
+
+        .radio-group { display: flex; flex-direction: column; gap: 6px; }
+        .radio-opt { display: flex; align-items: center; gap: 8px; padding: 8px 11px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 3px; cursor: pointer; font-size: 0.88rem; font-weight: 300; color: var(--ink); transition: border-color 0.15s, background 0.15s; }
+        .radio-opt:has(input:checked) { background: var(--accent-light); border-color: #a3c4ab; color: var(--accent); font-weight: 500; }
+        .radio-opt input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
+
+        .conditional-field { display: none; margin-top: 0.8rem; }
+        .conditional-field.visible { display: block; }
+
+        .btn-gerar { width: 100%; background: var(--accent); color: white; border: none; border-radius: 3px; padding: 12px; font-family: var(--font-display); font-size: 0.95rem; font-weight: 500; cursor: pointer; letter-spacing: 0.01em; transition: background 0.2s, transform 0.1s; margin-bottom: 0.6rem; }
+        .btn-gerar:hover { background: var(--accent-mid); }
+        .btn-gerar:active { transform: scale(0.99); }
+        .btn-pdf { width: 100%; background: none; color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 10px; font-family: var(--font-display); font-size: 0.88rem; font-weight: 300; cursor: pointer; letter-spacing: 0.01em; transition: background 0.2s; display: none; }
+        .btn-pdf:hover { background: var(--accent-light); }
+        .btn-pdf.visible { display: block; }
+
+        main { grid-column: 2; grid-row: 2; padding: 3rem 4rem; overflow-y: auto; height: calc(100vh - 74px); background: var(--paper); }
+
+        .preview-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: var(--ink-3); text-align: center; }
+        .preview-empty .big-char { font-size: 4rem; font-weight: 700; font-style: italic; color: var(--paper-3); line-height: 1; }
+        .preview-empty p { font-size: 0.88rem; font-weight: 300; font-style: italic; }
+
+        .page-sheet {
+            background: white; width: 100%; max-width: 794px;
+            margin: 0 auto;
+            padding: 144px 68px 106px 106px;
+            box-shadow: 0 2px 24px rgba(0,0,0,0.08); border: 1px solid var(--rule);
+            min-height: 1123px; animation: fadein 0.3s ease; display: none;
+            font-family: var(--font-doc); line-height: 1.15; position: relative;
+        }
+        .page-sheet.visible { display: block; }
+        @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        .doc-header-logos { position: absolute; top: 56px; left: 106px; }
+        .doc-logo-left { height: 45px; width: auto; }
+
+        .doc-anexo, .doc-title, .doc-section-title, .doc-body, .doc-items li, .item-label, .item-desc, .doc-setores-list li {
+            font-family: var(--font-doc);
+            font-size: 10pt;
+            color: var(--ink);
+        }
+
+        .doc-anexo { letter-spacing: 0.15em; font-weight: 700; text-align: center; margin: 0; }
+        .doc-title { font-weight: 700; text-align: center; margin: 5px 0 24px 0; padding-bottom: 10px; border-bottom: 2px solid var(--ink); }
+
+        .doc-section-title { font-weight: bold; margin: 24pt 0 12pt 0; }
+        .doc-body { text-align: justify; margin: 0 0 8pt 0; }
+
+        .doc-body.hanging { padding-left: 2.5em; text-indent: -2.5em; }
+        .doc-body.indent-1 { margin-left: 28px; }
+        .doc-body.indent-2 { margin-left: 56px; }
+        .doc-body.indent-3 { margin-left: 84px; }
+
+        .doc-items { margin: 8pt 0 0 0; padding: 0; list-style: none; }
+        .doc-items li { display: flex; gap: 8px; align-items: baseline; margin: 0 0 4pt 28px; }
+        .item-label { font-weight: normal; white-space: nowrap; flex-shrink: 0; }
+
+        .doc-setores-list { list-style: none; padding: 0; margin: 0; }
+        .doc-setores-list li { padding: 0; margin-bottom: 4pt; position: relative; }
+
+        .doc-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-family: var(--font-doc); font-size: 8pt; color: var(--ink-3); display: flex; justify-content: space-between; letter-spacing: 0.02em; }
+
+        @media (max-width: 860px) {
+            body { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
+            header { grid-column: 1; padding: 1.2rem 1.5rem; }
+            aside { grid-column: 1; grid-row: 2; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--rule); padding: 1.5rem; }
+            main { grid-column: 1; grid-row: 3; padding: 1.5rem; height: auto; }
+            .page-sheet { padding: 30px 24px; }
+            .doc-header-logos { top: 15px; left: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+  <span class="logo-text">Gerador</span>
+  <span class="logo-sub">Projeto Básico</span>
+  <div class="header-rule"></div>
+  <span class="header-badge">Offline</span>
+</header>
+
+<aside>
+  <div class="form-section">
+    <p class="form-section-label">Tipo de contratação</p>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="radio" name="tipo-contratacao" value="serviço" checked> Serviço</label>
+      <label class="radio-opt"><input type="radio" name="tipo-contratacao" value="obra"> Obra</label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Identificação</p>
+    <div class="field">
+      <label for="f-anexo">Número do Anexo</label>
+      <input type="text" id="f-anexo" placeholder="Ex: I, II, 01, A…">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Logotipo do documento</p>
+    <div class="logo-upload-area">
+      <div class="logo-upload-row">
+        <button type="button" class="btn-upload-logo" onclick="document.getElementById('logo-file-input').click()">Selecionar imagem</button>
+        <span class="logo-upload-status" id="logo-status">Nenhuma imagem selecionada</span>
+        <input type="file" id="logo-file-input" accept="image/*" onchange="carregarLogo(this)">
+      </div>
+      <div class="logo-preview-wrap" id="logo-preview-wrap">
+        <img id="logo-preview-img" src="" alt="Preview">
+        <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--ink-3);flex:1" id="logo-dims"></span>
+        <button type="button" class="btn-remove-logo" onclick="removerLogo()" title="Remover">×</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 1 — Objeto</p>
+    <div class="field">
+      <label for="f-objeto">Descrição do objeto</label>
+      <textarea id="f-objeto" placeholder="Ex: prestação de serviços de manutenção predial, conforme projetos e especificações técnicas constantes dos anexos do Edital."></textarea>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Tipo de licitação</p>
+    <div class="toggle-field">
+      <label for="chk-itens">Licitação por itens</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-itens" onchange="toggleItens()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="items-wrapper">
+      <p class="items-header">Itens da licitação</p>
+      <div id="items-list"></div>
+      <button type="button" class="btn-add-item" onclick="addItem()">+ Adicionar item</button>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 2 — Unidade(s) responsável(eis) pelas informações</p>
+    <div class="setores-grid" id="setores-sec2">
+      <label class="setor-option"><input type="checkbox" value="Setor A"> Setor A</label>
+      <label class="setor-option"><input type="checkbox" value="Setor B"> Setor B</label>
+      <label class="setor-option"><input type="checkbox" value="Setor C"> Setor C</label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 3 — Unidade(s) responsável(eis) pela elaboração</p>
+    <div class="setores-grid" id="setores-sec3">
+      <label class="setor-option"><input type="checkbox" value="Setor A"> Setor A</label>
+      <label class="setor-option"><input type="checkbox" value="Setor B"> Setor B</label>
+      <label class="setor-option"><input type="checkbox" value="Setor C"> Setor C</label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 4 — Unidade responsável pela fiscalização</p>
+    <div class="setores-grid" id="setores-sec4">
+      <label class="setor-option"><input type="radio" name="sec4" value="Setor A"> Setor A</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Setor B"> Setor B</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Setor C"> Setor C</label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 5 — Justificativa da contratação</p>
+    <div class="field">
+      <label for="f-justificativa">Explicar, resumidamente, a necessidade da contratação</label>
+      <textarea id="f-justificativa" placeholder="Descreva a justificativa para a contratação pretendida…" style="min-height: 120px;"></textarea>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 6 — Dotação Orçamentária</p>
+    <div class="field">
+      <label for="f-rubrica">Rubrica da PLC</label>
+      <input type="text" id="f-rubrica" placeholder="Ex: 123456">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 7 — Critérios para seleção do fornecedor</p>
+
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin-bottom:6px;">7.2.2 — Acervo Técnico-Operacional (parcelas de maior relevância)</p>
+    <div class="models-panel" id="models-panel-7222">
+      <p class="items-header" style="margin-bottom:6px;">Sugestões — marque para adicionar</p>
+      <div class="models-list" id="models-list-7222"></div>
+    </div>
+    <div id="items-wrapper-7222" class="items-wrapper-sub visible" style="margin-top:8px;">
+      <p class="items-header">Itens 7.2.2.x</p>
+      <div id="items-list-7222"></div>
+      <button type="button" class="btn-add-item" onclick="addSubItem('7222')">+ Adicionar item em branco</button>
+    </div>
+
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:14px 0 6px;">7.3.2 — Acervo Técnico-Profissional (parcelas de maior relevância)</p>
+    <div class="models-panel" id="models-panel-7322">
+      <p class="items-header" style="margin-bottom:6px;">Sugestões — marque para adicionar</p>
+      <div class="models-list" id="models-list-7322"></div>
+    </div>
+    <div id="items-wrapper-7322" class="items-wrapper-sub visible" style="margin-top:8px;">
+      <p class="items-header">Itens 7.3.2.x</p>
+      <div id="items-list-7322"></div>
+      <button type="button" class="btn-add-item" onclick="addSubItem('7322')">+ Adicionar item em branco</button>
+    </div>
+
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:14px 0 6px;">Soma de atestados (7.4)</p>
+    <div class="radio-group">
+      <label class="radio-opt">
+        <input type="radio" name="soma-atestados" value="permite" checked onchange="toggleJustSoma()">
+        Permitir soma de atestados
+      </label>
+      <label class="radio-opt">
+        <input type="radio" name="soma-atestados" value="nao-permite" onchange="toggleJustSoma()">
+        Não permitir soma de atestados
+      </label>
+    </div>
+    <div class="conditional-field" id="wrapper-just-soma">
+      <div class="field" style="margin-top:0.8rem;">
+        <label for="f-just-soma">7.4.1 — Justificativa para não permissão de soma</label>
+        <textarea id="f-just-soma" placeholder="Descreva a justificativa para não permitir a soma de atestados…" style="min-height:80px;"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 8 — Modo de Disputa</p>
+    <div class="radio-group">
+      <label class="radio-opt">
+        <input type="radio" name="modo-disputa" value="Aberto" checked>
+        Aberto
+      </label>
+      <label class="radio-opt">
+        <input type="radio" name="modo-disputa" value="Fechado">
+        Fechado
+      </label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 9 — Critério de Julgamento</p>
+    <div class="radio-group">
+      <label class="radio-opt">
+        <input type="radio" name="criterio-julgamento" value="Maior Desconto" checked>
+        Maior Desconto
+      </label>
+      <label class="radio-opt">
+        <input type="radio" name="criterio-julgamento" value="Maior Desconto por Item">
+        Maior Desconto por Item
+      </label>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 10 — Regime de Execução</p>
+    <div class="field">
+      <label for="f-regime">Regime de execução</label>
+      <input type="text" id="f-regime" placeholder="Empreitada por preço unitário" value="Empreitada por preço unitário">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 11 — Descrição dos Serviços</p>
+
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin-bottom:6px;">11.1 — Principais aspectos (subitem obrigatório)</p>
+    <div id="items-wrapper-111" class="items-wrapper-sub visible">
+      <p class="items-header">Itens 11.1.x</p>
+      <div id="items-list-111"></div>
+      <button type="button" class="btn-add-item" onclick="addSubItem('111')">+ Adicionar item</button>
+    </div>
+
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 12 — Prazo de Execução</p>
+
+    <div class="field">
+      <label for="f-prazo">Prazo de execução (numeral)</label>
+      <input type="number" id="f-prazo" min="1" placeholder="Ex: 30">
+    </div>
+    <div class="field">
+      <label>Unidade do prazo</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="unidade-prazo" value="dias" checked> Dias</label>
+        <label class="radio-opt"><input type="radio" name="unidade-prazo" value="meses"> Meses</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 14 — Condições de Pagamento</p>
+
+    <div class="field">
+      <label>Periodicidade das medições (14.1.1)</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="periodicidade" value="quinzenal" checked> Quinzenal</label>
+        <label class="radio-opt"><input type="radio" name="periodicidade" value="mensal"> Mensal</label>
+      </div>
+    </div>
+
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">14.1.7 — Dados para Faturamento</p>
+    <div class="field">
+      <label for="f-tomador">Tomador</label>
+      <input type="text" id="f-tomador" placeholder="Nome do tomador">
+    </div>
+    <div class="field">
+      <label for="f-cnpj">CNPJ</label>
+      <input type="text" id="f-cnpj" placeholder="00.000.000/0000-00">
+    </div>
+    <div class="field">
+      <label for="f-endereco">Endereço</label>
+      <input type="text" id="f-endereco" placeholder="Rua, número, complemento">
+    </div>
+    <div class="field">
+      <label for="f-cep">CEP</label>
+      <input type="text" id="f-cep" placeholder="00000-000">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 16 — Garantia Contratual</p>
+    <div class="field">
+      <label for="f-garantia-pct">Percentual de garantia (%)</label>
+      <input type="number" id="f-garantia-pct" min="0.01" max="100" step="0.01" placeholder="Ex: 5 ou 2,50">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 17 — Garantia dos Equipamentos/Serviços</p>
+    <div class="field">
+      <label for="f-garantia-titulo">Título da seção</label>
+      <input type="text" id="f-garantia-titulo" placeholder="Ex: DOS EQUIPAMENTOS, MATERIAIS E SERVIÇOS" value="DOS EQUIPAMENTOS, MATERIAIS E SERVIÇOS">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 18 — Subcontratação</p>
+    <div class="radio-group">
+      <label class="radio-opt"><input type="radio" name="subcontratacao" value="nao" checked onchange="toggleSubcontratacao()"> Não admitida</label>
+      <label class="radio-opt"><input type="radio" name="subcontratacao" value="sim" onchange="toggleSubcontratacao()"> Admitida</label>
+    </div>
+    <div class="conditional-field" id="wrapper-subcontratacao" style="margin-top:0.8rem;">
+      <div id="items-wrapper-sub18" class="items-wrapper-sub visible">
+        <p class="items-header">Parcelas subcontratáveis</p>
+        <div id="items-list-sub18"></div>
+        <button type="button" class="btn-add-item" onclick="addSubItem('sub18')">+ Adicionar parcela</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <p class="form-section-label">Seção 20 — Preço Global Estimado</p>
+    <div class="field">
+      <label for="f-preco-valor">Valor estimado (R$)</label>
+      <input type="text" id="f-preco-valor" placeholder="Ex: 150.000,00">
+    </div>
+    <div class="field">
+      <label for="f-preco-extenso">Valor por extenso</label>
+      <input type="text" id="f-preco-extenso" placeholder="Ex: cento e cinquenta mil reais">
+    </div>
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">Assinatura</p>
+    <div class="field">
+      <label for="f-ambiente">Ambiente</label>
+      <input type="text" id="f-ambiente" placeholder="Ex: Ambiente de TI">
+    </div>
+    <div class="field">
+      <label for="f-central">Central / Célula</label>
+      <input type="text" id="f-central" placeholder="Ex: Central de Infraestrutura">
+    </div>
+    <div class="field">
+      <label for="f-gestor">Gestor responsável</label>
+      <input type="text" id="f-gestor" placeholder="Nome do gestor">
+    </div>
+  </div>
+
+  <div class="form-section">
+    <button type="button" class="btn-gerar" onclick="gerar()">Visualizar documento</button>
+    <button type="button" class="btn-pdf" id="btn-pdf" onclick="exportarPDF()">↓ Baixar PDF</button>
+  </div>
+
+</aside>
+
+<main id="main-area">
+  <div class="preview-empty" id="empty-state">
+    <div class="big-char">§</div>
+    <p>Preencha o formulário ao lado<br>e clique em <em>Visualizar documento</em>.</p>
+  </div>
+
+  <div class="page-sheet" id="page-sheet">
+    <div class="doc-header-logos" id="doc-header-logos"></div>
+    <p class="doc-anexo" id="out-anexo"></p>
+    <div class="doc-title">PROJETO BÁSICO</div>
+
+    <div class="doc-section-title">1. OBJETO</div>
+    <p class="doc-body" id="out-objeto"></p>
+    <ul class="doc-items" id="out-items"></ul>
+
+    <div class="doc-section-title">2. UNIDADE(S) RESPONSÁVEL(EIS) PELAS INFORMAÇÕES DO PROJETO BÁSICO</div>
+    <ul class="doc-setores-list" id="out-sec2"></ul>
+
+    <div class="doc-section-title">3. UNIDADE(S) RESPONSÁVEL(EIS) PELA ELABORAÇÃO DO PROJETO BÁSICO</div>
+    <ul class="doc-setores-list" id="out-sec3"></ul>
+
+    <div class="doc-section-title">4. UNIDADE RESPONSÁVEL PELA FISCALIZAÇÃO</div>
+    <ul class="doc-setores-list" id="out-sec4"></ul>
+
+    <div class="doc-section-title">5. JUSTIFICATIVA DA CONTRATAÇÃO</div>
+    <p class="doc-body" id="out-justificativa"></p>
+
+    <div class="doc-section-title">6. DOTAÇÃO ORÇAMENTÁRIA</div>
+    <p class="doc-body" id="out-dotacao"></p>
+
+    <div class="doc-section-title">7. CRITÉRIOS PARA SELEÇÃO DO FORNECEDOR</div>
+
+    <p class="doc-body hanging">7.1. Documentação complementar à Proposta de Preço - Juntamente com a Proposta de Preço, o licitante deverá encaminhar:</p>
+    <p class="doc-body hanging indent-1" id="out-711"></p>
+    <p class="doc-body hanging indent-2" id="out-sec7-item711"></p>
+    <p class="doc-body hanging indent-1">7.1.2. caso conste a indicação de marcas nas especificações dos produtos constantes da planilha, projeto, caderno de especificações ou qualquer outra peça técnica anexa do edital, além dessas poderão ser cotadas outras marcas, desde que mantida ou superada a qualidade dos produtos indicados.</p>
+
+    <p class="doc-body hanging" style="margin-top:8pt;"><strong>7.2.</strong>&nbsp;&nbsp;<strong>Qualificação Técnico-Operacional</strong> - Para comprovação da qualificação técnico-operacional, o licitante deverá apresentar:</p>
+    <p class="doc-body hanging indent-1" id="out-721"></p>
+    <p class="doc-body hanging indent-1">7.2.2. Certidão de Acervo Técnico, fornecida pelo conselho profissional competente, ou atestado devidamente registrado no referido conselho, emitido(s) por pessoa jurídica de direito público ou privado, atestando a execução de serviços de características semelhantes, de complexidade tecnológica e operacionais equivalentes ou superiores às constantes adiante, as quais representam maior relevância técnica e valor significativo:</p>
+    <div id="out-722x"></div>
+
+    <p class="doc-body hanging" style="margin-top:8pt;"><strong>7.3.</strong>&nbsp;&nbsp;<strong>Qualificação Técnico-Profissional</strong> - Para comprovação da qualificação técnico-profissional, o licitante deverá apresentar:</p>
+    <p class="doc-body hanging indent-1">7.3.1. Certidão de Registro de Pessoa física junto ao Conselho de classe competente, que comprove a habilitação do profissional para o exercício das atividades relativas às parcelas de maior relevância técnica e valor significativo, do objeto da licitação;</p>
+    <p class="doc-body hanging indent-1" id="out-732"></p>
+    <div id="out-732x"></div>
+
+    <p class="doc-body hanging" id="out-soma-atestados"></p>
+    <p class="doc-body hanging indent-1" id="out-just-soma" style="display:none;"></p>
+
+    <p class="doc-body hanging" id="out-75" style="margin-top:8pt;"></p>
+    <p class="doc-body hanging indent-1" id="out-751"></p>
+
+    <p class="doc-body hanging" id="out-76" style="margin-top:8pt;"></p>
+    <p class="doc-body hanging indent-1">7.6.1. carteira de trabalho (p&#225;gina da identifica&#231;&#227;o do empregado e dos dados do contrato de trabalho), no caso de empregado(s);</p>
+    <p class="doc-body hanging indent-1">7.6.2. contrato social, no caso de s&#243;cio(s);</p>
+    <p class="doc-body hanging indent-1">7.6.3. contrato de presta&#231;&#227;o de servi&#231;os, devidamente assinado pelas partes, no caso de profissional(is) aut&#244;nomo(s); ou</p>
+    <p class="doc-body hanging indent-1">7.6.4. declara&#231;&#227;o de contrata&#231;&#227;o futura do profissional detentor do atestado apresentado, desde que acompanhada da anu&#234;ncia deste.</p>
+
+    <p class="doc-body hanging" id="out-77" style="margin-top:8pt;"></p>
+
+    <div class="doc-section-title">8. MODO DE DISPUTA</div>
+    <p class="doc-body" id="out-modo-disputa"></p>
+
+    <div class="doc-section-title">9. CRITÉRIO DE JULGAMENTO</div>
+    <p class="doc-body" id="out-criterio"></p>
+
+    <div class="doc-section-title">10. REGIME DE EXECUÇÃO</div>
+    <p class="doc-body" id="out-regime"></p>
+
+    <div class="doc-section-title">11. DESCRIÇÃO DOS SERVIÇOS</div>
+    <p class="doc-body hanging" id="out-111-intro"></p>
+    <div id="out-111x"></div>
+    <p class="doc-body hanging" id="out-112"></p>
+
+    <div class="doc-section-title">12. PRAZO DE EXECUÇÃO DOS SERVIÇOS</div>
+    <p class="doc-body hanging" id="out-121"></p>
+    <p class="doc-body hanging" id="out-122"></p>
+    <p class="doc-body hanging" id="out-123"></p>
+    <p class="doc-body hanging indent-1">12.3.1. obtenção da versão definitiva do documento de responsabilidade técnica pela execução da intervenção junto ao conselho competente;</p>
+    <p class="doc-body hanging indent-1">12.3.2. emissão de alvará de obra ou serviço, se necessário, podendo ser apresentado protocolo caso fique comprovado que o contratado não contribuiu para o atraso.</p>
+
+    <div class="doc-section-title">13. VIGÊNCIA DO CONTRATO</div>
+    <p class="doc-body">O prazo de vigência do Contrato será de 12 (doze) meses, contado da data de sua assinatura.</p>
+
+    <div class="doc-section-title">14. CONDIÇÕES DE PAGAMENTO</div>
+    <p class="doc-body hanging">14.1. O pagamento será efetuado até o 10 (décimo) dia útil, após a apresentação/aceitação das notas fiscais/faturas em boa e devida forma, mediante crédito em conta corrente indicada pelo CONTRATADO, vedada a cobrança por meio de boleto bancário, conforme a seguir:</p>
+    <p class="doc-body hanging indent-1" id="out-1411"></p>
+    <p class="doc-body hanging indent-1" id="out-1412"></p>
+    <p class="doc-body hanging indent-1">14.1.3. mediante apresentação de relatório técnico/fotográfico. O relatório fotográfico deverá apresentar, de forma clara, os serviços executados no início, durante e após a conclusão, de forma a se comprovar que os itens do orçamento foram corretamente executados. Deve-se apresentar fotos de todas as instalações, inclusive as que vierem a ser executadas sobre o forro, embutidas ou no interior de quadros elétricos. Recomenda-se que seja apresentada, no mínimo, 3 (três) fotos por item do orçamento ou quantas forem necessárias para sua comprovação. Outras fotos podem vir a ser exigidas pela fiscalização em caso de dúvidas em relação às já enviadas, por esse motivo, a Contratada deve possuir registros suficientes para envio, caso necessário;</p>
+    <p class="doc-body hanging indent-1">14.1.4. mediante apresentação do Diário de Obras devidamente assinado por responsável técnico e pelo representante legal da empresa;</p>
+    <p class="doc-body hanging indent-1">14.1.5. é obrigação do CONTRATADO verificar sempre a alíquota correta do ISS e eventual dedução de material permitida pela legislação do Munícipio onde será prestado o serviço;</p>
+    <p class="doc-body hanging indent-1">14.1.6. caso seja exigido pelo município onde o serviço será prestado, o CONTRATADO deverá apesentar ao Banco o Registro Auxiliar de Nota Fiscal de Serviço (RANFS);</p>
+    <p class="doc-body hanging indent-1">14.1.7. os Dados para Faturamento são os seguintes:</p>
+    <p class="doc-body indent-2" id="out-tomador"></p>
+    <p class="doc-body indent-2" id="out-cnpj"></p>
+    <p class="doc-body indent-2" id="out-endereco"></p>
+    <p class="doc-body indent-2" id="out-cep"></p>
+
+    <p class="doc-body hanging" style="margin-top:8pt;">14.2. Para a liberação da 1ª parcela, o CONTRATADO deverá apresentar, obrigatoriamente, o seguinte:</p>
+    <p class="doc-body hanging indent-1">14.2.1. comprovante de inscrição da obra ou serviço no CNO (Cadastro Nacional de Obras);</p>
+    <p class="doc-body hanging indent-1">14.2.2. instalação das placas indicativas da obra ou serviço;</p>
+    <p class="doc-body hanging indent-1">14.2.3. alvará da obra ou serviço.</p>
+
+    <p class="doc-body hanging" style="margin-top:8pt;">14.3. As demais parcelas serão liberadas quando cumpridas, conforme o cronograma físico-financeiro da obra ou serviço, sendo que a última só o será por ocasião do "Recebimento Provisório", e desde que atendidas as seguintes exigências:</p>
+    <p class="doc-body hanging indent-1">14.3.1. apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;</p>
+    <p class="doc-body hanging indent-1">14.3.2. apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.</p>
+
+    <p class="doc-body hanging" style="margin-top:8pt;">14.4. Para os itens que envolvem o fornecimento/instalação de equipamentos deverão ser observadas as seguintes etapas:</p>
+    <table class="doc-table" style="margin:8pt 0 0 28px;width:calc(100% - 28px);border-collapse:collapse;font-family:var(--font-doc);font-size:10pt;">
+      <thead>
+        <tr>
+          <th style="border:1px solid var(--ink);padding:5px 8px;text-align:left;font-weight:bold;background:#f0f0f0;">Descrição da Etapa</th>
+          <th style="border:1px solid var(--ink);padding:5px 8px;text-align:center;font-weight:bold;background:#f0f0f0;white-space:nowrap;">Percentual de Pagamento (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border:1px solid var(--ink);padding:5px 8px;">Entrega dos produtos no local da obra ou serviços, de conformidade com as especificações, marca e modelo cotados.</td>
+          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;">60%</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid var(--ink);padding:5px 8px;">Instalação, configuração e ativação dos itens.</td>
+          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;">30%</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid var(--ink);padding:5px 8px;">Emissão do Termo de Recebimento dos itens.</td>
+          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">15. REAJUSTE</div>
+    <p class="doc-body hanging">15.1. O reajuste de preço será na forma de reajuste em sentido estrito, por meio de aplicação de índice de preço.</p>
+    <p class="doc-body hanging">15.2. Os preços contratados serão reajustados de acordo com a variação do Índice Nacional de Custo da Construção – INCC/FGV ou, na sua falta, de acordo com o índice que vier a substituí-lo, em conformidade com a legislação em vigor, tomando-se por base o índice vigente no mês de apresentação da proposta de preço.</p>
+    <p class="doc-body hanging">15.3. Na ausência de previsão legal quanto ao índice substituto, as partes poderão eleger novo índice oficial para reajustamento do preço, mediante aditivo contratual.</p>
+    <p class="doc-body hanging">15.4. O CONTRATADO somente fará jus ao reajustamento do preço contratado após decorrido o interregno mínimo de 1 (um) ano, a contar da data de apresentação da proposta de preço, bem como quando completar 1 (um) ano em relação ao último reajuste devido, se for o caso.</p>
+
+    <div class="doc-section-title">16. GARANTIA CONTRATUAL</div>
+    <p class="doc-body" id="out-garantia-contratual"></p>
+
+    <div class="doc-section-title" id="out-sec17-title"></div>
+    <p class="doc-body hanging">X.1. O CONTRATADO deverá oferecer garantia integral contra qualquer defeito de fabricação e instalação, contado da data de emissão do Termo de Recebimento Definitivo, conforme a seguir:</p>
+    <p class="doc-body hanging indent-1">X.1.1. 12 (doze) meses para o(s) equipamento(s);</p>
+    <p class="doc-body hanging indent-1">X.1.2. 60 (sessenta) meses para os demais itens.</p>
+
+    <div class="doc-section-title">18. SUBCONTRATAÇÃO</div>
+    <p class="doc-body" id="out-subcontratacao-intro"></p>
+    <div id="out-subcontratacao-itens"></div>
+
+    <div class="doc-section-title">19. SANÇÕES ADMINISTRATIVAS</div>
+    <p class="doc-body hanging">19.1. Pela inexecução total ou parcial dos serviços previsto no Contrato, pela execução desses serviços em desacordo com o estabelecido no Contrato e/ou pelo descumprimento das obrigações contratuais, o contratante poderá, garantida a defesa prévia, e observada a gravidade da ocorrência, aplicar ao CONTRATADO as seguintes sanções:</p>
+    <p class="doc-body hanging indent-1">19.1.1. advertência;</p>
+    <p class="doc-body hanging indent-1">19.1.2. multa;</p>
+    <p class="doc-body hanging indent-1">19.1.3. suspensão temporária de participar em licitação e impedimento de contratar com o BANCO pelo prazo de até 2 (dois) anos.</p>
+    <p class="doc-body hanging">19.2. Poderá ser aplicada a sanção de <strong>advertência</strong> nas seguintes condições:</p>
+    <p class="doc-body hanging indent-1">19.2.1. descumprimento parcial das obrigações e responsabilidades assumidas contratualmente e nas situações que ameacem a qualidade do produto ou serviço, ou integridade patrimonial ou humana;</p>
+    <p class="doc-body hanging indent-1">19.2.2. outras ocorrências que possam acarretar transtornos ao desenvolvimento dos serviços do Banco, desde que não caiba a aplicação de sanção mais grave;</p>
+    <p class="doc-body hanging indent-1">19.2.3. na primeira ocorrência de quaisquer dos itens relacionados na Tabela 2 abaixo;</p>
+    <p class="doc-body hanging indent-1">19.2.4. a qualquer tempo, se constatado que o CONTRATADO executou percentual menor que o previsto para aquele período do cronograma físico-financeiro por ele apresentado e aprovado pelo CONTRATANTE.</p>
+    <p class="doc-body hanging">19.3. Será aplicada a sanção de <strong>multa</strong> nas seguintes condições:</p>
+    <p class="doc-body hanging indent-1">19.3.1. No caso de atraso injustificado na execução do objeto, caracterizado em qualquer medição (VMA) pela execução de percentual inferior a 50% (cinquenta por cento) do valor acumulado previsto (VAP) no cronograma físico-financeiro apresentado pelo contratado e aprovado pelo contratante, será aplicada multa no valor definido pela seguinte equação:</p>
+    <p class="doc-body indent-2" style="font-style:italic;">Multa = 1% do valor contratado x (1 - VMA/VAP)</p>
+    <p class="doc-body indent-2">Sendo: VMA - Valor medido acumulado e VAP - valor acumulado previsto</p>
+    <p class="doc-body hanging indent-1">19.3.2. No caso de atraso injustificado no início ou na conclusão do objeto, será aplicada multa de 0,1% (um décimo por cento) sobre o preço global do Contrato por dia de atraso na entrega do objeto, de acordo com o cronograma físico-financeiro apresentado pelo CONTRATADO e aprovado pelo CONTRATANTE, até o limite de 30 (trinta) dias, a partir de quando será considerada inexecução parcial do objeto;</p>
+    <p class="doc-body hanging indent-1">19.3.3. No caso de inexecução parcial do objeto, será aplicada multa de <strong>10% (dez por cento)</strong> sobre o preço global do Contrato.</p>
+    <p class="doc-body hanging">19.4. Será configurada a inexecução parcial do objeto quando:</p>
+    <p class="doc-body hanging indent-1">19.4.1. Injustificadamente, o CONTRATADO executar, a qualquer tempo, percentual inferior a 35% (trinta e cinco por cento) do valor total acumulado previsto no cronograma físico-financeiro apresentado pelo CONTRATADO e aprovado pelo CONTRATANTE, para a execução até o momento da apuração;</p>
+    <p class="doc-body hanging indent-1">19.4.2. O atraso injustificado na conclusão do objeto ultrapassar o prazo máximo de 30 (trinta) dias.</p>
+    <p class="doc-body hanging">19.5. No caso de inexecução total, a multa aplicada será de 10% (dez por cento) sobre o preço global do Contrato, a qual estará configurada, entre outros casos, quando houver atraso injustificado por mais de 15 (quinze) dias após a data prevista para início dos serviços.</p>
+    <p class="doc-body hanging">19.6. Além das multas previstas acima, poderão ser aplicadas multas, de forma cumulativa e limitada a <strong>10% (dez por cento)</strong> sobre o preço global do Contrato por processo administrativo, conforme graus e eventos descritos nas Tabelas 1 e 2 abaixo, até o limite de 20 pontos, cumulativamente, a partir do qual poderá ser configurada inexecução parcial do Contrato.</p>
+    <p class="doc-body" style="margin:6pt 0 4pt 0;">A pontuação é calculada multiplicando-se o número de ocorrências pelo grau atribuído à infração.</p>
+
+    <p class="doc-body" style="font-weight:bold;margin:12pt 0 4pt 0;">Tabela 1</p>
+    <table class="doc-table" style="margin:0 0 12pt 0;width:40%;border-collapse:collapse;font-family:var(--font-doc);font-size:10pt;">
+      <thead><tr>
+        <th style="border:1px solid var(--ink);padding:4px 8px;background:#f0f0f0;text-align:center;">GRAU</th>
+        <th style="border:1px solid var(--ink);padding:4px 8px;background:#f0f0f0;text-align:center;">CORRESPONDÊNCIA</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="border:1px solid var(--ink);padding:4px 8px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:4px 8px;">R$ 100,00</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:4px 8px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:4px 8px;">R$ 300,00</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:4px 8px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:4px 8px;">R$ 500,00</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:4px 8px;text-align:center;">4</td><td style="border:1px solid var(--ink);padding:4px 8px;">R$ 700,00</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:4px 8px;text-align:center;">5</td><td style="border:1px solid var(--ink);padding:4px 8px;">R$ 2.500,00</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:4px 8px;text-align:center;">6</td><td style="border:1px solid var(--ink);padding:4px 8px;">R$ 5.000,00</td></tr>
+      </tbody>
+    </table>
+
+    <p class="doc-body" style="font-weight:bold;margin:12pt 0 4pt 0;">Tabela 2</p>
+    <table class="doc-table" style="margin:0 0 12pt 0;width:100%;border-collapse:collapse;font-family:var(--font-doc);font-size:9pt;">
+      <thead><tr>
+        <th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;text-align:center;width:5%;">ITEM</th>
+        <th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;width:65%;">DESCRIÇÃO</th>
+        <th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;text-align:center;width:8%;">GRAU</th>
+        <th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;width:22%;">INCIDÊNCIA</th>
+      </tr></thead>
+      <tbody id="out-tabela2-body">
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Permitir a presença de empregado desuniformizado, mal apresentado, sem crachá.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por empregado e por dia</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Manter funcionário sem qualificação para a execução dos serviços.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por empregado e por dia</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:3px 6px;">Executar serviço incompleto, paliativo, substitutivo como por caráter permanente, ou deixar de providenciar recomposição complementar.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">4</td><td style="border:1px solid var(--ink);padding:3px 6px;">Fornecer informação pérfida de serviço ou substituição de material sem validação do CONTRATANTE.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">5</td><td style="border:1px solid var(--ink);padding:3px 6px;">Executar serviço sem a utilização de EPI, quando necessários, e não impor penalidade àqueles que se negarem a usá-los.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por empregado e por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">6</td><td style="border:1px solid var(--ink);padding:3px 6px;">Suspender ou interromper, salvo motivo de força maior ou caso fortuito, os serviços contratuais sem validação do CONTRATANTE.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">6</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por dia e por tarefa designada</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">7</td><td style="border:1px solid var(--ink);padding:3px 6px;">Utilizar e/ou reutilizar material, peça ou equipamento de propriedade do Banco sem anuência da fiscalização.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">8</td><td style="border:1px solid var(--ink);padding:3px 6px;">Destruir ou danificar documentos, instalações existentes ou serviço já executado por culpa ou dolo de seus agentes.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">9</td><td style="border:1px solid var(--ink);padding:3px 6px;">Utilizar as dependências da CONTRATANTE para fins diversos do objeto do Contrato.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">4</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">10</td><td style="border:1px solid var(--ink);padding:3px 6px;">Recusar-se a executar serviço determinado pela FISCALIZAÇÃO, sem motivo justificado.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">5</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">11</td><td style="border:1px solid var(--ink);padding:3px 6px;">Permitir situação que crie a possibilidade de causar ou cause dano físico, lesão corporal ou consequências letais.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">6</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">12</td><td style="border:1px solid var(--ink);padding:3px 6px;">Retirar das dependências do BANCO quaisquer equipamentos ou materiais de consumo, previstos em contrato, sem autorização prévia do responsável.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por item e por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">13</td><td style="border:1px solid var(--ink);padding:3px 6px;">Retirar funcionários ou encarregados do serviço durante o expediente, sem a anuência prévia do CONTRATANTE.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">4</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por empregado e por dia</td></tr>
+        <tr><td colspan="4" style="border:1px solid var(--ink);padding:4px 6px;font-weight:bold;background:#f8f8f8;">Para os itens a seguir, deixar de:</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">14</td><td style="border:1px solid var(--ink);padding:3px 6px;">Apresentar ART/RRT/TRT dos serviços para início da execução destes, no prazo definido pela fiscalização/Contrato.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por dia de atraso</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">15</td><td style="border:1px solid var(--ink);padding:3px 6px;">Registrar e controlar, diariamente, a assiduidade e a pontualidade de seu pessoal.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por funcionário e por dia</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">16</td><td style="border:1px solid var(--ink);padding:3px 6px;">Substituir empregado que tenha conduta inconveniente ou incompatível com suas atribuições.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por empregado e por dia</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">17</td><td style="border:1px solid var(--ink);padding:3px 6px;">Manter a documentação de habilitação atualizada.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por item e por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">19</td><td style="border:1px solid var(--ink);padding:3px 6px;">Cumprir horário estabelecido pelo contrato ou determinado pela FISCALIZAÇÃO.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">20</td><td style="border:1px solid var(--ink);padding:3px 6px;">Cumprir determinação da FISCALIZAÇÃO para controle de acesso de seus funcionários.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">1</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">21</td><td style="border:1px solid var(--ink);padding:3px 6px;">Cumprir determinação formal ou instrução complementar da FISCALIZAÇÃO.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">22</td><td style="border:1px solid var(--ink);padding:3px 6px;">Substituir empregado que se conduza de modo inconveniente.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">3</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">23</td><td style="border:1px solid var(--ink);padding:3px 6px;">Efetuar o pagamento de salários, vales-transportes, vales-refeições, seguros, encargos fiscais e sociais, bem como arcar com quaisquer despesas diretas e/ou indiretas relacionadas à execução do contrato nas datas avençadas.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por dia e por ocorrência</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">24</td><td style="border:1px solid var(--ink);padding:3px 6px;">Apresentar, quando solicitado, documentação fiscal, trabalhista e previdenciária.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">2</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência e por dia</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">25</td><td style="border:1px solid var(--ink);padding:3px 6px;">Entregar ou entregar com atraso os esclarecimentos formais solicitados para sanar as inconsistências ou dúvidas suscitadas durante a análise de documentação exigida pela fiscalização.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">5</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência e por dia</td></tr>
+        <tr><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">26</td><td style="border:1px solid var(--ink);padding:3px 6px;">Cumprir quaisquer dos itens do edital e seus anexos, mesmo que não previstos nesta tabela de multas.</td><td style="border:1px solid var(--ink);padding:3px 6px;text-align:center;">5</td><td style="border:1px solid var(--ink);padding:3px 6px;">Por ocorrência e por dia</td></tr>
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">20. PREÇO GLOBAL ESTIMADO PARA A CONTRATAÇÃO</div>
+    <p class="doc-body" id="out-preco-global"></p>
+    <div style="margin-top:48pt;font-family:var(--font-doc);font-size:10pt;" id="out-assinatura">
+      <p class="doc-body" id="out-ambiente"></p>
+      <p class="doc-body" id="out-central"></p>
+      <p class="doc-body" style="margin-top:36pt;">_____________________________________________</p>
+      <p class="doc-body" id="out-gestor"></p>
+    </div>
+
+    <div class="doc-footer">
+      <span id="out-footer-left"></span>
+      <span id="out-footer-right"></span>
+    </div>
+  </div>
+</main>
+
+<script>
+let itemCount = 0;
+let logoBase64 = null;
+let logoNaturalW = 0;
+let logoNaturalH = 0;
+
+// Inicializa listas de subitens com 1 item obrigatório
+// Modelos de sugestão para 7.2.2 e 7.3.2
+const MODELOS_722 = [
+  { id: 'm1', label: 'Edificação não residencial', texto: 'construção ou reforma de edificação não residencial, com área construída de no mínimo XXX (por extenso) m², devidamente concluída' },
+  { id: 'm2', label: 'Revestimento cerâmico/porcelanato', texto: 'fornecimento e instalação de revestimento cerâmico do tipo porcelanato, compreendendo as etapas de preparo e regularização da base, assentamento, nivelamento, rejuntamento e acabamento final, em área mínima de XXX (por extenso) m²' },
+  { id: 'm3', label: 'Estruturas em concreto armado', texto: 'fornecimento e execução de estruturas, peças e elementos em concreto armado e/ou simples, moldado in loco, abrangendo uma área mínima XXX (por extenso) m³' },
+  { id: 'm4', label: 'Prevenção e combate a incêndio', texto: 'fornecimento e implantação de sistemas de prevenção e combate a incêndio e pânico, compreendendo a instalação de extintores, rede de hidrantes, sinalização de emergência, sistema de detecção e/ou alarme de incêndio e sistema de iluminação de emergência, em edificação com área construída igual ou superior a XXX (por extenso) m², em conformidade com as normas técnicas e exigências do Corpo de Bombeiros' },
+  { id: 'm5', label: 'SPDA', texto: 'fornecimento e implantação de Sistema de Proteção contra Descargas Atmosféricas – SPDA, em edificação com área coberta mínima de XXX (por extenso) m², incluindo captação, descidas, aterramento e interligações equipotenciais, conforme normas técnicas aplicáveis' },
+  { id: 'm6', label: 'Cabeamento estruturado Cat. 6', texto: 'fornecimento e instalação de sistema de cabeamento estruturado, padrão Categoria 6, compreendendo, no mínimo com XXX (por extenso) pontos devidamente instalados, identificados e certificados e a implantação de, no mínimo, XXX (por extenso) m de cabos' },
+  { id: 'm7', label: 'Instalações elétricas prediais', texto: 'fornecimento e execução de instalações elétricas prediais em baixa tensão, em edificação com área construída mínima de XXX (por extenso) m², compreendendo pontos de alimentação para equipamentos de ar-condicionado, tomadas de uso geral, sistemas de iluminação, quadros de distribuição e quadros de bombas' },
+  { id: 'm8', label: 'Climatização Self Contained/Splitão', texto: 'fornecimento e instalação de sistemas de climatização do tipo Self Contained e/ou Splitão, contemplando equipamentos cuja capacidade total instalada seja igual ou superior a XXX (por extenso) TR (toneladas de refrigeração)' },
+];
+
+// Rastreia qual item da lista corresponde a cada modelo (por grupo e id)
+const modeloItemMap = { '7222': {}, '7322': {} };
+
+function initModelosPanel(group) {
+  const container = document.getElementById('models-list-' + group);
+  MODELOS_722.forEach(modelo => {
+    const label = document.createElement('label');
+    label.className = 'model-opt';
+    label.innerHTML = `<input type="checkbox" id="chk-${group}-${modelo.id}" onchange="toggleModelo('${group}', '${modelo.id}')"><span class="model-label">${modelo.label}</span>`;
+    container.appendChild(label);
+  });
+}
+
+function toggleModelo(group, modeloId) {
+  const chk = document.getElementById('chk-' + group + '-' + modeloId);
+  const modelo = MODELOS_722.find(m => m.id === modeloId);
+  if (!modelo) return;
+
+  if (chk.checked) {
+    // Adicionar item com texto do modelo
+    const n = ++subItemCounts[group];
+    const list = document.getElementById('items-list-' + group);
+    const row = document.createElement('div');
+    row.className = 'item-row-sub';
+    row.id = 'subrow-' + group + '-' + n;
+    const prefix = group === '7222' ? '7.2.2.' : '7.3.2.';
+    const isFirst = (list.querySelectorAll('.item-row-sub').length === 0);
+    row.innerHTML = `
+      <span class="item-num-label" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);font-weight:400;text-align:right;padding-right:4px;">${prefix}${n}</span>
+      <textarea id="subtext-${group}-${n}" placeholder="Descrição…">${modelo.texto};</textarea>
+      <button type="button" class="item-remove" onclick="removeModeloItem('${group}', ${n}, '${modeloId}')" ${isFirst && list.querySelectorAll('.item-row-sub').length === 0 ? '' : ''}>×</button>`;
+    list.appendChild(row);
+    modeloItemMap[group][modeloId] = n;
+    renumerarSub(group);
+    // Garante que o botão do primeiro item seja habilitado quando há mais de 1
+    atualizarBotoesRemover(group);
+  } else {
+    // Remover item correspondente
+    const n = modeloItemMap[group][modeloId];
+    if (n !== undefined) {
+      const el = document.getElementById('subrow-' + group + '-' + n);
+      if (el) el.remove();
+      delete modeloItemMap[group][modeloId];
+      renumerarSub(group);
+      atualizarBotoesRemover(group);
+    }
+  }
+}
+
+function atualizarBotoesRemover(group) {
+  const rows = document.querySelectorAll('#items-list-' + group + ' .item-row-sub');
+  rows.forEach((r, i) => {
+    const btn = r.querySelector('.item-remove');
+    if (rows.length === 1 && i === 0) {
+      btn.setAttribute('disabled', '');
+    } else {
+      btn.removeAttribute('disabled');
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  initModelosPanel('7222');
+  initModelosPanel('7322');
+  addSubItem('7222');
+  addSubItem('7322');
+  addSubItem('111');
+});
+
+function carregarLogo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    logoBase64 = e.target.result;
+    const img = new Image();
+    img.onload = function() {
+      logoNaturalW = img.naturalWidth;
+      logoNaturalH = img.naturalHeight;
+      document.getElementById('logo-preview-img').src = logoBase64;
+      document.getElementById('logo-preview-wrap').classList.add('visible');
+      document.getElementById('logo-dims').textContent = logoNaturalW + ' × ' + logoNaturalH + ' px';
+      const status = document.getElementById('logo-status');
+      status.textContent = file.name;
+      status.classList.add('ok');
+      atualizarLogoDoc();
+    };
+    img.src = logoBase64;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removerLogo() {
+  logoBase64 = null; logoNaturalW = 0; logoNaturalH = 0;
+  document.getElementById('logo-file-input').value = '';
+  document.getElementById('logo-preview-img').src = '';
+  document.getElementById('logo-preview-wrap').classList.remove('visible');
+  document.getElementById('logo-dims').textContent = '';
+  const status = document.getElementById('logo-status');
+  status.textContent = 'Nenhuma imagem selecionada';
+  status.classList.remove('ok');
+  atualizarLogoDoc();
+}
+
+function atualizarLogoDoc() {
+  const wrap = document.getElementById('doc-header-logos');
+  wrap.innerHTML = '';
+  if (logoBase64) {
+    const img = document.createElement('img');
+    img.src = logoBase64;
+    img.className = 'doc-logo-left';
+    wrap.appendChild(img);
+  }
+}
+
+let subItemCounts = { '7222': 0, '7322': 0, '111': 0, 'sub18': 0 };
+
+function addSubItem(group, value) {
+  subItemCounts[group]++;
+  const n = subItemCounts[group];
+  const list = document.getElementById('items-list-' + group);
+  const row = document.createElement('div');
+  row.className = 'item-row-sub';
+  row.id = 'subrow-' + group + '-' + n;
+  const isFirst = (list.querySelectorAll('.item-row-sub').length === 0);
+  const prefix = group === '7222' ? '7.2.2.' : group === '7322' ? '7.3.2.' : group === 'sub18' ? '18.1.' : '11.1.';
+  row.innerHTML = `
+    <span class="item-num-label" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);font-weight:400;text-align:right;padding-right:4px;">${prefix}${n}</span>
+    <textarea id="subtext-${group}-${n}" placeholder="Descrição…">${value || ''}</textarea>
+    <button type="button" class="item-remove${isFirst ? '' : ''}" onclick="removeSubItem('${group}', ${n})" ${isFirst ? 'disabled' : ''}>×</button>`;
+  list.appendChild(row);
+  renumerarSub(group);
+}
+
+function removeSubItem(group, n) {
+  const el = document.getElementById('subrow-' + group + '-' + n);
+  if (el) el.remove();
+  // Desmarcar checkbox do modelo se for um item de modelo
+  Object.entries(modeloItemMap[group] || {}).forEach(([modeloId, itemN]) => {
+    if (itemN === n) {
+      const chk = document.getElementById('chk-' + group + '-' + modeloId);
+      if (chk) chk.checked = false;
+      delete modeloItemMap[group][modeloId];
+    }
+  });
+  renumerarSub(group);
+  atualizarBotoesRemover(group);
+}
+
+function removeModeloItem(group, n, modeloId) {
+  removeSubItem(group, n);
+}
+
+function renumerarSub(group) {
+  const prefix = group === '7222' ? '7.2.2.' : group === '7322' ? '7.3.2.' : group === 'sub18' ? '18.1.' : '11.1.';
+  document.querySelectorAll('#items-list-' + group + ' .item-row-sub').forEach((r, i) => {
+    r.querySelector('.item-num-label').textContent = prefix + (i + 1);
+  });
+}
+
+function atualizarBotoesRemover(group) {
+  const rows = document.querySelectorAll('#items-list-' + group + ' .item-row-sub');
+  rows.forEach((r, i) => {
+    const btn = r.querySelector('.item-remove');
+    if (rows.length === 1) btn.setAttribute('disabled', '');
+    else btn.removeAttribute('disabled');
+  });
+}
+
+function getSubItems(group) {
+  return Array.from(document.querySelectorAll('#items-list-' + group + ' .item-row-sub'))
+    .map(r => r.querySelector('textarea').value.trim());
+}
+
+function toggleItens() {
+  const cb = document.getElementById('chk-itens');
+  const wrap = document.getElementById('items-wrapper');
+  if (cb.checked) {
+    wrap.classList.add('visible');
+    if (itemCount === 0) { addItem(); addItem(); }
+  } else { wrap.classList.remove('visible'); }
+}
+
+function addItem() {
+  itemCount++;
+  const list = document.getElementById('items-list');
+  const row = document.createElement('div');
+  row.className = 'item-row';
+  row.id = 'irow-' + itemCount;
+  row.innerHTML = `<span class="item-num-label">Item ${itemCount}</span><input type="text" id="itext-${itemCount}" placeholder="Descrição..."><button type="button" class="item-remove" onclick="removeItem(${itemCount})">×</button>`;
+  list.appendChild(row);
+}
+
+function removeItem(n) {
+  const el = document.getElementById('irow-' + n);
+  if (el) el.remove();
+  renumerar();
+}
+
+function renumerar() {
+  document.querySelectorAll('#items-list .item-row').forEach((r, i) => {
+    r.querySelector('.item-num-label').textContent = 'Item ' + (i + 1);
+  });
+}
+
+function toggleJustSoma() {
+  const val = document.querySelector('input[name="soma-atestados"]:checked').value;
+  document.getElementById('wrapper-just-soma').classList.toggle('visible', val === 'nao-permite');
+}
+
+function toggleSubcontratacao() {
+  const val = document.querySelector('input[name="subcontratacao"]:checked').value;
+  const wrap = document.getElementById('wrapper-subcontratacao');
+  wrap.classList.toggle('visible', val === 'sim');
+  if (val === 'sim' && document.querySelectorAll('#items-list-sub18 .item-row-sub').length === 0) {
+    addSubItem('sub18');
+  }
+}
+
+function setText(id, text, placeholder, isPlaceholder) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.style.fontStyle = isPlaceholder ? 'italic' : 'normal';
+  el.style.color = isPlaceholder ? 'var(--ink-3)' : 'var(--ink)';
+}
+
+function numeroPorExtenso(n) {
+  const unidades = ['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove',
+    'dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
+  const dezenas = ['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+  const centenas = ['','cem','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+  if (n === 100) return 'cem';
+  if (n < 20) return unidades[n];
+  if (n < 100) {
+    const d = Math.floor(n / 10), u = n % 10;
+    return dezenas[d] + (u ? ' e ' + unidades[u] : '');
+  }
+  if (n < 1000) {
+    const c = Math.floor(n / 100), resto = n % 100;
+    return centenas[c] + (resto ? ' e ' + numeroPorExtenso(resto) : '');
+  }
+  if (n < 1000000) {
+    const mil = Math.floor(n / 1000), resto = n % 1000;
+    const milStr = mil === 1 ? 'mil' : numeroPorExtenso(mil) + ' mil';
+    return milStr + (resto ? ' e ' + numeroPorExtenso(resto) : '');
+  }
+  return n.toString();
+}
+
+function pctPorExtenso(valorStr) {
+  const normalizado = String(valorStr).replace(',', '.');
+  const num = parseFloat(normalizado);
+  if (isNaN(num)) return '?????';
+  const parteInteira = Math.floor(num);
+  const centesimos = Math.round((num - parteInteira) * 100);
+  const inteiroExt = numeroPorExtenso(parteInteira);
+  if (centesimos === 0) return inteiroExt;
+  const decExt = numeroPorExtenso(centesimos);
+  return `${inteiroExt} vírgula ${decExt}`;
+}
+
+function pctFormatado(valorStr) {
+  // Exibe com vírgula: 5.25 → 5,25
+  const normalizado = String(valorStr).replace(',', '.');
+  const num = parseFloat(normalizado);
+  if (isNaN(num)) return valorStr;
+  return num.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+}
+
+function gerar() {
+  const anexo = document.getElementById('f-anexo').value.trim();
+  const objeto = document.getElementById('f-objeto').value.trim();
+  const porItens = document.getElementById('chk-itens').checked;
+
+  document.getElementById('out-anexo').textContent = anexo ? 'ANEXO ' + anexo : 'ANEXO';
+  document.getElementById('out-objeto').textContent = 'Contratação de ' + (objeto || '[completar]') + ', conforme projetos e especificações técnicas constantes dos anexos do Edital.';
+
+  // Itens
+  const ul = document.getElementById('out-items');
+  ul.innerHTML = '';
+  if (porItens) {
+    document.querySelectorAll('#items-list .item-row').forEach((r, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="item-label">·&nbsp;&nbsp;ITEM ${i + 1} –&nbsp;</span><span class="item-desc">${r.querySelector('input').value.trim() || '—'}</span>`;
+      ul.appendChild(li);
+    });
+  }
+
+  const dataStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  document.getElementById('out-footer-left').textContent = (anexo ? 'ANEXO ' + anexo + '  ·  ' : '') + 'PROJETO BÁSICO';
+  document.getElementById('out-footer-right').textContent = dataStr;
+
+  // Seções 2 e 3
+  ['sec2', 'sec3'].forEach(sec => {
+    const checks = document.querySelectorAll('#setores-' + sec + ' input:checked');
+    const ul = document.getElementById('out-' + sec);
+    ul.innerHTML = '';
+    if (!checks.length) {
+      const li = document.createElement('li');
+      li.textContent = '[Informar Unidade]'; li.style.color = 'var(--ink-3)'; li.style.fontStyle = 'italic';
+      ul.appendChild(li);
+    } else {
+      checks.forEach(c => { const li = document.createElement('li'); li.textContent = c.value; ul.appendChild(li); });
+    }
+  });
+
+  // Seção 4
+  const radio4 = document.querySelector('#setores-sec4 input:checked');
+  const ul4 = document.getElementById('out-sec4');
+  ul4.innerHTML = `<li>${radio4 ? radio4.value : '[Informar Unidade]'}</li>`;
+  if (!radio4) { ul4.firstChild.style.color = 'var(--ink-3)'; ul4.firstChild.style.fontStyle = 'italic'; }
+
+  // Seção 5
+  const justificativa = document.getElementById('f-justificativa').value.trim();
+  setText('out-justificativa', justificativa || '[Explicar, resumidamente, a necessidade da contratação pretendida].', null, !justificativa);
+
+  // Seção 6
+  const rubrica = document.getElementById('f-rubrica').value.trim();
+  setText('out-dotacao',
+    `Os custos decorrentes da contratação correrão à conta de recursos previstos em dotação orçamentária própria, sob a(s) rubrica(s) ${rubrica || '[INFORMAR RUBRICA DA PLC – NÚMERO]'}.`,
+    null, !rubrica);
+
+  // 7.1.1.1
+  const numAnexo = anexo || '___';
+  document.getElementById('out-sec7-item711').innerHTML =
+    `7.1.1.1. os quantitativos fornecidos pelo Banco, bem como os serviços constantes da planilha modelo, <strong>Anexo denominado ${numAnexo}</strong>, NÃO poderão ser alterados;`;
+
+  // itens dependentes do tipo de contratação
+  const tipoContratacao = document.querySelector('input[name="tipo-contratacao"]:checked').value;
+  const eObra = tipoContratacao === 'obra';
+
+  // 7.1.1
+  document.getElementById('out-711').innerHTML = `7.1.1. cronograma físico-financeiro, em formato Excel (.xls ou .xlsx), elaborado com base na planilha de orçamento divulgada no edital, observando que esta deverá ter seus valores readequados ao último lance ofertado aplicando linearmente o desconto sobre a totalidade dos itens. O cronograma físico-financeiro deverá explicitar, dentre outros dados, os valores referentes a materiais/equipamentos e à mão de obra correspondente a cada etapa da ${eObra ? 'obra' : 'serviço'}:`;
+
+  // 7.2.2.x — lista dinâmica
+  const container722x = document.getElementById('out-722x');
+  container722x.innerHTML = '';
+  const items722 = getSubItems('7222');
+  const prefix722 = '7.2.2.';
+  items722.forEach((val, i) => {
+    const p = document.createElement('p');
+    p.className = 'doc-body hanging indent-2';
+    const num = prefix722 + (i + 1);
+    if (val) {
+      p.textContent = num + '. ' + val;
+    } else {
+      p.textContent = num + '. [Ver exemplos contidos na NOTA 5 a seguir, ou definir o que pode ser considerada parcela de maior relevância para o caso concreto];';
+      p.style.color = 'var(--ink-3)'; p.style.fontStyle = 'italic';
+    }
+    container722x.appendChild(p);
+  });
+
+  // 7.3.2.x — lista dinâmica
+  const container732x = document.getElementById('out-732x');
+  container732x.innerHTML = '';
+  const items732 = getSubItems('7322');
+  const prefix732 = '7.3.2.';
+  items732.forEach((val, i) => {
+    const p = document.createElement('p');
+    p.className = 'doc-body hanging indent-2';
+    const num = prefix732 + (i + 1);
+    if (val) {
+      p.textContent = num + '. ' + val;
+    } else {
+      p.textContent = num + '. [Ver exemplos contidos na NOTA 5 a seguir, ou definir o que pode ser considerada parcela de maior relevância para o caso concreto];';
+      p.style.color = 'var(--ink-3)'; p.style.fontStyle = 'italic';
+    }
+    container732x.appendChild(p);
+  });
+
+  // 7.4 — soma de atestados
+  const somaVal = document.querySelector('input[name="soma-atestados"]:checked').value;
+  const elSoma = document.getElementById('out-soma-atestados');
+  const elJustSoma = document.getElementById('out-just-soma');
+  if (somaVal === 'permite') {
+    elSoma.textContent = '7.4. Poderão ser somadas as quantidades de dois ou mais atestados para obtenção da quantidade a ser comprovada no(s) atestado(s) de capacidade técnica.';
+    elJustSoma.style.display = 'none';
+  } else {
+    elSoma.textContent = '7.4. Não poderão ser somadas as quantidades de atestados para obtenção da quantidade a ser comprovada.';
+    const justSoma = document.getElementById('f-just-soma').value.trim();
+    elJustSoma.style.display = '';
+    if (justSoma) {
+      elJustSoma.textContent = '7.4.1. ' + justSoma;
+      elJustSoma.style.color = 'var(--ink)'; elJustSoma.style.fontStyle = 'normal';
+    } else {
+      elJustSoma.textContent = '7.4.1. [Justificativa para não permissão de soma de atestados].';
+      elJustSoma.style.color = 'var(--ink-3)'; elJustSoma.style.fontStyle = 'italic';
+    }
+  }
+
+  // 7.2.1
+  document.getElementById('out-721').textContent =
+    `7.2.1. Certidão de Registro de Pessoa Jurídica junto ao Conselho de classe competente, que comprove a habilitação do licitante para execução de ${eObra ? 'obras' : 'serviços'} de engenharia;`;
+
+  // 7.3.2
+  document.getElementById('out-732').textContent =
+    `7.3.2. Certidão de Acervo Técnico, fornecida pelo conselho profissional competente, ou atestado devidamente registrado no referido conselho, emitido(s) por pessoa jurídica de direito público ou privado, atestando a execução de ${eObra ? 'obra' : 'serviço'} de características semelhantes, de complexidade tecnológica e operacionais equivalentes ou superiores às constantes adiante, as quais representam maior relevância técnica e valor significativo:`;
+
+  // 7.5
+  const termo75 = eObra ? 'da obra' : 'do serviço';
+  document.getElementById('out-75').textContent =
+    `7.5. O licitante deve apresentar documento, no qual conste, expressamente, a indicação do(s) profissional(is) que atuará(ão) como responsável(is) técnico(s) ${termo75}, devendo informar, pelo menos, nome completo, função, número de registro da classe, RG e CPF, devendo atender aos seguintes requisitos:`;
+
+  // 7.5.1
+  document.getElementById('out-751').textContent =
+    `7.5.1. o(s) profissional(is) indicado(s) pelo licitante deverá(ão) participar ${eObra ? 'da referida obra' : 'do referido serviço'}, NÃO admitindo-se sua substituição na fase da habilitação;`;
+
+  // 7.6
+  document.getElementById('out-76').textContent =
+    `7.6. comprovação do vínculo do licitante com o(s) responsável(is) técnico(s) detentor(es) do Acervo Técnico, no qual foi indicado pelo licitante para acompanhamento da execução contratual, por meio da juntada de cópia da documentação a seguir:`;
+
+  // 7.7
+  const local77 = eObra ? 'da obra' : 'do serviço';
+  const execucao77 = eObra ? 'da obra' : 'dos serviços';
+  document.getElementById('out-77').textContent =
+    `7.7. Ao licitante é facultada a possibilidade de realizar vistoria ao local ${local77}. Todavia, realizando ou não a vistoria, o licitante deverá declarar que "tomou conhecimento de todas as informações do Edital, do regime de execução ${execucao77} e, ainda, que recebeu todos os documentos necessários para o cumprimento das obrigações objeto do Edital.`;
+
+  // Seção 8
+  const modoDisputa = document.querySelector('input[name="modo-disputa"]:checked').value;
+  document.getElementById('out-modo-disputa').textContent = modoDisputa + '.';
+
+  // Seção 9
+  const criterio = document.querySelector('input[name="criterio-julgamento"]:checked').value;
+  document.getElementById('out-criterio').textContent = criterio + '.';
+
+  // Seção 10
+  const regime = document.getElementById('f-regime').value.trim();
+  document.getElementById('out-regime').textContent = (regime || 'Empreitada por preço unitário') + '.';
+
+  // Seção 11
+  const termoObra11 = eObra ? 'na obra' : 'no serviço';
+  const intro111 = document.getElementById('out-111-intro');
+  intro111.textContent = `11.1. A partir das premissas dos projetos elaborados, os principais aspectos contemplados ${termoObra11} serão:`;
+
+  const container111 = document.getElementById('out-111x');
+  container111.innerHTML = '';
+  getSubItems('111').forEach((val, i) => {
+    const p = document.createElement('p');
+    p.className = 'doc-body hanging indent-1';
+    const num = '11.1.' + (i + 1) + '.';
+    if (val) {
+      p.textContent = num + '   ' + val + ';';
+    } else {
+      p.textContent = num + '   [informar];';
+      p.style.color = 'var(--ink-3)'; p.style.fontStyle = 'italic';
+    }
+    container111.appendChild(p);
+  });
+
+  const anexo11 = document.getElementById('f-anexo').value.trim();
+  const el112 = document.getElementById('out-112');
+  el112.textContent = `11.2. O detalhamento das informações consta do Anexo denominado ${anexo11 || '____'}.`;
+  if (!anexo11) { el112.style.color = 'var(--ink-3)'; el112.style.fontStyle = 'italic'; }
+  else { el112.style.color = 'var(--ink)'; el112.style.fontStyle = 'normal'; }
+
+  // Seção 12
+  const prazoNum = parseInt(document.getElementById('f-prazo').value) || null;
+  const unidadePrazo = document.querySelector('input[name="unidade-prazo"]:checked').value;
+  const unidadeLabel = unidadePrazo === 'dias' ? 'dias' : 'meses';
+  const el121 = document.getElementById('out-121');
+  if (prazoNum) {
+    el121.textContent = `12.1. O prazo de execução dos serviços será de ${prazoNum} (${numeroPorExtenso(prazoNum)}) ${unidadeLabel}.`;
+    el121.style.color = 'var(--ink)'; el121.style.fontStyle = 'normal';
+  } else {
+    el121.textContent = '12.1. O prazo de execução dos serviços será de ___ (_____) [dias/meses].';
+    el121.style.color = 'var(--ink-3)'; el121.style.fontStyle = 'italic';
+  }
+
+  const termoInicio12 = eObra ? 'da obra' : 'do serviço';
+  document.getElementById('out-122').textContent =
+    `12.2. O efetivo início ${termoInicio12} deverá ocorrer em até 20 (vinte) dias após a assinatura do instrumento contratual, podendo ser prorrogado, a critério do Banco ou mediante solicitação formal da empresa, desde que devidamente justificada e acatada pelo CONTRATANTE.`;
+
+  document.getElementById('out-123').textContent =
+    '12.3. É obrigação do contratado adotar todas as medidas necessárias para efetivo e correto início da intervenção no prazo acima citado, considerando que tomou conhecimento das condições de execução e do porte da intervenção desde a publicação do edital. Para tal, deve atentar para providências como:';
+
+  // Seção 14
+  const periodicidade = document.querySelector('input[name="periodicidade"]:checked').value;
+  const periodicidadeLabel = periodicidade === 'quinzenal' ? 'quinzenais' : 'mensais';
+  const periodicidadeAdv = periodicidade === 'quinzenal' ? 'quinzenalmente' : 'mensalmente';
+  document.getElementById('out-1411').textContent = `14.1.1. mediante medições ${periodicidadeLabel};`;
+  document.getElementById('out-1412').textContent = `14.1.2. É obrigação do fornecedor solicitar ${periodicidadeAdv} a medição apresentando toda a documentação pertinente;`;
+
+  function setFaturamento(id, label, valor) {
+    const el = document.getElementById(id);
+    if (valor) {
+      el.textContent = label + ' ' + valor;
+      el.style.color = 'var(--ink)'; el.style.fontStyle = 'normal';
+    } else {
+      el.textContent = label + ' ____';
+      el.style.color = 'var(--ink-3)'; el.style.fontStyle = 'italic';
+    }
+  }
+  setFaturamento('out-tomador', 'Tomador:', document.getElementById('f-tomador').value.trim());
+  setFaturamento('out-cnpj',    'CNPJ:',    document.getElementById('f-cnpj').value.trim());
+  setFaturamento('out-endereco','Endereço:',document.getElementById('f-endereco').value.trim());
+  setFaturamento('out-cep',     'CEP:',     document.getElementById('f-cep').value.trim());
+
+  // Seção 16 — Garantia Contratual
+  const garantiaPct = document.getElementById('f-garantia-pct').value.trim();
+  const elGarantia = document.getElementById('out-garantia-contratual');
+  if (garantiaPct) {
+    elGarantia.textContent = `Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ${pctFormatado(garantiaPct)}% (${pctPorExtenso(garantiaPct)} por cento) do preço global contratado.`;
+    elGarantia.style.color = 'var(--ink)'; elGarantia.style.fontStyle = 'normal';
+  } else {
+    elGarantia.textContent = 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ____% (_____ por cento) do preço global contratado.';
+    elGarantia.style.color = 'var(--ink-3)'; elGarantia.style.fontStyle = 'italic';
+  }
+
+  // Seção 17 — título editável
+  const garantiaTitulo = document.getElementById('f-garantia-titulo').value.trim() || 'DOS EQUIPAMENTOS, MATERIAIS E SERVIÇOS';
+  document.getElementById('out-sec17-title').textContent = '17. GARANTIA ' + garantiaTitulo;
+
+  // Seção 18 — Subcontratação
+  const subVal = document.querySelector('input[name="subcontratacao"]:checked').value;
+  const elSubIntro = document.getElementById('out-subcontratacao-intro');
+  const elSubItens = document.getElementById('out-subcontratacao-itens');
+  elSubItens.innerHTML = '';
+  if (subVal === 'nao') {
+    elSubIntro.textContent = 'Não será admitida subcontratação de parcela do objeto do instrumento contratual.';
+    elSubIntro.style.color = 'var(--ink)'; elSubIntro.style.fontStyle = 'normal';
+  } else {
+    elSubIntro.textContent = '18.1. O CONTRATADO, na execução do instrumento contratual, sem prejuízo das responsabilidades contratuais e legais, poderá subcontratar a(s) parcela(s) do objeto definida(s) a seguir:';
+    elSubIntro.style.color = 'var(--ink)'; elSubIntro.style.fontStyle = 'normal';
+    getSubItems('sub18').forEach((val, i) => {
+      const p = document.createElement('p');
+      p.className = 'doc-body hanging indent-1';
+      const num = '18.1.' + (i + 1) + '.';
+      p.textContent = num + '   ' + (val || '[completar]') + '.';
+      if (!val) { p.style.color = 'var(--ink-3)'; p.style.fontStyle = 'italic'; }
+      elSubItens.appendChild(p);
+    });
+  }
+
+  // Seção 20 — Preço Global e Assinatura
+  const precoValor = document.getElementById('f-preco-valor').value.trim();
+  const precoExtenso = document.getElementById('f-preco-extenso').value.trim();
+  const elPreco = document.getElementById('out-preco-global');
+  if (precoValor && precoExtenso) {
+    elPreco.textContent = `O preço global estimado para a contratação é R$ ${precoValor} (${precoExtenso}).`;
+    elPreco.style.color = 'var(--ink)'; elPreco.style.fontStyle = 'normal';
+  } else {
+    elPreco.textContent = 'O preço global estimado para a contratação é R$ _______ (        ).';
+    elPreco.style.color = 'var(--ink-3)'; elPreco.style.fontStyle = 'italic';
+  }
+  const ambiente = document.getElementById('f-ambiente').value.trim();
+  const central  = document.getElementById('f-central').value.trim();
+  const gestor   = document.getElementById('f-gestor').value.trim();
+  document.getElementById('out-ambiente').textContent = ambiente || 'Ambiente ____';
+  document.getElementById('out-central').textContent  = central  || 'Central / Célula ____';
+  document.getElementById('out-gestor').textContent   = gestor   || '<Gestor responsável>';
+
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('page-sheet').classList.add('visible');
+  document.getElementById('btn-pdf').classList.add('visible');
+}
+
+/* ─── EXPORTAÇÃO PDF ────────────────────────────────────────── */
+function exportarPDF() {
+  try {
+    if (!window.jspdf) {
+      alert("A biblioteca de PDF não foi carregada corretamente. Verifique sua conexão ou recarregue a página.");
+      return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+    const anexo = document.getElementById('f-anexo').value.trim();
+    const titulo = 'PROJETO BÁSICO';
+    const objeto = document.getElementById('f-objeto').value.trim();
+    const porItens = document.getElementById('chk-itens').checked;
+
+    const marginL = 28, marginR = 18, marginT = 38, marginB = 28, pageW = 210, pageH = 297;
+    const contentW = pageW - marginL - marginR;
+    const lh = 4.8;
+    const espacoGrande = 5;
+    const espacoMedio = 3;
+    const espacoPequeno = 2;
+    const gapSecao = 8;
+
+    let y = marginT;
+
+    function checkPage() {
+      if (y >= pageH - marginB) { doc.addPage(); y = marginT; }
+    }
+
+    function printJustifiedLine(line, isLastLine, xStart, maxW) {
+      if (isLastLine) { doc.text(line, xStart, y); return; }
+      const words = line.split(' ').filter(w => w.length > 0);
+      if (words.length <= 1) { doc.text(line, xStart, y); return; }
+      const totalWordsW = words.reduce((sum, w) => sum + doc.getTextWidth(w), 0);
+      const gaps = words.length - 1;
+      const spaceW = (maxW - totalWordsW) / gaps;
+      let x = xStart;
+      words.forEach((word, i) => {
+        doc.text(word, x, y);
+        if (i < words.length - 1) x += doc.getTextWidth(word) + spaceW;
+      });
+    }
+
+    function printHangingBlock(prefix, text, baseIndent, isBoldPrefix) {
+      isBoldPrefix = isBoldPrefix || false;
+      doc.setFont('helvetica', isBoldPrefix ? 'bold' : 'normal');
+      doc.setFontSize(10);
+      const prefixW = doc.getTextWidth(prefix + ' ');
+      const xBase = marginL + baseIndent;
+      const xText = xBase + prefixW;
+      const textW = contentW - baseIndent - prefixW;
+      let lines = doc.splitTextToSize(text, textW);
+      while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+      lines.forEach((line, i) => {
+        checkPage();
+        const isLastLine = (i === lines.length - 1);
+        const isShort = doc.getTextWidth(line.trim()) < (textW * 0.85);
+        if (i === 0) {
+          doc.setFont('helvetica', isBoldPrefix ? 'bold' : 'normal');
+          doc.text(prefix, xBase, y);
+          doc.setFont('helvetica', 'normal');
+          if (!isLastLine && !isShort) printJustifiedLine(line.trim(), false, xText, textW);
+          else doc.text(line.trim(), xText, y);
+        } else {
+          doc.setFont('helvetica', 'normal');
+          if (!isLastLine && !isShort) printJustifiedLine(line.trim(), false, xText, textW);
+          else doc.text(line.trim(), xText, y);
+        }
+        y += lh;
+      });
+    }
+
+    function printBlockWithBoldJustified(fullText, boldPart, baseIndent, prefix, isPrefixBold = false) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      const prefixW = doc.getTextWidth(prefix + ' ');
+      const xBase = marginL + baseIndent;
+      const xText = xBase + prefixW;
+      
+      const words = fullText.split(' ').filter(w => w.length > 0);
+      const boldWords = boldPart.split(' ')
+        .map(bw => bw.replace(/[.,;:\-]/g, '').toLowerCase())
+        .filter(bw => bw.length > 0);
+
+      const getWordFont = (w) => {
+        const cleanW = w.replace(/[.,;:\-]/g, '').toLowerCase();
+        return (cleanW.length > 0 && boldWords.includes(cleanW)) ? 'bold' : 'normal';
+      };
+
+      let currentX = xText;
+      
+      // Imprime o prefixo (Ex: "7.1.1.1." ou "7.3.")
+      doc.setFont('helvetica', isPrefixBold ? 'bold' : 'normal'); 
+      doc.text(prefix, xBase, y); 
+
+      // Desenha palavra por palavra calculando o tamanho real do negrito
+      words.forEach(w => {
+        doc.setFont('helvetica', getWordFont(w));
+        const wWidth = doc.getTextWidth(w);
+        const spaceWidth = doc.getTextWidth(' ');
+
+        // Se a palavra for passar da margem direita, pula para a linha de baixo
+        if (currentX + wWidth > marginL + contentW) {
+          y += lh;
+          checkPage();
+          currentX = xText;
+        }
+
+        doc.text(w, currentX, y);
+        currentX += wWidth + spaceWidth;
+      });
+      y += lh;
+    }
+
+    function printBlock(text, fontStyle, isJustify, indent, textColor) {
+      indent = indent || 0;
+      if (!text) return;
+      if (textColor) doc.setTextColor(textColor[0], textColor[1], textColor[2]);
+      doc.setFont('helvetica', fontStyle);
+      doc.setFontSize(10);
+      const usableW = contentW - indent;
+      const xStart = marginL + indent;
+      let lines = doc.splitTextToSize(text, usableW);
+      while (lines.length > 0 && lines[lines.length - 1].trim() === '') lines.pop();
+      lines.forEach((line, i) => {
+        checkPage();
+        const isLastLine = (i === lines.length - 1);
+        const lineWidth = doc.getTextWidth(line.trim());
+        const isShortLine = lineWidth < (usableW * 0.85);
+        if (isJustify && lines.length > 1 && !isLastLine && !isShortLine) {
+          printJustifiedLine(line, isLastLine, xStart, usableW);
+        } else {
+          doc.text(line.trim(), xStart, y);
+        }
+        y += lh;
+      });
+      if (textColor) doc.setTextColor(26, 23, 20);
+    }
+
+    // Tratamento seguro do Logo
+    if (logoBase64 && logoNaturalH > 0) {
+      try {
+        let format = logoBase64.split(';')[0].split('/')[1].toUpperCase();
+        if (format === 'JPG') format = 'JPEG';
+        const b64data = logoBase64.split(',')[1];
+        const imgRatio = logoNaturalW / logoNaturalH;
+        const logoH = 12, logoW = logoH * imgRatio;
+        doc.addImage(b64data, format, marginL, 16, logoW, logoH);
+      } catch (err) {
+        console.warn("Erro ao processar imagem no PDF. Continuando sem logo...", err);
+      }
+    }
+
+    // Cabeçalho
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+    doc.text(anexo ? 'ANEXO ' + anexo.toUpperCase() : 'ANEXO', pageW / 2, y, { align: 'center' });
+    y += lh;
+    doc.text(titulo, pageW / 2, y, { align: 'center' });
+    y += 2;
+    doc.setDrawColor(26, 23, 20); doc.setLineWidth(0.8);
+    doc.line(marginL, y, pageW - marginR, y);
+    y += gapSecao;
+
+    // 1
+    printBlock('1. OBJETO', 'bold', false);
+    y += espacoGrande;
+    printBlock('Contratação de ' + (objeto || '[completar]') + ', conforme projetos e especificações técnicas constantes dos anexos do Edital.', 'normal', true);
+    if (porItens) {
+      y += espacoMedio;
+      Array.from(document.querySelectorAll('#items-list .item-row')).forEach((r, i) => {
+        const desc = r.querySelector('input').value.trim() || '—';
+        printHangingBlock('·', `ITEM ${i + 1} – ${desc}`, 10);
+      });
+    }
+    y += gapSecao;
+
+    function renderSecao(tituloSec, itens) {
+      printBlock(tituloSec, 'bold', false);
+      y += espacoGrande;
+      itens.forEach((txt, index) => {
+        printBlock(txt, 'normal', false);
+        if (index < itens.length - 1) y += espacoPequeno;
+      });
+      y += gapSecao;
+    }
+
+    const s2 = Array.from(document.querySelectorAll('#setores-sec2 input:checked')).map(c => c.value);
+    renderSecao('2. UNIDADE(S) RESPONSÁVEL(EIS) PELAS INFORMAÇÕES DO PROJETO BÁSICO', s2.length ? s2 : ['[Informar Unidade]']);
+
+    const s3 = Array.from(document.querySelectorAll('#setores-sec3 input:checked')).map(c => c.value);
+    renderSecao('3. UNIDADE(S) RESPONSÁVEL(EIS) PELA ELABORAÇÃO DO PROJETO BÁSICO', s3.length ? s3 : ['[Informar Unidade]']);
+
+    const r4 = document.querySelector('#setores-sec4 input:checked');
+    renderSecao('4. UNIDADE RESPONSÁVEL PELA FISCALIZAÇÃO', [r4 ? r4.value : '[Informar Unidade]']);
+
+    // 5
+    printBlock('5. JUSTIFICATIVA DA CONTRATAÇÃO', 'bold', false);
+    y += espacoGrande;
+    const justificativa = document.getElementById('f-justificativa').value.trim();
+    printBlock(justificativa || '[Explicar, resumidamente, a necessidade da contratação pretendida].', justificativa ? 'normal' : 'italic', true, 0, justificativa ? [26,23,20] : [150,140,130]);
+    y += gapSecao;
+
+    // 6
+    printBlock('6. DOTAÇÃO ORÇAMENTÁRIA', 'bold', false);
+    y += espacoGrande;
+    const rubrica = document.getElementById('f-rubrica').value.trim();
+    printBlock(`Os custos decorrentes da contratação correrão à conta de recursos previstos em dotação orçamentária própria, sob a(s) rubrica(s) ${rubrica || '[INFORMAR RUBRICA DA PLC – NÚMERO]'}.`, rubrica ? 'normal' : 'italic', true, 0, rubrica ? [26,23,20] : [150,140,130]);
+    y += gapSecao;
+
+    // 7
+    printBlock('7. CRITÉRIOS PARA SELEÇÃO DO FORNECEDOR', 'bold', false);
+    y += espacoGrande;
+    const numAnexo = anexo || '___';
+    const eObraPDF = document.querySelector('input[name="tipo-contratacao"]:checked').value === 'obra';
+
+    printHangingBlock('7.1.', 'Documentação complementar à Proposta de Preço - Juntamente com a Proposta de Preço, o licitante deverá encaminhar:', 0);
+    y += espacoPequeno;
+    printHangingBlock('7.1.1.', `cronograma físico-financeiro, em formato Excel (.xls ou .xlsx), elaborado com base na planilha de orçamento divulgada no edital, observando que esta deverá ter seus valores readequados ao último lance ofertado aplicando linearmente o desconto sobre a totalidade dos itens. O cronograma físico-financeiro deverá explicitar, dentre outros dados, os valores referentes a materiais/equipamentos e à mão de obra correspondente a cada etapa da ${eObraPDF ? 'obra' : 'serviço'}:`, 10);
+    y += espacoPequeno;
+    printBlockWithBoldJustified(
+      `os quantitativos fornecidos pelo Banco, bem como os serviços constantes da planilha modelo, Anexo denominado ${numAnexo}, NÃO poderão ser alterados;`,
+      `Anexo denominado ${numAnexo}`, 20, '7.1.1.1.', false);
+    y += espacoPequeno;
+    printHangingBlock('7.1.2.', 'caso conste a indicação de marcas nas especificações dos produtos constantes da planilha, projeto, caderno de especificações ou qualquer outra peça técnica anexa do edital, além dessas poderão ser cotadas outras marcas, desde que mantida ou superada a qualidade dos produtos indicados.', 10);
+    y += espacoMedio;
+
+    // 7.2
+    printBlockWithBoldJustified(
+      'Qualificação Técnico-Operacional - Para comprovação da qualificação técnico-operacional, o licitante deverá apresentar:',
+      'Qualificação Técnico-Operacional', 0, '7.2.', true);
+    y += espacoPequeno;
+
+    printHangingBlock('7.2.1.', `Certidão de Registro de Pessoa Jurídica junto ao Conselho de classe competente, que comprove a habilitação do licitante para execução de ${eObraPDF ? 'obras' : 'serviços'} de engenharia;`, 10);
+    y += espacoPequeno;
+    printHangingBlock('7.2.2.', 'Certidão de Acervo Técnico, fornecida pelo conselho profissional competente, ou atestado devidamente registrado no referido conselho, emitido(s) por pessoa jurídica de direito público ou privado, atestando a execução de serviços de características semelhantes, de complexidade tecnológica e operacionais equivalentes ou superiores às constantes adiante, as quais representam maior relevância técnica e valor significativo:', 10);
+    y += espacoPequeno;
+
+    const items722pdf = getSubItems('7222');
+    items722pdf.forEach((val, i) => {
+      const num = '7.2.2.' + (i + 1) + '.';
+      printHangingBlock(num, val || '[Ver exemplos contidos na NOTA 5 a seguir, ou definir o que pode ser considerada parcela de maior relevância para o caso concreto];', 20, !val);
+      y += espacoPequeno;
+    });
+    y += espacoMedio;
+
+    // 7.3
+    printBlockWithBoldJustified(
+      'Qualificação Técnico-Profissional - Para comprovação da qualificação técnico-profissional, o licitante deverá apresentar:',
+      'Qualificação Técnico-Profissional', 0, '7.3.', true);
+    y += espacoPequeno;
+    
+    printHangingBlock('7.3.1.', 'Certidão de Registro de Pessoa física junto ao Conselho de classe competente, que comprove a habilitação do profissional para o exercício das atividades relativas às parcelas de maior relevância técnica e valor significativo, do objeto da licitação;', 10);
+    y += espacoPequeno;
+    printHangingBlock('7.3.2.', `Certidão de Acervo Técnico, fornecida pelo conselho profissional competente, ou atestado devidamente registrado no referido conselho, emitido(s) por pessoa jurídica de direito público ou privado, atestando a execução de ${eObraPDF ? 'obra' : 'serviço'} de características semelhantes, de complexidade tecnológica e operacionais equivalentes ou superiores às constantes adiante, as quais representam maior relevância técnica e valor significativo:`, 10);
+    y += espacoPequeno;
+
+    const items732pdf = getSubItems('7322');
+    items732pdf.forEach((val, i) => {
+      const num = '7.3.2.' + (i + 1) + '.';
+      printHangingBlock(num, val || '[Ver exemplos contidos na NOTA 5 a seguir, ou definir o que pode ser considerada parcela de maior relevância para o caso concreto];', 20, !val);
+      y += espacoPequeno;
+    });
+    y += espacoMedio;
+
+    // 7.4 — soma de atestados
+    const somaVal = document.querySelector('input[name="soma-atestados"]:checked').value;
+    if (somaVal === 'permite') {
+      printHangingBlock('7.4.', 'Poderão ser somadas as quantidades de dois ou mais atestados para obtenção da quantidade a ser comprovada no(s) atestado(s) de capacidade técnica.', 0);
+    } else {
+      printHangingBlock('7.4.', 'Não poderão ser somadas as quantidades de atestados para obtenção da quantidade a ser comprovada.', 0);
+      y += espacoPequeno;
+      const justSoma = document.getElementById('f-just-soma').value.trim();
+      printHangingBlock('7.4.1.', justSoma || '[Justificativa para não permissão de soma de atestados].', 10);
+    }
+    y += espacoMedio;
+
+    // 7.5 — responsável técnico
+    const termo75PDF = eObraPDF ? 'da obra' : 'do serviço';
+    printHangingBlock('7.5.', `O licitante deve apresentar documento, no qual conste, expressamente, a indicação do(s) profissional(is) que atuará(ão) como responsável(is) técnico(s) ${termo75PDF}, devendo informar, pelo menos, nome completo, função, número de registro da classe, RG e CPF, devendo atender aos seguintes requisitos:`, 0);
+    y += espacoPequeno;
+    printHangingBlock('7.5.1.', `o(s) profissional(is) indicado(s) pelo licitante deverá(ão) participar ${eObraPDF ? 'da referida obra' : 'do referido serviço'}, NÃO admitindo-se sua substituição na fase da habilitação;`, 10);
+    y += espacoMedio;
+
+    // 7.6 — vínculo
+    printHangingBlock('7.6.', 'comprovação do vínculo do licitante com o(s) responsável(is) técnico(s) detentor(es) do Acervo Técnico, no qual foi indicado pelo licitante para acompanhamento da execução contratual, por meio da juntada de cópia da documentação a seguir:', 0);
+    y += espacoPequeno;
+    printHangingBlock('7.6.1.', 'carteira de trabalho (página da identificação do empregado e dos dados do contrato de trabalho), no caso de empregado(s);', 10);
+    y += espacoPequeno;
+    printHangingBlock('7.6.2.', 'contrato social, no caso de sócio(s);', 10);
+    y += espacoPequeno;
+    printHangingBlock('7.6.3.', 'contrato de prestação de serviços, devidamente assinado pelas partes, no caso de profissional(is) autônomo(s); ou', 10);
+    y += espacoPequeno;
+    printHangingBlock('7.6.4.', 'declaração de contratação futura do profissional detentor do atestado apresentado, desde que acompanhada da anuência deste.', 10);
+    y += espacoMedio;
+
+    // 7.7 — vistoria
+    printHangingBlock('7.7.', `Ao licitante é facultada a possibilidade de realizar vistoria ao local ${eObraPDF ? 'da obra' : 'do serviço'}. Todavia, realizando ou não a vistoria, o licitante deverá declarar que "tomou conhecimento de todas as informações do Edital, do regime de execução ${eObraPDF ? 'da obra' : 'dos serviços'} e, ainda, que recebeu todos os documentos necessários para o cumprimento das obrigações objeto do Edital.`, 0);
+    y += gapSecao;
+
+    // 8
+    printBlock('8. MODO DE DISPUTA', 'bold', false);
+    y += espacoGrande;
+    const modoDisputa = document.querySelector('input[name="modo-disputa"]:checked').value;
+    printBlock(modoDisputa + '.', 'normal', false);
+    y += gapSecao;
+
+    // 9
+    printBlock('9. CRITÉRIO DE JULGAMENTO', 'bold', false);
+    y += espacoGrande;
+    printBlock(document.querySelector('input[name="criterio-julgamento"]:checked').value + '.', 'normal', false);
+    y += gapSecao;
+
+    // 10
+    printBlock('10. REGIME DE EXECUÇÃO', 'bold', false);
+    y += espacoGrande;
+    const regime = document.getElementById('f-regime').value.trim();
+    printBlock((regime || 'Empreitada por preço unitário') + '.', 'normal', false);
+    y += gapSecao;
+
+    // 11
+    printBlock('11. DESCRIÇÃO DOS SERVIÇOS', 'bold', false);
+    y += espacoGrande;
+
+    const termoObra11pdf = eObraPDF ? 'na obra' : 'no serviço';
+    printHangingBlock('11.1.', `A partir das premissas dos projetos elaborados, os principais aspectos contemplados ${termoObra11pdf} serão:`, 0);
+    y += espacoPequeno;
+
+    const items111pdf = getSubItems('111');
+    items111pdf.forEach((val, i) => {
+      const num = '11.1.' + (i + 1) + '.';
+      printHangingBlock(num, (val || '[informar]') + ';', 10, !val);
+      y += espacoPequeno;
+    });
+    y += espacoPequeno;
+
+    const anexo11pdf = document.getElementById('f-anexo').value.trim();
+    printHangingBlock('11.2.', `O detalhamento das informações consta do Anexo denominado ${anexo11pdf || '____'}.`, 0, !anexo11pdf);
+    y += gapSecao;
+
+    // 12
+    printBlock('12. PRAZO DE EXECUÇÃO DOS SERVIÇOS', 'bold', false);
+    y += espacoGrande;
+
+    const prazoNumPDF = parseInt(document.getElementById('f-prazo').value) || null;
+    const unidadePrazoPDF = document.querySelector('input[name="unidade-prazo"]:checked').value;
+    const unidadeLabelPDF = unidadePrazoPDF === 'dias' ? 'dias' : 'meses';
+    if (prazoNumPDF) {
+      printHangingBlock('12.1.', `O prazo de execução dos serviços será de ${prazoNumPDF} (${numeroPorExtenso(prazoNumPDF)}) ${unidadeLabelPDF}.`, 0);
+    } else {
+      printHangingBlock('12.1.', 'O prazo de execução dos serviços será de ___ (_____) [dias/meses].', 0, true);
+    }
+    y += espacoPequeno;
+
+    const termoInicio12pdf = eObraPDF ? 'da obra' : 'do serviço';
+    printHangingBlock('12.2.', `O efetivo início ${termoInicio12pdf} deverá ocorrer em até 20 (vinte) dias após a assinatura do instrumento contratual, podendo ser prorrogado, a critério do Banco ou mediante solicitação formal da empresa, desde que devidamente justificada e acatada pelo CONTRATANTE.`, 0);
+    y += espacoPequeno;
+
+    printHangingBlock('12.3.', 'É obrigação do contratado adotar todas as medidas necessárias para efetivo e correto início da intervenção no prazo acima citado, considerando que tomou conhecimento das condições de execução e do porte da intervenção desde a publicação do edital. Para tal, deve atentar para providências como:', 0);
+    y += espacoPequeno;
+    printHangingBlock('12.3.1.', 'obtenção da versão definitiva do documento de responsabilidade técnica pela execução da intervenção junto ao conselho competente;', 10);
+    y += espacoPequeno;
+    printHangingBlock('12.3.2.', 'emissão de alvará de obra ou serviço, se necessário, podendo ser apresentado protocolo caso fique comprovado que o contratado não contribuiu para o atraso.', 10);
+    y += gapSecao;
+
+    // 13
+    printBlock('13. VIGÊNCIA DO CONTRATO', 'bold', false);
+    y += espacoGrande;
+    printBlock('O prazo de vigência do Contrato será de 12 (doze) meses, contado da data de sua assinatura.', 'normal', false);
+    y += gapSecao;
+
+    // 14
+    printBlock('14. CONDIÇÕES DE PAGAMENTO', 'bold', false);
+    y += espacoGrande;
+    printHangingBlock('14.1.', 'O pagamento será efetuado até o 10 (décimo) dia útil, após a apresentação/aceitação das notas fiscais/faturas em boa e devida forma, mediante crédito em conta corrente indicada pelo CONTRATADO, vedada a cobrança por meio de boleto bancário, conforme a seguir:', 0);
+    y += espacoPequeno;
+
+    const periodicidadePDF = document.querySelector('input[name="periodicidade"]:checked').value;
+    const periodicidadeLabelPDF = periodicidadePDF === 'quinzenal' ? 'quinzenais' : 'mensais';
+    const periodicidadeAdvPDF = periodicidadePDF === 'quinzenal' ? 'quinzenalmente' : 'mensalmente';
+    printHangingBlock('14.1.1.', `mediante medições ${periodicidadeLabelPDF};`, 10);
+    y += espacoPequeno;
+    printHangingBlock('14.1.2.', `É obrigação do fornecedor solicitar ${periodicidadeAdvPDF} a medição apresentando toda a documentação pertinente;`, 10);
+    y += espacoPequeno;
+    printHangingBlock('14.1.3.', 'mediante apresentação de relatório técnico/fotográfico. O relatório fotográfico deverá apresentar, de forma clara, os serviços executados no início, durante e após a conclusão, de forma a se comprovar que os itens do orçamento foram corretamente executados. Deve-se apresentar fotos de todas as instalações, inclusive as que vierem a ser executadas sobre o forro, embutidas ou no interior de quadros elétricos. Recomenda-se que seja apresentada, no mínimo, 3 (três) fotos por item do orçamento ou quantas forem necessárias para sua comprovação. Outras fotos podem vir a ser exigidas pela fiscalização em caso de dúvidas em relação às já enviadas, por esse motivo, a Contratada deve possuir registros suficientes para envio, caso necessário;', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.1.4.', 'mediante apresentação do Diário de Obras devidamente assinado por responsável técnico e pelo representante legal da empresa;', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.1.5.', 'é obrigação do CONTRATADO verificar sempre a alíquota correta do ISS e eventual dedução de material permitida pela legislação do Munícipio onde será prestado o serviço;', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.1.6.', 'caso seja exigido pelo município onde o serviço será prestado, o CONTRATADO deverá apesentar ao Banco o Registro Auxiliar de Nota Fiscal de Serviço (RANFS);', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.1.7.', 'os Dados para Faturamento são os seguintes:', 10);
+    y += espacoPequeno;
+
+    const tomadorPDF   = document.getElementById('f-tomador').value.trim();
+    const cnpjPDF      = document.getElementById('f-cnpj').value.trim();
+    const enderecoPDF  = document.getElementById('f-endereco').value.trim();
+    const cepPDF       = document.getElementById('f-cep').value.trim();
+    const indFat = 20;
+    printBlock('Tomador: ' + (tomadorPDF || '____'), 'normal', false, indFat);
+    y += espacoPequeno;
+    printBlock('CNPJ: '    + (cnpjPDF    || '____'), 'normal', false, indFat);
+    y += espacoPequeno;
+    printBlock('Endereço: '+ (enderecoPDF|| '____'), 'normal', false, indFat);
+    y += espacoPequeno;
+    printBlock('CEP: '     + (cepPDF     || '____'), 'normal', false, indFat);
+    y += espacoMedio;
+
+    // 14.2
+    printHangingBlock('14.2.', 'Para a liberação da 1ª parcela, o CONTRATADO deverá apresentar, obrigatoriamente, o seguinte:', 0);
+    y += espacoPequeno;
+    printHangingBlock('14.2.1.', 'comprovante de inscrição da obra ou serviço no CNO (Cadastro Nacional de Obras);', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.2.2.', 'instalação das placas indicativas da obra ou serviço;', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.2.3.', 'alvará da obra ou serviço.', 10);
+    y += espacoMedio;
+
+    // 14.3
+    printHangingBlock('14.3.', 'As demais parcelas serão liberadas quando cumpridas, conforme o cronograma físico-financeiro da obra ou serviço, sendo que a última só o será por ocasião do "Recebimento Provisório", e desde que atendidas as seguintes exigências:', 0);
+    y += espacoPequeno;
+    printHangingBlock('14.3.1.', 'apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;', 10);
+    y += espacoPequeno;
+    printHangingBlock('14.3.2.', 'apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.', 10);
+    y += espacoMedio;
+
+    // 14.4 — tabela
+    printHangingBlock('14.4.', 'Para os itens que envolvem o fornecimento/instalação de equipamentos deverão ser observadas as seguintes etapas:', 0);
+    y += espacoPequeno;
+
+    // desenhar tabela
+    const tblX = marginL;
+    const colDesc = contentW * 0.78;
+    const colPerc = contentW * 0.22;
+    const tblW = contentW;
+    const cellPad = 2;
+    const tblRows = [
+      ['Descrição da Etapa', 'Percentual de Pagamento (%)'],
+      ['Entrega dos produtos no local da obra ou serviços, de conformidade com as especificações, marca e modelo cotados.', '60%'],
+      ['Instalação, configuração e ativação dos itens.', '30%'],
+      ['Emissão do Termo de Recebimento dos itens.', '10%'],
+    ];
+    doc.setFontSize(9);
+    tblRows.forEach((row, ri) => {
+      const isHeader = ri === 0;
+      doc.setFont('helvetica', isHeader ? 'bold' : 'normal');
+      const descLines = doc.splitTextToSize(row[0], colDesc - cellPad * 2);
+      const rowH = descLines.length * lh + cellPad * 2;
+      checkPage();
+      // fundo cabeçalho
+      if (isHeader) { doc.setFillColor(230, 230, 230); doc.rect(tblX, y - lh + 1, tblW, rowH, 'F'); }
+      // bordas
+      doc.setDrawColor(26, 23, 20); doc.setLineWidth(0.3);
+      doc.rect(tblX, y - lh + 1, colDesc, rowH);
+      doc.rect(tblX + colDesc, y - lh + 1, colPerc, rowH);
+      // texto coluna 1
+      descLines.forEach((line, li) => { doc.text(line, tblX + cellPad, y + li * lh); });
+      // texto coluna 2 (centrado)
+      doc.text(row[1], tblX + colDesc + colPerc / 2, y + (descLines.length * lh) / 2 - lh / 2 + lh, { align: 'center' });
+      y += rowH;
+    });
+    doc.setFontSize(10);
+    y += gapSecao;
+
+    // 15
+    printBlock('15. REAJUSTE', 'bold', false);
+    y += espacoGrande;
+    printHangingBlock('15.1.', 'O reajuste de preço será na forma de reajuste em sentido estrito, por meio de aplicação de índice de preço.', 0);
+    y += espacoPequeno;
+    printHangingBlock('15.2.', 'Os preços contratados serão reajustados de acordo com a variação do Índice Nacional de Custo da Construção – INCC/FGV ou, na sua falta, de acordo com o índice que vier a substituí-lo, em conformidade com a legislação em vigor, tomando-se por base o índice vigente no mês de apresentação da proposta de preço.', 0);
+    y += espacoPequeno;
+    printHangingBlock('15.3.', 'Na ausência de previsão legal quanto ao índice substituto, as partes poderão eleger novo índice oficial para reajustamento do preço, mediante aditivo contratual.', 0);
+    y += espacoPequeno;
+    printHangingBlock('15.4.', 'O CONTRATADO somente fará jus ao reajustamento do preço contratado após decorrido o interregno mínimo de 1 (um) ano, a contar da data de apresentação da proposta de preço, bem como quando completar 1 (um) ano em relação ao último reajuste devido, se for o caso.', 0);
+    y += gapSecao;
+
+    // 16 — Garantia Contratual
+    printBlock('16. GARANTIA CONTRATUAL', 'bold', false);
+    y += espacoGrande;
+    const garantiaPctPDF = document.getElementById('f-garantia-pct').value.trim();
+    const garantiaTexto = garantiaPctPDF
+      ? `Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ${pctFormatado(garantiaPctPDF)}% (${pctPorExtenso(garantiaPctPDF)} por cento) do preço global contratado.`
+      : 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ____% (_____ por cento) do preço global contratado.';
+    printBlock(garantiaTexto, 'normal', true);
+    y += gapSecao;
+
+    // 17 — Garantia equipamentos/serviços
+    const garantiaTituloPDF = document.getElementById('f-garantia-titulo').value.trim() || 'DOS EQUIPAMENTOS, MATERIAIS E SERVIÇOS';
+    printBlock('17. GARANTIA ' + garantiaTituloPDF, 'bold', false);
+    y += espacoGrande;
+    printHangingBlock('17.1.', 'O CONTRATADO deverá oferecer garantia integral contra qualquer defeito de fabricação e instalação, contado da data de emissão do Termo de Recebimento Definitivo, conforme a seguir:', 0);
+    y += espacoPequeno;
+    printHangingBlock('17.1.1.', '12 (doze) meses para o(s) equipamento(s);', 10);
+    y += espacoPequeno;
+    printHangingBlock('17.1.2.', '60 (sessenta) meses para os demais itens.', 10);
+    y += gapSecao;
+
+    // 18 — Subcontratação
+    printBlock('18. SUBCONTRATAÇÃO', 'bold', false);
+    y += espacoGrande;
+    const subValPDF = document.querySelector('input[name="subcontratacao"]:checked').value;
+    if (subValPDF === 'nao') {
+      printBlock('Não será admitida subcontratação de parcela do objeto do instrumento contratual.', 'normal', true);
+    } else {
+      printHangingBlock('18.1.', 'O CONTRATADO, na execução do instrumento contratual, sem prejuízo das responsabilidades contratuais e legais, poderá subcontratar a(s) parcela(s) do objeto definida(s) a seguir:', 0);
+      y += espacoPequeno;
+      getSubItems('sub18').forEach((val, i) => {
+        printHangingBlock('18.1.' + (i + 1) + '.', (val || '[completar]') + '.', 10, !val);
+        y += espacoPequeno;
+      });
+    }
+    y += gapSecao;
+
+    // 19 — Sanções
+    printBlock('19. SANÇÕES ADMINISTRATIVAS', 'bold', false);
+    y += espacoGrande;
+    printHangingBlock('19.1.', 'Pela inexecução total ou parcial dos serviços previsto no Contrato, pela execução desses serviços em desacordo com o estabelecido no Contrato e/ou pelo descumprimento das obrigações contratuais, o contratante poderá, garantida a defesa prévia, e observada a gravidade da ocorrência, aplicar ao CONTRATADO as seguintes sanções:', 0);
+    y += espacoPequeno;
+    printHangingBlock('19.1.1.', 'advertência;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.1.2.', 'multa;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.1.3.', 'suspensão temporária de participar em licitação e impedimento de contratar com o BANCO pelo prazo de até 2 (dois) anos.', 10);
+    y += espacoMedio;
+    printHangingBlock('19.2.', 'Poderá ser aplicada a sanção de advertência nas seguintes condições:', 0);
+    y += espacoPequeno;
+    printHangingBlock('19.2.1.', 'descumprimento parcial das obrigações e responsabilidades assumidas contratualmente e nas situações que ameacem a qualidade do produto ou serviço, ou integridade patrimonial ou humana;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.2.2.', 'outras ocorrências que possam acarretar transtornos ao desenvolvimento dos serviços do Banco, desde que não caiba a aplicação de sanção mais grave;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.2.3.', 'na primeira ocorrência de quaisquer dos itens relacionados na Tabela 2 abaixo;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.2.4.', 'a qualquer tempo, se constatado que o CONTRATADO executou percentual menor que o previsto para aquele período do cronograma físico-financeiro por ele apresentado e aprovado pelo CONTRATANTE.', 10);
+    y += espacoMedio;
+    printHangingBlock('19.3.', 'Será aplicada a sanção de multa nas seguintes condições:', 0);
+    y += espacoPequeno;
+    printHangingBlock('19.3.1.', 'No caso de atraso injustificado na execução do objeto, caracterizado em qualquer medição (VMA) pela execução de percentual inferior a 50% (cinquenta por cento) do valor acumulado previsto (VAP) no cronograma físico-financeiro apresentado pelo contratado e aprovado pelo contratante, será aplicada multa no valor definido pela seguinte equação:', 10);
+    y += espacoPequeno;
+    printBlock('Multa = 1% do valor contratado x (1 - VMA/VAP)', 'normal', false, 30);
+    y += espacoPequeno;
+    printBlock('Sendo: VMA - Valor medido acumulado e VAP - valor acumulado previsto', 'normal', false, 30);
+    y += espacoPequeno;
+    printHangingBlock('19.3.2.', 'No caso de atraso injustificado no início ou na conclusão do objeto, será aplicada multa de 0,1% (um décimo por cento) sobre o preço global do Contrato por dia de atraso na entrega do objeto, de acordo com o cronograma físico-financeiro, até o limite de 30 (trinta) dias, a partir de quando será considerada inexecução parcial do objeto;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.3.3.', 'No caso de inexecução parcial do objeto, será aplicada multa de 10% (dez por cento) sobre o preço global do Contrato.', 10);
+    y += espacoMedio;
+    printHangingBlock('19.4.', 'Será configurada a inexecução parcial do objeto quando:', 0);
+    y += espacoPequeno;
+    printHangingBlock('19.4.1.', 'Injustificadamente, o CONTRATADO executar, a qualquer tempo, percentual inferior a 35% (trinta e cinco por cento) do valor total acumulado previsto no cronograma físico-financeiro para a execução até o momento da apuração;', 10);
+    y += espacoPequeno;
+    printHangingBlock('19.4.2.', 'O atraso injustificado na conclusão do objeto ultrapassar o prazo máximo de 30 (trinta) dias.', 10);
+    y += espacoMedio;
+    printHangingBlock('19.5.', 'No caso de inexecução total, a multa aplicada será de 10% (dez por cento) sobre o preço global do Contrato, a qual estará configurada, entre outros casos, quando houver atraso injustificado por mais de 15 (quinze) dias após a data prevista para início dos serviços.', 0);
+    y += espacoMedio;
+    printHangingBlock('19.6.', 'Além das multas previstas acima, poderão ser aplicadas multas, de forma cumulativa e limitada a 10% (dez por cento) sobre o preço global do Contrato por processo administrativo, conforme graus e eventos descritos nas Tabelas 1 e 2 abaixo, até o limite de 20 pontos.', 0);
+    y += espacoMedio;
+    printBlock('A pontuação é calculada multiplicando-se o número de ocorrências pelo grau atribuído à infração.', 'normal', true);
+    y += espacoMedio;
+
+    // Tabela 1
+    printBlock('Tabela 1', 'bold', false);
+    y += espacoPequeno;
+    const tbl1Rows = [['GRAU','CORRESPONDÊNCIA'],['1','R$ 100,00'],['2','R$ 300,00'],['3','R$ 500,00'],['4','R$ 700,00'],['5','R$ 2.500,00'],['6','R$ 5.000,00']];
+    const t1W1 = 20, t1W2 = 50;
+    doc.setFontSize(9);
+    tbl1Rows.forEach((row, ri) => {
+      const isH = ri === 0;
+      doc.setFont('helvetica', isH ? 'bold' : 'normal');
+      const rowH = lh + 4;
+      checkPage();
+      if (isH) { doc.setFillColor(230,230,230); doc.rect(marginL, y - lh + 1, t1W1 + t1W2, rowH, 'F'); }
+      doc.setDrawColor(26,23,20); doc.setLineWidth(0.3);
+      doc.rect(marginL, y - lh + 1, t1W1, rowH);
+      doc.rect(marginL + t1W1, y - lh + 1, t1W2, rowH);
+      doc.text(row[0], marginL + t1W1 / 2, y + 1, { align: 'center' });
+      doc.text(row[1], marginL + t1W1 + 2, y + 1);
+      y += rowH;
+    });
+    doc.setFontSize(10);
+    y += espacoMedio;
+
+    // Tabela 2
+    printBlock('Tabela 2', 'bold', false);
+    y += espacoPequeno;
+    const tbl2Data = [
+      ['ITEM','DESCRIÇÃO','GRAU','INCIDÊNCIA'],
+      ['1','Permitir a presença de empregado desuniformizado, mal apresentado, sem crachá.','1','Por empregado e por dia'],
+      ['2','Manter funcionário sem qualificação para a execução dos serviços.','1','Por empregado e por dia'],
+      ['3','Executar serviço incompleto, paliativo, substitutivo como por caráter permanente, ou deixar de providenciar recomposição complementar.','2','Por ocorrência'],
+      ['4','Fornecer informação pérfida de serviço ou substituição de material sem validação do CONTRATANTE.','2','Por ocorrência'],
+      ['5','Executar serviço sem a utilização de EPI, quando necessários, e não impor penalidade àqueles que se negarem a usá-los.','3','Por empregado e por ocorrência'],
+      ['6','Suspender ou interromper, salvo motivo de força maior ou caso fortuito, os serviços contratuais sem validação do CONTRATANTE.','6','Por dia e por tarefa designada'],
+      ['7','Utilizar e/ou reutilizar material, peça ou equipamento de propriedade do Banco sem anuência da fiscalização.','3','Por ocorrência'],
+      ['8','Destruir ou danificar documentos, instalações existentes ou serviço já executado por culpa ou dolo de seus agentes.','3','Por ocorrência'],
+      ['9','Utilizar as dependências da CONTRATANTE para fins diversos do objeto do Contrato.','4','Por ocorrência'],
+      ['10','Recusar-se a executar serviço determinado pela FISCALIZAÇÃO, sem motivo justificado.','5','Por ocorrência'],
+      ['11','Permitir situação que crie a possibilidade de causar ou cause dano físico, lesão corporal ou consequências letais.','6','Por ocorrência'],
+      ['12','Retirar das dependências do BANCO quaisquer equipamentos ou materiais de consumo, previstos em contrato, sem autorização prévia do responsável.','3','Por item e por ocorrência'],
+      ['13','Retirar funcionários ou encarregados do serviço durante o expediente, sem a anuência prévia do CONTRATANTE.','4','Por empregado e por dia'],
+      ['Para os itens a seguir, deixar de:','','',''],
+      ['14','Apresentar ART/RRT/TRT dos serviços para início da execução destes, no prazo definido pela fiscalização/Contrato.','2','Por dia de atraso'],
+      ['15','Registrar e controlar, diariamente, a assiduidade e a pontualidade de seu pessoal.','1','Por funcionário e por dia'],
+      ['16','Substituir empregado que tenha conduta inconveniente ou incompatível com suas atribuições.','1','Por empregado e por dia'],
+      ['17','Manter a documentação de habilitação atualizada.','1','Por item e por ocorrência'],
+      ['19','Cumprir horário estabelecido pelo contrato ou determinado pela FISCALIZAÇÃO.','1','Por ocorrência'],
+      ['20','Cumprir determinação da FISCALIZAÇÃO para controle de acesso de seus funcionários.','1','Por ocorrência'],
+      ['21','Cumprir determinação formal ou instrução complementar da FISCALIZAÇÃO.','2','Por ocorrência'],
+      ['22','Substituir empregado que se conduza de modo inconveniente.','3','Por ocorrência'],
+      ['23','Efetuar o pagamento de salários, vales-transportes, seguros, encargos fiscais e sociais, bem como arcar com quaisquer despesas relacionadas à execução do contrato nas datas avençadas.','2','Por dia e por ocorrência'],
+      ['24','Apresentar, quando solicitado, documentação fiscal, trabalhista e previdenciária.','2','Por ocorrência e por dia'],
+      ['25','Entregar ou entregar com atraso os esclarecimentos formais solicitados para sanar as inconsistências ou dúvidas suscitadas durante a análise de documentação exigida pela fiscalização.','5','Por ocorrência e por dia'],
+      ['26','Cumprir quaisquer dos itens do edital e seus anexos, mesmo que não previstos nesta tabela de multas.','5','Por ocorrência e por dia'],
+    ];
+    const t2cw = [12, contentW * 0.58, 12, contentW - 12 - contentW * 0.58 - 12];
+    doc.setFontSize(8);
+    tbl2Data.forEach((row, ri) => {
+      const isH = ri === 0;
+      const isSub = row[1] === '' && row[2] === '' && row[3] === '';
+      doc.setFont('helvetica', (isH || isSub) ? 'bold' : 'normal');
+      const descW = isSub ? contentW - 4 : t2cw[1] - 4;
+      const descLines = doc.splitTextToSize(row[isSub ? 0 : 1], descW);
+      const rowH = Math.max(descLines.length * (lh - 0.5) + 3, lh + 3);
+      checkPage();
+      if (isH) { doc.setFillColor(230,230,230); doc.rect(marginL, y - lh + 1, contentW, rowH, 'F'); }
+      if (isSub) { doc.setFillColor(245,245,245); doc.rect(marginL, y - lh + 1, contentW, rowH, 'F'); }
+      doc.setDrawColor(26,23,20); doc.setLineWidth(0.2);
+      if (isSub) {
+        doc.rect(marginL, y - lh + 1, contentW, rowH);
+        descLines.forEach((l, li) => doc.text(l, marginL + 2, y + li * (lh - 0.5)));
+      } else {
+        let cx = marginL;
+        t2cw.forEach((cw, ci) => { doc.rect(cx, y - lh + 1, cw, rowH); cx += cw; });
+        doc.text(row[0], marginL + t2cw[0] / 2, y + 1, { align: 'center' });
+        descLines.forEach((l, li) => doc.text(l, marginL + t2cw[0] + 2, y + li * (lh - 0.5)));
+        doc.text(row[2], marginL + t2cw[0] + t2cw[1] + t2cw[2] / 2, y + 1, { align: 'center' });
+        const incLines = doc.splitTextToSize(row[3], t2cw[3] - 4);
+        incLines.forEach((l, li) => doc.text(l, marginL + t2cw[0] + t2cw[1] + t2cw[2] + 2, y + li * (lh - 0.5)));
+      }
+      y += rowH;
+    });
+    doc.setFontSize(10);
+    y += gapSecao;
+
+    // 20 — Preço Global
+    printBlock('20. PREÇO GLOBAL ESTIMADO PARA A CONTRATAÇÃO', 'bold', false);
+    y += espacoGrande;
+    const precoValorPDF  = document.getElementById('f-preco-valor').value.trim();
+    const precoExtensoPDF = document.getElementById('f-preco-extenso').value.trim();
+    if (precoValorPDF && precoExtensoPDF) {
+      printBlock(`O preço global estimado para a contratação é R$ ${precoValorPDF} (${precoExtensoPDF}).`, 'normal', true);
+    } else {
+      printBlock('O preço global estimado para a contratação é R$ _______ (        ).', 'normal', true);
+    }
+    y += 20;
+    const ambientePDF = document.getElementById('f-ambiente').value.trim();
+    const centralPDF  = document.getElementById('f-central').value.trim();
+    const gestorPDF   = document.getElementById('f-gestor').value.trim();
+    if (ambientePDF)  { printBlock(ambientePDF,  'normal', false); y += lh; }
+    if (centralPDF)   { printBlock(centralPDF,   'normal', false); y += lh; }
+    y += 16;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10);
+    doc.line(marginL, y, marginL + 80, y);
+    y += lh;
+    printBlock(gestorPDF || '<Gestor responsável>', 'normal', false);
+
+    // Rodapé
+    const footerY = pageH - marginB + 8;
+    doc.setDrawColor(212, 207, 200); doc.setLineWidth(0.2);
+    doc.line(marginL, footerY - 4, pageW - marginR, footerY - 4);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 140, 130);
+    const dataStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    doc.text((anexo ? 'ANEXO ' + anexo.toUpperCase() + '  ·  ' : '') + titulo, marginL, footerY);
+    doc.text(dataStr, pageW - marginR, footerY, { align: 'right' });
+
+    doc.save('ProjetoBasico.pdf');
+    
+  } catch (erro) {
+    console.error("Erro na geração do PDF:", erro);
+    alert("Houve um erro ao tentar baixar o PDF.\nVerifique se todas as informações estão preenchidas corretamente ou olhe o console para mais detalhes.");
+  }
+}
+</script>
+
+</body>
+</html>
