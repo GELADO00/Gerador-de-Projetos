@@ -165,7 +165,7 @@
         @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
         .doc-header-logos { position: absolute; top: 56px; left: 106px; }
-        .doc-logo-left { height: 45px; width: auto; }
+        .doc-logo-left { height: 70px; width: auto; }
 
         .doc-anexo, .doc-title, .doc-section-title, .doc-body, .doc-items li, .item-label, .item-desc, .doc-setores-list li {
             font-family: var(--font-doc);
@@ -487,23 +487,21 @@
       <label for="f-preco-valor">Valor estimado (R$)</label>
       <input type="text" id="f-preco-valor" placeholder="Ex: 150.000,00">
     </div>
-    <div class="field">
-      <label for="f-preco-extenso">Valor por extenso</label>
-      <input type="text" id="f-preco-extenso" placeholder="Ex: cento e cinquenta mil reais">
+    <div style="display:none;">
+      <input type="text" id="f-preco-extenso" readonly>
     </div>
-    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">Assinatura</p>
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">Bloco de assinaturas</p>
     <div class="field">
       <label for="f-ambiente">Ambiente</label>
-      <input type="text" id="f-ambiente" placeholder="Ex: Ambiente de TI">
+      <input type="text" id="f-ambiente" placeholder="Ex: Ambiente de Estratégia de Logística">
     </div>
     <div class="field">
       <label for="f-central">Central / Célula</label>
-      <input type="text" id="f-central" placeholder="Ex: Central de Infraestrutura">
+      <input type="text" id="f-central" placeholder="Ex: Central de Aquisições e Contratações">
     </div>
-    <div class="field">
-      <label for="f-gestor">Gestor responsável</label>
-      <input type="text" id="f-gestor" placeholder="Nome do gestor">
-    </div>
+    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:10px 0 6px;">Assinaturas</p>
+    <div id="assinaturas-list"></div>
+    <button type="button" class="btn-add-item" onclick="addAssinatura()" style="margin-bottom:0;">+ Adicionar assinatura</button>
   </div>
 
   <div class="form-section">
@@ -622,25 +620,29 @@
     <p class="doc-body hanging indent-1">14.3.2. apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.</p>
 
     <p class="doc-body hanging" style="margin-top:8pt;">14.4. Para os itens que envolvem o fornecimento/instalação de equipamentos deverão ser observadas as seguintes etapas:</p>
-    <table class="doc-table" style="margin:8pt 0 0 28px;width:calc(100% - 28px);border-collapse:collapse;font-family:var(--font-doc);font-size:10pt;">
+    <table class="doc-table" style="margin:8pt 0 0 28px;width:calc(100% - 28px);border-collapse:collapse;font-family:var(--font-doc);font-size:10pt;table-layout:fixed;">
+      <colgroup>
+        <col style="width:78%;">
+        <col style="width:22%;">
+      </colgroup>
       <thead>
         <tr>
           <th style="border:1px solid var(--ink);padding:5px 8px;text-align:left;font-weight:bold;background:#f0f0f0;">Descrição da Etapa</th>
-          <th style="border:1px solid var(--ink);padding:5px 8px;text-align:center;font-weight:bold;background:#f0f0f0;white-space:nowrap;">Percentual de Pagamento (%)</th>
+          <th style="border:1px solid var(--ink);padding:5px 8px;text-align:center;font-weight:bold;background:#f0f0f0;word-break:break-word;overflow-wrap:break-word;white-space:normal;">Percentual de Pagamento (%)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td style="border:1px solid var(--ink);padding:5px 8px;">Entrega dos produtos no local da obra ou serviços, de conformidade com as especificações, marca e modelo cotados.</td>
-          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;">60%</td>
+          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;vertical-align:middle;">60%</td>
         </tr>
         <tr>
           <td style="border:1px solid var(--ink);padding:5px 8px;">Instalação, configuração e ativação dos itens.</td>
-          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;">30%</td>
+          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;vertical-align:middle;">30%</td>
         </tr>
         <tr>
           <td style="border:1px solid var(--ink);padding:5px 8px;">Emissão do Termo de Recebimento dos itens.</td>
-          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;">10%</td>
+          <td style="border:1px solid var(--ink);padding:5px 8px;text-align:center;vertical-align:middle;">10%</td>
         </tr>
       </tbody>
     </table>
@@ -743,10 +745,10 @@
     <div class="doc-section-title">20. PREÇO GLOBAL ESTIMADO PARA A CONTRATAÇÃO</div>
     <p class="doc-body" id="out-preco-global"></p>
     <div style="margin-top:48pt;font-family:var(--font-doc);font-size:10pt;" id="out-assinatura">
-      <p class="doc-body" id="out-ambiente"></p>
-      <p class="doc-body" id="out-central"></p>
-      <p class="doc-body" style="margin-top:36pt;">_____________________________________________</p>
-      <p class="doc-body" id="out-gestor"></p>
+      <p class="doc-body" style="text-align:center;font-size:10pt;">Pelo <strong>BANCO DO NORDESTE DO BRASIL S.A.</strong></p>
+      <p class="doc-body" style="text-align:center;" id="out-ambiente"></p>
+      <p class="doc-body" style="text-align:center;" id="out-central"></p>
+      <div id="out-assinaturas-bloco" style="margin-top:16pt;"></div>
     </div>
 
     <div class="doc-footer">
@@ -836,12 +838,103 @@ function atualizarBotoesRemover(group) {
   });
 }
 
+function valorPorExtenso(valor) {
+  var unidades = ['','um','dois','tres','quatro','cinco','seis','sete','oito','nove',
+    'dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
+  var dezenas  = ['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+  var centenas = ['','cem','duzentos','trezentos','quatrocentos','quinhentos',
+    'seiscentos','setecentos','oitocentos','novecentos'];
+  function grupo(n) {
+    var s = '';
+    var c = Math.floor(n / 100), r = n % 100, d = Math.floor(r / 10), u = r % 10;
+    if (c) { if (c === 1 && r > 0) s += 'cento'; else s += centenas[c]; }
+    if (r) {
+      if (s) s += ' e ';
+      if (r < 20) s += unidades[r];
+      else { s += dezenas[d]; if (u) s += ' e ' + unidades[u]; }
+    }
+    return s;
+  }
+  if (isNaN(valor) || valor < 0) return '';
+  if (valor === 0) return 'zero reais';
+  var inteiro = Math.floor(valor);
+  var centavos = Math.round((valor - inteiro) * 100);
+  var partes = [];
+  var bilhoes  = Math.floor(inteiro / 1e9);
+  var milhoes  = Math.floor((inteiro % 1e9) / 1e6);
+  var milhares = Math.floor((inteiro % 1e6) / 1e3);
+  var resto    = inteiro % 1e3;
+  if (bilhoes)  partes.push(grupo(bilhoes)  + (bilhoes  === 1 ? ' bilhao'  : ' bilhoes'));
+  if (milhoes)  partes.push(grupo(milhoes)  + (milhoes  === 1 ? ' milhao'  : ' milhoes'));
+  if (milhares) partes.push(grupo(milhares) + ' mil');
+  if (resto)    partes.push(grupo(resto));
+  var texto = partes.join(' e ');
+  if (inteiro === 0) texto = ''; else texto += inteiro === 1 ? ' real' : ' reais';
+  if (centavos) {
+    var txtCentavos = grupo(centavos) + (centavos === 1 ? ' centavo' : ' centavos');
+    texto = texto ? texto + ' e ' + txtCentavos : txtCentavos;
+  }
+  return texto.trim();
+}
+
+let assinaturaCount = 0;
+
+function addAssinatura() {
+  assinaturaCount++;
+  var n = assinaturaCount;
+  var list = document.getElementById('assinaturas-list');
+  var div = document.createElement('div');
+  div.id = 'ass-row-' + n;
+  div.style.cssText = 'background:white;border:1px solid #c3d9c9;border-radius:4px;padding:10px;margin-bottom:8px;';
+  div.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+      '<span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--accent);">Assinatura ' + n + '</span>' +
+      '<button type="button" onclick="removeAssinatura(' + n + ')" style="background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:1rem;line-height:1;">x</button>' +
+    '</div>' +
+    '<div class="field" style="margin-bottom:6px;">' +
+      '<label style="font-size:0.75rem;color:var(--ink-2);">Nome completo</label>' +
+      '<input type="text" id="ass-nome-' + n + '" placeholder="Ex: FERNANDO Luiz Linhares Vital Filho" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:6px 10px;font-family:var(--font-display);font-size:0.83rem;font-weight:300;color:var(--ink);outline:none;">' +
+    '</div>' +
+    '<div class="field" style="margin-bottom:0;">' +
+      '<label style="font-size:0.75rem;color:var(--ink-2);">Cargo / função</label>' +
+      '<input type="text" id="ass-cargo-' + n + '" placeholder="Ex: Gerente de Ambiente, em exercício" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:6px 10px;font-family:var(--font-display);font-size:0.83rem;font-weight:300;color:var(--ink);outline:none;">' +
+    '</div>';
+  list.appendChild(div);
+}
+
+function removeAssinatura(n) {
+  var el = document.getElementById('ass-row-' + n);
+  if (el) el.remove();
+}
+
+function getAssinaturas() {
+  var result = [];
+  document.querySelectorAll('[id^="ass-row-"]').forEach(function(div) {
+    var id = div.id.replace('ass-row-', '');
+    var nome  = (document.getElementById('ass-nome-'  + id) || {}).value || '';
+    var cargo = (document.getElementById('ass-cargo-' + id) || {}).value || '';
+    result.push({ nome: nome.trim(), cargo: cargo.trim() });
+  });
+  return result;
+}
+
 window.addEventListener('DOMContentLoaded', function() {
   initModelosPanel('7222');
   initModelosPanel('7322');
   addSubItem('7222');
   addSubItem('7322');
   addSubItem('111');
+  addAssinatura();
+
+  var inputValor   = document.getElementById('f-preco-valor');
+  var inputExtenso = document.getElementById('f-preco-extenso');
+  if (inputValor && inputExtenso) {
+    inputValor.addEventListener('input', function() {
+      var raw = this.value.trim().replace(/\./g, '').replace(',', '.');
+      var num = parseFloat(raw);
+      inputExtenso.value = (!isNaN(num) && raw !== '') ? valorPorExtenso(num) : '';
+    });
+  }
 });
 
 function carregarLogo(input) {
@@ -1322,10 +1415,27 @@ function gerar() {
   }
   const ambiente = document.getElementById('f-ambiente').value.trim();
   const central  = document.getElementById('f-central').value.trim();
-  const gestor   = document.getElementById('f-gestor').value.trim();
   document.getElementById('out-ambiente').textContent = ambiente || 'Ambiente ____';
   document.getElementById('out-central').textContent  = central  || 'Central / Célula ____';
-  document.getElementById('out-gestor').textContent   = gestor   || '<Gestor responsável>';
+
+  // Bloco de assinaturas
+  var blocoAss = document.getElementById('out-assinaturas-bloco');
+  blocoAss.innerHTML = '';
+  getAssinaturas().forEach(function(ass) {
+    var div = document.createElement('div');
+    div.style.cssText = 'margin-top:28pt;text-align:center;';
+    var linha = document.createElement('p');
+    linha.className = 'doc-body';
+    linha.style.cssText = 'border-top:1px solid var(--ink);width:240px;margin:0 auto 4pt auto;padding-top:4pt;text-align:center;';
+    linha.innerHTML = ass.nome ? '<strong>' + ass.nome + '</strong>' : '<em style="color:var(--ink-3)">&lt;Nome&gt;</em>';
+    var cargo = document.createElement('p');
+    cargo.className = 'doc-body';
+    cargo.style.textAlign = 'center';
+    cargo.textContent = ass.cargo || '';
+    div.appendChild(linha);
+    div.appendChild(cargo);
+    blocoAss.appendChild(div);
+  });
 
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('page-sheet').classList.add('visible');
@@ -1479,7 +1589,7 @@ function exportarPDF() {
         if (format === 'JPG') format = 'JPEG';
         const b64data = logoBase64.split(',')[1];
         const imgRatio = logoNaturalW / logoNaturalH;
-        const logoH = 12, logoW = logoH * imgRatio;
+        const logoH = 18, logoW = logoH * imgRatio;
         doc.addImage(b64data, format, marginL, 16, logoW, logoH);
       } catch (err) {
         console.warn("Erro ao processar imagem no PDF. Continuando sem logo...", err);
@@ -1768,30 +1878,38 @@ function exportarPDF() {
     const colDesc = contentW * 0.78;
     const colPerc = contentW * 0.22;
     const tblW = contentW;
-    const cellPad = 2;
+    const cellPad = 2.5;
     const tblRows = [
-      ['Descrição da Etapa', 'Percentual de Pagamento (%)'],
-      ['Entrega dos produtos no local da obra ou serviços, de conformidade com as especificações, marca e modelo cotados.', '60%'],
-      ['Instalação, configuração e ativação dos itens.', '30%'],
-      ['Emissão do Termo de Recebimento dos itens.', '10%'],
+      ['Descricao da Etapa', 'Percentual de Pagamento (%)'],
+      ['Entrega dos produtos no local da obra ou servicos, de conformidade com as especificacoes, marca e modelo cotados.', '60%'],
+      ['Instalacao, configuracao e ativacao dos itens.', '30%'],
+      ['Emissao do Termo de Recebimento dos itens.', '10%'],
     ];
     doc.setFontSize(9);
     tblRows.forEach((row, ri) => {
       const isHeader = ri === 0;
       doc.setFont('helvetica', isHeader ? 'bold' : 'normal');
-      const descLines = doc.splitTextToSize(row[0], colDesc - cellPad * 2);
-      const rowH = descLines.length * lh + cellPad * 2;
+      // quebrar texto de AMBAS as colunas
+      const col1Lines = doc.splitTextToSize(row[0], colDesc - cellPad * 2);
+      const col2Lines = doc.splitTextToSize(row[1], colPerc - cellPad * 2);
+      // altura baseada na coluna com mais linhas
+      const maxLines = Math.max(col1Lines.length, col2Lines.length);
+      const rowH = maxLines * lh + cellPad * 2;
       checkPage();
-      // fundo cabeçalho
+      // fundo cabecalho
       if (isHeader) { doc.setFillColor(230, 230, 230); doc.rect(tblX, y - lh + 1, tblW, rowH, 'F'); }
       // bordas
       doc.setDrawColor(26, 23, 20); doc.setLineWidth(0.3);
       doc.rect(tblX, y - lh + 1, colDesc, rowH);
       doc.rect(tblX + colDesc, y - lh + 1, colPerc, rowH);
-      // texto coluna 1
-      descLines.forEach((line, li) => { doc.text(line, tblX + cellPad, y + li * lh); });
-      // texto coluna 2 (centrado)
-      doc.text(row[1], tblX + colDesc + colPerc / 2, y + (descLines.length * lh) / 2 - lh / 2 + lh, { align: 'center' });
+      // texto coluna 1 — alinhado ao topo
+      col1Lines.forEach((line, li) => { doc.text(line, tblX + cellPad, y + li * lh); });
+      // texto coluna 2 — centralizado vertical e horizontalmente
+      const col2TotalH = col2Lines.length * lh;
+      const col2StartY = y + (maxLines * lh - col2TotalH) / 2;
+      col2Lines.forEach((line, li) => {
+        doc.text(line, tblX + colDesc + colPerc / 2, col2StartY + li * lh, { align: 'center' });
+      });
       y += rowH;
     });
     doc.setFontSize(10);
@@ -1986,17 +2104,81 @@ function exportarPDF() {
     } else {
       printBlock('O preço global estimado para a contratação é R$ _______ (        ).', 'normal', true);
     }
-    y += 20;
+    y += 14;
+    // Cabecalho do bloco de assinaturas
     const ambientePDF = document.getElementById('f-ambiente').value.trim();
     const centralPDF  = document.getElementById('f-central').value.trim();
-    const gestorPDF   = document.getElementById('f-gestor').value.trim();
-    if (ambientePDF)  { printBlock(ambientePDF,  'normal', false); y += lh; }
-    if (centralPDF)   { printBlock(centralPDF,   'normal', false); y += lh; }
-    y += 16;
-    doc.setFont('helvetica','normal'); doc.setFontSize(10);
-    doc.line(marginL, y, marginL + 80, y);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    // "Pelo BANCO DO NORDESTE DO BRASIL S.A." - Pelo normal, BANCO... negrito
+    var txtPelo = 'Pelo ';
+    var txtBanco = 'BANCO DO NORDESTE DO BRASIL S.A.';
+    doc.setFont('helvetica', 'normal');
+    var wPelo = doc.getTextWidth(txtPelo);
+    doc.setFont('helvetica', 'bold');
+    var wBanco = doc.getTextWidth(txtBanco);
+    var totalW = wPelo + wBanco;
+    var xIniPelo = pageW / 2 - totalW / 2;
+    doc.setFont('helvetica', 'normal');
+    doc.text(txtPelo, xIniPelo, y);
+    doc.setFont('helvetica', 'bold');
+    doc.text(txtBanco, xIniPelo + wPelo, y);
+    doc.setFont('helvetica', 'normal');
     y += lh;
-    printBlock(gestorPDF || '<Gestor responsável>', 'normal', false);
+    if (ambientePDF) { doc.text(ambientePDF, pageW / 2, y, { align: 'center' }); y += lh; }
+    if (centralPDF)  { doc.text(centralPDF,  pageW / 2, y, { align: 'center' }); y += lh; }
+
+    // Assinaturas dinamicas
+    var assinaturasPDF = getAssinaturas();
+    var lineLen = 64;
+    var colsPerRow = assinaturasPDF.length >= 2 ? 2 : 1;
+    var colW = contentW / colsPerRow;
+    for (var ai = 0; ai < assinaturasPDF.length; ai += colsPerRow) {
+      y += 18;
+      checkPage();
+      for (var ci = 0; ci < colsPerRow; ci++) {
+        var ass = assinaturasPDF[ai + ci];
+        if (!ass) continue;
+        var colX = marginL + ci * colW;
+        var lineCX = colX + colW / 2;
+        var lineX1 = lineCX - lineLen / 2;
+        var lineX2 = lineCX + lineLen / 2;
+        doc.setDrawColor(26, 23, 20); doc.setLineWidth(0.4);
+        doc.line(lineX1, y, lineX2, y);
+        y += lh + 1;
+        // Nome: parte em negrito + parte normal, baseado no padrao "NOME Resto"
+        var nomeCompleto = ass.nome || '<Nome>';
+        var palavras = nomeCompleto.split(' ');
+        // primeira palavra(s) em caixa alta = bold
+        var boldPart = '', normalPart = '';
+        var foundNormal = false;
+        palavras.forEach(function(p) {
+          if (!foundNormal && p === p.toUpperCase() && p.length > 1) boldPart += (boldPart ? ' ' : '') + p;
+          else { foundNormal = true; normalPart += (normalPart ? ' ' : '') + p; }
+        });
+        if (!boldPart) { boldPart = nomeCompleto; normalPart = ''; }
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        var wBold = doc.getTextWidth(boldPart);
+        var wNorm = normalPart ? doc.getTextWidth(' ' + normalPart) : 0;
+        var totalNomeW = wBold + wNorm;
+        var nomeX = lineCX - totalNomeW / 2;
+        doc.text(boldPart, nomeX, y);
+        if (normalPart) {
+          doc.setFont('helvetica', 'normal');
+          doc.text(' ' + normalPart, nomeX + wBold, y);
+        }
+        y += lh;
+        if (ass.cargo) {
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+          doc.text(ass.cargo, lineCX, y, { align: 'center' });
+          doc.setFontSize(10);
+          y += lh;
+        }
+        // voltar y para proxima coluna na mesma linha
+        if (ci < colsPerRow - 1) y -= lh * 2 + (ass.cargo ? lh : 0) + 1;
+      }
+      // avancar y pelo bloco mais alto (garantia minima)
+      if (colsPerRow > 1) y += lh;
+    }
 
     // Rodapé
     const footerY = pageH - marginB + 8;
