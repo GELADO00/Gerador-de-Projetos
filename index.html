@@ -490,18 +490,57 @@
     <div style="display:none;">
       <input type="text" id="f-preco-extenso" readonly>
     </div>
-    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">Bloco de assinaturas</p>
+    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">Bloco de Assinaturas</p>
     <div class="field">
-      <label for="f-ambiente">Ambiente</label>
-      <input type="text" id="f-ambiente" placeholder="Ex: Ambiente de Estratégia de Logística">
+      <label>Ambiente (fixo)</label>
+      <div style="padding:8px 11px;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;font-family:var(--font-display);font-size:0.88rem;font-weight:500;color:var(--ink-2);">AMBIENTE DE ENGENHARIA E ARQUITETURA</div>
     </div>
-    <div class="field">
-      <label for="f-central">Central / Célula</label>
-      <input type="text" id="f-central" placeholder="Ex: Central de Aquisições e Contratações">
+
+    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:10px 0 4px;">1ª Assinatura — Gerente de Ambiente</p>
+    <div class="field" style="margin-bottom:0;">
+      <label for="ass-gerente-sel">Selecionar Gerente de Ambiente</label>
+      <select id="ass-gerente-sel" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
+        <option value="">-- Selecione --</option>
+        <option value="Elvis Andrade Soares|Gerente de Ambiente">Elvis Andrade Soares</option>
+        <option value="Lívia Lorena Freitas Gomes|Gerente de Ambiente em Exercício">Lívia Lorena Freitas Gomes</option>
+        <option value="Lidyci Thatielle Gurgel Cruz|Gerente de Ambiente em Exercício">Lidyci Thatielle Gurgel Cruz</option>
+        <option value="Paulo Cesar Rodrigues Pinheiro|Gerente de Ambiente em Exercício">Paulo Cesar Rodrigues Pinheiro</option>
+        <option value="Erico de Macedo Gurgel|Gerente de Ambiente em Exercício">Erico de Macedo Gurgel</option>
+        <option value="Gilberto Ferreira e Silva Filho|Gerente de Ambiente em Exercício">Gilberto Ferreira e Silva Filho</option>
+        <option value="Fernanda Linard de Paula|Gerente de Ambiente em Exercício">Fernanda Linard de Paula</option>
+      </select>
     </div>
-    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:10px 0 6px;">Assinaturas</p>
-    <div id="assinaturas-list"></div>
-    <button type="button" class="btn-add-item" onclick="addAssinatura()" style="margin-bottom:0;">+ Adicionar assinatura</button>
+
+    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:14px 0 4px;">2ª Assinatura — Gerente Executivo</p>
+    <div id="ass-exec-bloco-1" class="ass-exec-bloco">
+      <div class="field" style="margin-bottom:6px;">
+        <label>Setor</label>
+        <select class="ass-setor-sel" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
+          <option value="">-- Selecione o setor --</option>
+          <option value="Célula de Projeto de Engenharia e Arquitetura">Célula de Projeto de Engenharia e Arquitetura</option>
+          <option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Gerente Executivo</label>
+        <select class="ass-exec-sel" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
+          <option value="">-- Selecione --</option>
+          <option value="Lívia Lorena Freitas Gomes|Gerente Executivo em Exercício">Lívia Lorena Freitas Gomes</option>
+          <option value="Lidyci Thatielle Gurgel Cruz|Gerente Executivo em Exercício">Lidyci Thatielle Gurgel Cruz</option>
+          <option value="Paulo Cesar Rodrigues Pinheiro|Gerente Executivo em Exercício">Paulo Cesar Rodrigues Pinheiro</option>
+          <option value="Erico de Macedo Gurgel|Gerente Executivo em Exercício">Erico de Macedo Gurgel</option>
+          <option value="Gilberto Ferreira e Silva Filho|Gerente Executivo em Exercício">Gilberto Ferreira e Silva Filho</option>
+          <option value="Fernanda Linard de Paula|Gerente Executivo em Exercício">Fernanda Linard de Paula</option>
+          <option value="Valmir Silva Pereira|Gerente Executivo em Exercício">Valmir Silva Pereira</option>
+          <option value="Sergio Lessa Costa Barboza|Gerente Executivo em Exercício">Sergio Lessa Costa Barboza</option>
+          <option value="Matheus Benício de Castro Uchôa|Gerente Executivo em Exercício">Matheus Benício de Castro Uchôa</option>
+          <option value="Mauro César do Nascimento|Gerente Executivo em Exercício">Mauro César do Nascimento</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="ass-extras-list"></div>
+    <button type="button" class="btn-add-item" onclick="addExtraAssinatura()" style="margin-top:8px;margin-bottom:0;">+ Adicionar outra assinatura</button>
   </div>
 
   <div class="form-section">
@@ -877,45 +916,89 @@ function valorPorExtenso(valor) {
   return texto.trim();
 }
 
-let assinaturaCount = 0;
+var extraAssCount = 0;
+var SELOPT = '<option value="">-- Selecione --</option>' +
+  '<option value="Lívia Lorena Freitas Gomes|Gerente Executivo em Exercício">Lívia Lorena Freitas Gomes</option>' +
+  '<option value="Lidyci Thatielle Gurgel Cruz|Gerente Executivo em Exercício">Lidyci Thatielle Gurgel Cruz</option>' +
+  '<option value="Paulo Cesar Rodrigues Pinheiro|Gerente Executivo em Exercício">Paulo Cesar Rodrigues Pinheiro</option>' +
+  '<option value="Erico de Macedo Gurgel|Gerente Executivo em Exercício">Erico de Macedo Gurgel</option>' +
+  '<option value="Gilberto Ferreira e Silva Filho|Gerente Executivo em Exercício">Gilberto Ferreira e Silva Filho</option>' +
+  '<option value="Fernanda Linard de Paula|Gerente Executivo em Exercício">Fernanda Linard de Paula</option>' +
+  '<option value="Valmir Silva Pereira|Gerente Executivo em Exercício">Valmir Silva Pereira</option>' +
+  '<option value="Sergio Lessa Costa Barboza|Gerente Executivo em Exercício">Sergio Lessa Costa Barboza</option>' +
+  '<option value="Matheus Benício de Castro Uchôa|Gerente Executivo em Exercício">Matheus Benício de Castro Uchôa</option>' +
+  '<option value="Mauro César do Nascimento|Gerente Executivo em Exercício">Mauro César do Nascimento</option>';
 
-function addAssinatura() {
-  assinaturaCount++;
-  var n = assinaturaCount;
-  var list = document.getElementById('assinaturas-list');
+var SELOPTS = '<option value="">-- Selecione o setor --</option>' +
+  '<option value="Célula de Projeto de Engenharia e Arquitetura">Célula de Projeto de Engenharia e Arquitetura</option>' +
+  '<option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>';
+
+var SEL_STYLE = 'width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;';
+
+function addExtraAssinatura() {
+  extraAssCount++;
+  var n = extraAssCount;
+  var list = document.getElementById('ass-extras-list');
   var div = document.createElement('div');
-  div.id = 'ass-row-' + n;
-  div.style.cssText = 'background:white;border:1px solid #c3d9c9;border-radius:4px;padding:10px;margin-bottom:8px;';
+  div.id = 'ass-extra-' + n;
+  div.style.cssText = 'border-top:1px dashed #c3d9c9;margin-top:10px;padding-top:10px;';
   div.innerHTML =
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-      '<span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--accent);">Assinatura ' + n + '</span>' +
-      '<button type="button" onclick="removeAssinatura(' + n + ')" style="background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:1rem;line-height:1;">x</button>' +
+      '<span style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">' + (extraAssCount + 1) + 'ª Assinatura — Gerente Executivo</span>' +
+      '<button type="button" onclick="removeExtraAssinatura(' + n + ')" style="background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:1rem;">×</button>' +
     '</div>' +
-    '<div class="field" style="margin-bottom:6px;">' +
-      '<label style="font-size:0.75rem;color:var(--ink-2);">Nome completo</label>' +
-      '<input type="text" id="ass-nome-' + n + '" placeholder="Ex: FERNANDO Luiz Linhares Vital Filho" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:6px 10px;font-family:var(--font-display);font-size:0.83rem;font-weight:300;color:var(--ink);outline:none;">' +
-    '</div>' +
-    '<div class="field" style="margin-bottom:0;">' +
-      '<label style="font-size:0.75rem;color:var(--ink-2);">Cargo / função</label>' +
-      '<input type="text" id="ass-cargo-' + n + '" placeholder="Ex: Gerente de Ambiente, em exercício" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:6px 10px;font-family:var(--font-display);font-size:0.83rem;font-weight:300;color:var(--ink);outline:none;">' +
-    '</div>';
+    '<div class="field" style="margin-bottom:6px;"><label>Setor</label>' +
+      '<select class="ass-setor-sel" style="' + SEL_STYLE + '">' + SELOPTS + '</select></div>' +
+    '<div class="field" style="margin-bottom:0;"><label>Gerente Executivo</label>' +
+      '<select class="ass-exec-sel" style="' + SEL_STYLE + '">' + SELOPT + '</select></div>';
   list.appendChild(div);
 }
 
-function removeAssinatura(n) {
-  var el = document.getElementById('ass-row-' + n);
+function removeExtraAssinatura(n) {
+  var el = document.getElementById('ass-extra-' + n);
   if (el) el.remove();
 }
 
 function getAssinaturas() {
   var result = [];
-  document.querySelectorAll('[id^="ass-row-"]').forEach(function(div) {
-    var id = div.id.replace('ass-row-', '');
-    var nome  = (document.getElementById('ass-nome-'  + id) || {}).value || '';
-    var cargo = (document.getElementById('ass-cargo-' + id) || {}).value || '';
-    result.push({ nome: nome.trim(), cargo: cargo.trim() });
+
+  // 1a assinatura: Gerente de Ambiente
+  var gerenteSel = document.getElementById('ass-gerente-sel');
+  if (gerenteSel && gerenteSel.value) {
+    var parts = gerenteSel.value.split('|');
+    result.push({ nome: parts[0], cargo: parts[1] || '', setor: '' });
+  } else {
+    result.push({ nome: '', cargo: 'Gerente de Ambiente', setor: '' });
+  }
+
+  // 2a assinatura fixa + extras
+  var execBlocos = document.querySelectorAll('.ass-exec-bloco, [id^="ass-extra-"]');
+  execBlocos.forEach(function(bloco) {
+    var setorSel = bloco.querySelector('.ass-setor-sel');
+    var execSel  = bloco.querySelector('.ass-exec-sel');
+    var setor = setorSel ? setorSel.value : '';
+    var execVal = execSel ? execSel.value : '';
+    if (execVal) {
+      var p = execVal.split('|');
+      result.push({ nome: p[0], cargo: p[1] || '', setor: setor });
+    } else {
+      result.push({ nome: '', cargo: 'Gerente Executivo', setor: setor });
+    }
   });
+
   return result;
+}
+
+function getCentralLabel() {
+  // Monta o texto de Central/Celula a partir dos setores das assinaturas executivas
+  var setores = [];
+  document.querySelectorAll('.ass-exec-bloco, [id^="ass-extra-"]').forEach(function(bloco) {
+    var sel = bloco.querySelector('.ass-setor-sel');
+    if (sel && sel.value && setores.indexOf(sel.value) === -1) setores.push(sel.value);
+  });
+  if (setores.length === 0) return '';
+  if (setores.length === 1) return setores[0];
+  return setores.slice(0, -1).join(', ') + ' e ' + setores[setores.length - 1];
 }
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -924,7 +1007,6 @@ window.addEventListener('DOMContentLoaded', function() {
   addSubItem('7222');
   addSubItem('7322');
   addSubItem('111');
-  addAssinatura();
 
   var inputValor   = document.getElementById('f-preco-valor');
   var inputExtenso = document.getElementById('f-preco-extenso');
@@ -1413,29 +1495,38 @@ function gerar() {
     elPreco.textContent = 'O preço global estimado para a contratação é R$ _______ (        ).';
     elPreco.style.color = 'var(--ink-3)'; elPreco.style.fontStyle = 'italic';
   }
-  const ambiente = document.getElementById('f-ambiente').value.trim();
-  const central  = document.getElementById('f-central').value.trim();
-  document.getElementById('out-ambiente').textContent = ambiente || 'Ambiente ____';
-  document.getElementById('out-central').textContent  = central  || 'Central / Célula ____';
+  var ambienteFixo = 'AMBIENTE DE ENGENHARIA E ARQUITETURA';
+  var centralLabel = getCentralLabel();
+  document.getElementById('out-ambiente').textContent = ambienteFixo;
+  document.getElementById('out-central').textContent  = centralLabel;
 
-  // Bloco de assinaturas
+  // Bloco de assinaturas no preview
   var blocoAss = document.getElementById('out-assinaturas-bloco');
   blocoAss.innerHTML = '';
-  getAssinaturas().forEach(function(ass) {
-    var div = document.createElement('div');
-    div.style.cssText = 'margin-top:28pt;text-align:center;';
-    var linha = document.createElement('p');
-    linha.className = 'doc-body';
-    linha.style.cssText = 'border-top:1px solid var(--ink);width:240px;margin:0 auto 4pt auto;padding-top:4pt;text-align:center;';
-    linha.innerHTML = ass.nome ? '<strong>' + ass.nome + '</strong>' : '<em style="color:var(--ink-3)">&lt;Nome&gt;</em>';
-    var cargo = document.createElement('p');
-    cargo.className = 'doc-body';
-    cargo.style.textAlign = 'center';
-    cargo.textContent = ass.cargo || '';
-    div.appendChild(linha);
-    div.appendChild(cargo);
-    blocoAss.appendChild(div);
-  });
+  var assinantes = getAssinaturas();
+  // Assinaturas em pares (lado a lado)
+  for (var ai = 0; ai < assinantes.length; ai += 2) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:24px;margin-top:28pt;';
+    [0,1].forEach(function(ci) {
+      var ass = assinantes[ai + ci];
+      if (!ass) return;
+      var col = document.createElement('div');
+      col.style.cssText = 'flex:1;text-align:center;';
+      var linha = document.createElement('p');
+      linha.className = 'doc-body';
+      linha.style.cssText = 'border-top:1px solid var(--ink);padding-top:4pt;margin:0 auto 2pt auto;text-align:center;';
+      linha.innerHTML = ass.nome ? '<strong>' + ass.nome + '</strong>' : '<em style="color:var(--ink-3)">&lt;Nome&gt;</em>';
+      var cargo = document.createElement('p');
+      cargo.className = 'doc-body';
+      cargo.style.cssText = 'text-align:center;margin:0;';
+      cargo.textContent = ass.cargo || '';
+      col.appendChild(linha);
+      col.appendChild(cargo);
+      row.appendChild(col);
+    });
+    blocoAss.appendChild(row);
+  }
 
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('page-sheet').classList.add('visible');
@@ -2106,8 +2197,8 @@ function exportarPDF() {
     }
     y += 14;
     // Cabecalho do bloco de assinaturas
-    const ambientePDF = document.getElementById('f-ambiente').value.trim();
-    const centralPDF  = document.getElementById('f-central').value.trim();
+    var ambientePDF = 'AMBIENTE DE ENGENHARIA E ARQUITETURA';
+    var centralPDF  = getCentralLabel();
     doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
     // "Pelo BANCO DO NORDESTE DO BRASIL S.A." - Pelo normal, BANCO... negrito
     var txtPelo = 'Pelo ';
@@ -2127,57 +2218,39 @@ function exportarPDF() {
     if (ambientePDF) { doc.text(ambientePDF, pageW / 2, y, { align: 'center' }); y += lh; }
     if (centralPDF)  { doc.text(centralPDF,  pageW / 2, y, { align: 'center' }); y += lh; }
 
-    // Assinaturas dinamicas
+    // Assinaturas dinamicas (2 por linha)
     var assinaturasPDF = getAssinaturas();
-    var lineLen = 64;
-    var colsPerRow = assinaturasPDF.length >= 2 ? 2 : 1;
-    var colW = contentW / colsPerRow;
-    for (var ai = 0; ai < assinaturasPDF.length; ai += colsPerRow) {
-      y += 18;
+    var lineLen = 70;
+    var colW2 = contentW / 2;
+    for (var ai = 0; ai < assinaturasPDF.length; ai += 2) {
+      y += 20;
       checkPage();
-      for (var ci = 0; ci < colsPerRow; ci++) {
+      var rowMaxY = y;
+      for (var ci = 0; ci < 2; ci++) {
         var ass = assinaturasPDF[ai + ci];
         if (!ass) continue;
-        var colX = marginL + ci * colW;
-        var lineCX = colX + colW / 2;
-        var lineX1 = lineCX - lineLen / 2;
-        var lineX2 = lineCX + lineLen / 2;
+        var colX = marginL + ci * colW2;
+        var lineCX = colX + colW2 / 2;
+        var yy = y;
+        // Linha de assinatura
         doc.setDrawColor(26, 23, 20); doc.setLineWidth(0.4);
-        doc.line(lineX1, y, lineX2, y);
-        y += lh + 1;
-        // Nome: parte em negrito + parte normal, baseado no padrao "NOME Resto"
+        doc.line(lineCX - lineLen / 2, yy, lineCX + lineLen / 2, yy);
+        yy += lh + 1;
+        // Nome em negrito (padrao do banco: nome completo em bold)
         var nomeCompleto = ass.nome || '<Nome>';
-        var palavras = nomeCompleto.split(' ');
-        // primeira palavra(s) em caixa alta = bold
-        var boldPart = '', normalPart = '';
-        var foundNormal = false;
-        palavras.forEach(function(p) {
-          if (!foundNormal && p === p.toUpperCase() && p.length > 1) boldPart += (boldPart ? ' ' : '') + p;
-          else { foundNormal = true; normalPart += (normalPart ? ' ' : '') + p; }
-        });
-        if (!boldPart) { boldPart = nomeCompleto; normalPart = ''; }
         doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
-        var wBold = doc.getTextWidth(boldPart);
-        var wNorm = normalPart ? doc.getTextWidth(' ' + normalPart) : 0;
-        var totalNomeW = wBold + wNorm;
-        var nomeX = lineCX - totalNomeW / 2;
-        doc.text(boldPart, nomeX, y);
-        if (normalPart) {
-          doc.setFont('helvetica', 'normal');
-          doc.text(' ' + normalPart, nomeX + wBold, y);
-        }
-        y += lh;
+        doc.text(nomeCompleto, lineCX, yy, { align: 'center' });
+        yy += lh;
+        // Cargo
         if (ass.cargo) {
           doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
-          doc.text(ass.cargo, lineCX, y, { align: 'center' });
+          doc.text(ass.cargo, lineCX, yy, { align: 'center' });
           doc.setFontSize(10);
-          y += lh;
+          yy += lh;
         }
-        // voltar y para proxima coluna na mesma linha
-        if (ci < colsPerRow - 1) y -= lh * 2 + (ass.cargo ? lh : 0) + 1;
+        if (yy > rowMaxY) rowMaxY = yy;
       }
-      // avancar y pelo bloco mais alto (garantia minima)
-      if (colsPerRow > 1) y += lh;
+      y = rowMaxY;
     }
 
     // Rodapé
