@@ -91,13 +91,13 @@
         .btn-remove-logo:hover { color: var(--danger); }
 
         .toggle-field { display: flex; align-items: center; gap: 12px; padding: 10px 0; margin-bottom: 1rem; }
-        .toggle-field label { font-size: 0.88rem; font-weight: 500; color: var(--ink); cursor: pointer; flex: 1; }
-        .switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+        .toggle-field > label:first-child { font-size: 0.88rem; font-weight: 500; color: var(--ink); cursor: pointer; flex: 1; }
+        .switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background: var(--paper-3); border-radius: 22px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--rule); }
-        .slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+        .slider { position: absolute; inset: 0; background: var(--paper-3); border-radius: 16px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--rule); }
+        .slider:before { content: ''; position: absolute; width: 14px; height: 14px; left: 2px; top: 2px; background: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
         .switch input:checked + .slider { background: var(--accent); border-color: var(--accent); }
-        .switch input:checked + .slider:before { transform: translateX(18px); }
+        .switch input:checked + .slider:before { transform: translateX(16px); }
 
         #items-wrapper { display: none; background: var(--accent-light); border: 1px solid #c3d9c9; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; }
         #items-wrapper.visible { display: block; }
@@ -272,27 +272,24 @@
   <div class="form-section">
     <p class="form-section-label">Seção 2 — Unidade(s) responsável(eis) pelas informações</p>
     <div class="setores-grid" id="setores-sec2">
-      <label class="setor-option"><input type="checkbox" value="Setor A"> Setor A</label>
-      <label class="setor-option"><input type="checkbox" value="Setor B"> Setor B</label>
-      <label class="setor-option"><input type="checkbox" value="Setor C"> Setor C</label>
+      <label class="setor-option"><input type="checkbox" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
+      <label class="setor-option"><input type="checkbox" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
     </div>
   </div>
 
   <div class="form-section">
     <p class="form-section-label">Seção 3 — Unidade(s) responsável(eis) pela elaboração</p>
     <div class="setores-grid" id="setores-sec3">
-      <label class="setor-option"><input type="checkbox" value="Setor A"> Setor A</label>
-      <label class="setor-option"><input type="checkbox" value="Setor B"> Setor B</label>
-      <label class="setor-option"><input type="checkbox" value="Setor C"> Setor C</label>
+      <label class="setor-option"><input type="checkbox" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
+      <label class="setor-option"><input type="checkbox" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
     </div>
   </div>
 
   <div class="form-section">
     <p class="form-section-label">Seção 4 — Unidade responsável pela fiscalização</p>
     <div class="setores-grid" id="setores-sec4">
-      <label class="setor-option"><input type="radio" name="sec4" value="Setor A"> Setor A</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Setor B"> Setor B</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Setor C"> Setor C</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
     </div>
   </div>
 
@@ -306,9 +303,14 @@
 
   <div class="form-section">
     <p class="form-section-label">Seção 6 — Dotação Orçamentária</p>
-    <div class="field">
-      <label for="f-rubrica">Rubrica da PLC</label>
-      <input type="text" id="f-rubrica" placeholder="Ex: 123456">
+    <p style="font-size:0.78rem;color:var(--ink-2);margin-bottom:8px;">Selecione as rubricas utilizadas:</p>
+    <div class="setores-grid" id="rubricas-grid">
+      <label class="setor-option"><input type="checkbox" name="rubrica" value="00000486/000014 - REPAROS, ADAPTAÇÃO E CONSERVAÇÃO DE BENS IMÓVEIS - DESPESAS ADMINISTRATIVAS"> 00000486/000014 — Reparos, Adaptação e Conservação de Bens Imóveis</label>
+      <label class="setor-option"><input type="checkbox" name="rubrica" value="00000540/000014 - MANUTENÇÃO BENS ALUGADOS E ANFMV - DESPESAS ADMINISTRATIVAS"> 00000540/000014 — Manutenção Bens Alugados e ANFMV</label>
+      <label class="setor-option"><input type="checkbox" name="rubrica" value="00000258/000031 - IMÓVEIS DE USO - AQUISIÇÕES DE ATIVOS"> 00000258/000031 — Imóveis de Uso</label>
+      <label class="setor-option"><input type="checkbox" name="rubrica" value="00000369/000031 - INVESTIMENTO EM SISTEMA DE COMUNICAÇÃO - AQUISIÇÕES DE ATIVOS"> 00000369/000031 — Investimento em Sistema de Comunicação</label>
+      <label class="setor-option"><input type="checkbox" name="rubrica" value="00000247/000031 - EQUIPAMENTOS DE USO - AQUISIÇÕES DE ATIVOS"> 00000247/000031 — Equipamentos de Uso</label>
+      <label class="setor-option"><input type="checkbox" name="rubrica" value="00000211/000032 - AVALIAÇÃO, FISCALIZAÇÃO E PROJETOS DE ENGENHARIA E ARQUITETURA - SERVIÇOS DE TERCEIROS"> 00000211/000032 — Avaliação, Fiscalização e Projetos de Engenharia e Arquitetura</label>
     </div>
   </div>
 
@@ -370,19 +372,7 @@
     </div>
   </div>
 
-  <div class="form-section">
-    <p class="form-section-label">Seção 9 — Critério de Julgamento</p>
-    <div class="radio-group">
-      <label class="radio-opt">
-        <input type="radio" name="criterio-julgamento" value="Maior Desconto" checked>
-        Maior Desconto
-      </label>
-      <label class="radio-opt">
-        <input type="radio" name="criterio-julgamento" value="Maior Desconto por Item">
-        Maior Desconto por Item
-      </label>
-    </div>
-  </div>
+  <!-- Seção 9: critério definido automaticamente pela seção 1 (sem campo manual) -->
 
   <div class="form-section">
     <p class="form-section-label">Seção 10 — Regime de Execução</p>
@@ -433,28 +423,53 @@
 
     <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">14.1.7 — Dados para Faturamento</p>
     <div class="field">
-      <label for="f-tomador">Tomador</label>
-      <input type="text" id="f-tomador" placeholder="Nome do tomador">
+      <label for="f-uf">Estado (UF)</label>
+      <select id="f-uf" onchange="onUFChange()" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
+        <option value="">-- Selecione o estado --</option>
+      </select>
     </div>
     <div class="field">
-      <label for="f-cnpj">CNPJ</label>
-      <input type="text" id="f-cnpj" placeholder="00.000.000/0000-00">
+      <label for="f-unidade">Unidade</label>
+      <select id="f-unidade" onchange="onUnidadeChange()" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;" disabled>
+        <option value="">-- Selecione a unidade --</option>
+      </select>
     </div>
     <div class="field">
-      <label for="f-endereco">Endereço</label>
-      <input type="text" id="f-endereco" placeholder="Rua, número, complemento">
+      <label>Tomador</label>
+      <input type="text" id="f-tomador" readonly value="Banco do Nordeste do Brasil S.A." style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
     </div>
     <div class="field">
-      <label for="f-cep">CEP</label>
-      <input type="text" id="f-cep" placeholder="00000-000">
+      <label>CNPJ</label>
+      <input type="text" id="f-cnpj" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+    </div>
+    <div class="field">
+      <label>Endereço</label>
+      <input type="text" id="f-endereco" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+    </div>
+    <div class="field">
+      <label>CEP</label>
+      <input type="text" id="f-cep" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
     </div>
   </div>
 
   <div class="form-section">
     <p class="form-section-label">Seção 16 — Garantia Contratual</p>
     <div class="field">
-      <label for="f-garantia-pct">Percentual de garantia (%)</label>
-      <input type="number" id="f-garantia-pct" min="0.01" max="100" step="0.01" placeholder="Ex: 5 ou 2,50">
+      <label>Será exigida garantia contratual?</label>
+      <div class="radio-group">
+        <label class="radio-opt">
+          <input type="radio" name="garantia-exige" value="sim" checked onchange="toggleGarantia()"> Sim
+        </label>
+        <label class="radio-opt">
+          <input type="radio" name="garantia-exige" value="nao" onchange="toggleGarantia()"> Não
+        </label>
+      </div>
+    </div>
+    <div id="wrapper-garantia-pct">
+      <div class="field">
+        <label for="f-garantia-pct">Percentual de garantia (%)</label>
+        <input type="number" id="f-garantia-pct" min="0.01" max="100" step="0.01" placeholder="Ex: 5 ou 2,50">
+      </div>
     </div>
   </div>
 
@@ -989,6 +1004,369 @@ function getAssinaturas() {
   return result;
 }
 
+var UNIDADES_BNB = {
+  "AL": [
+    {nome:"Arapiraca",end:"RUA FERNANDES LIMA, 47 - CENTRO, ARAPIRACA - AL",cep:"57300-070",cnpj:"07.237.373/0006-34"},
+    {nome:"Batalha",end:"PRACA DA PENHA, 22 - CENTRO, BATALHA - AL",cep:"57420-000",cnpj:"07.237.373/0007-15"},
+    {nome:"Coruripe",end:"RUA LINDOLFO SIMOES, 442 - CENTRO, CORURIPE - AL",cep:"57230-000",cnpj:"07.237.373/0282-10"},
+    {nome:"Delmiro Gouveia",end:"PRAÇA MANOEL MONTEIRO, 81 - CENTRO, DELMIRO GOUVEIA - AL",cep:"57480-000",cnpj:"07.237.373/0281-30"},
+    {nome:"Maceió Antares",end:"AV ANTONIO LISBOA DE AMORIM, 220 - ANTARES, MACEIO - AL",cep:"57083-048",cnpj:"07.237.373/0229-56"},
+    {nome:"Maceió Centro",end:"RUA MELO MORAIS, 165 - CENTRO, MACEIO - AL",cep:"57020-330",cnpj:"07.237.373/0031-45"},
+    {nome:"Maceió Farol",end:"AV. FERNANDES LIMA, 2542 - GRUTA DE LOURDES, MACEIO - AL",cep:"57052-400",cnpj:"07.237.373/0190-68"},
+    {nome:"Maragogi",end:"PRAÇA GUEDES DE MIRANDA, 33 - NOVA, MARAGOGI - AL",cep:"57955-000",cnpj:"07.237.373/0280-59"},
+    {nome:"Mata Grande",end:"RUA SIQUEIRA CAMPOS, 403 - ED A ALBUQUERQUE - CENTRO, MATA GRANDE - AL",cep:"57540-000",cnpj:"07.237.373/0032-26"},
+    {nome:"Olho d'Água das Flores",end:"AVENIDA 2 DE DEZEMBRO, 356 - CENTRO, OLHO D'AGUA DAS FLORES - AL",cep:"57442-000",cnpj:"07.237.373/0336-48"},
+    {nome:"Palmeira dos Índios",end:"RUA JOSE MARIA PASSOS, 216 - CENTRO, PALMEIRA DOS INDIOS - AL",cep:"57600-030",cnpj:"07.237.373/0080-23"},
+    {nome:"Penedo",end:"AV. FLORIANO PEIXOTO, 260 - ED.JOSE SILVA PEIXOT - CENTRO, PENEDO - AL",cep:"57200-000",cnpj:"07.237.373/0066-75"},
+    {nome:"Rio Largo",end:"RUA CANDIDO LINS, 157 - CENTRO, RIO LARGO - AL",cep:"57100-000",cnpj:"07.237.373/0279-15"},
+    {nome:"Santana do Ipanema",end:"AV DR ARSENIO MOREIRA, 480 - MONUMENTO, SANTANA DO IPANEMA - AL",cep:"57500-000",cnpj:"07.237.373/0165-57"},
+    {nome:"São Miguel dos Campos",end:"RUA BARAO DE JEQUIA, 86 - CENTRO, SAO MIGUEL DOS CAMPOS - AL",cep:"57240-000",cnpj:"07.237.373/0222-80"},
+    {nome:"União dos Palmares",end:"AV XV DE NOVEMBRO, 64 - CENTRO, UNIAO DOS PALMARES - AL",cep:"57800-000",cnpj:"07.237.373/0110-83"},
+    {nome:"Viçosa",end:"RUA FREDERICO MAIA, 43/45 - CENTRO, VICOSA - AL",cep:"57700-000",cnpj:"07.237.373/0355-00"},
+  ],
+  "BA": [
+    {nome:"Alagoinhas",end:"RUA MILTON JOSE ORNELAS DA SILVA, S/N - CENTRO, ALAGOINHAS - BA",cep:"48000-173",cnpj:"07.237.373/0083-76"},
+    {nome:"Andaraí",end:"PRACA SAO FRANCISCO, S/N - ALTO DO IBIRAPITANGA, ANDARAI - BA",cep:"46830-000",cnpj:"07.237.373/0151-51"},
+    {nome:"Araci",end:"RUA JOSE PEDRO DE CARVALHO, 330 - CENTRO, ARACI - BA",cep:"48760-000",cnpj:"07.237.373/0324-04"},
+    {nome:"Barra da Estiva",end:"RUA TEIXEIRA DE FREITAS, 340 - CENTRO, BARRA DA ESTIVA - BA",cep:"46650-000",cnpj:"07.237.373/0310-09"},
+    {nome:"Barreiras",end:"AV. CLERISTON DE ANDRADE, 281 - JUSCELINO KUBITSCHEK, BARREIRAS - BA",cep:"47800-358",cnpj:"07.237.373/0092-67"},
+    {nome:"Bom Jesus da Lapa",end:"AV. DUQUE DE CAIXAS, 327 - CENTRO, BOM JESUS DA LAPA - BA",cep:"47600-000",cnpj:"07.237.373/0154-02"},
+    {nome:"Brumado",end:"AV DR ANTONIO MOURAO GUIMARAES, 110 - CENTRO, BRUMADO - BA",cep:"46100-000",cnpj:"07.237.373/0247-38"},
+    {nome:"Camacan",end:"AV. DR. JOAO VARGENS, 81 - CENTRO, CAMACAN - BA",cep:"45880-000",cnpj:"07.237.373/0157-47"},
+    {nome:"Camaçari",end:"RUA DUQUE DE CAXIAS, 351 - CENTRO, CAMACARI - BA",cep:"42800-902",cnpj:"07.237.373/0142-60"},
+    {nome:"Campo Formoso",end:"RUA HIPOLITO RIBEIRO, 50 - CENTRO, CAMPO FORMOSO - BA",cep:"44790-000",cnpj:"07.237.373/0285-63"},
+    {nome:"Candeias",end:"PRACA TIRADENTES, 22 - CENTRO, CANDEIAS - BA",cep:"43805-220",cnpj:"07.237.373/0326-76"},
+    {nome:"Casa Nova",end:"QUADRA R, LOTE 9 - CENTRO, CASA NOVA - BA",cep:"47300-000",cnpj:"07.237.373/0286-44"},
+    {nome:"Catu",end:"RUA DESEMBARGADOR PEDRO RIBEIRO, S/N - CENTRO, CATU - BA",cep:"48110-000",cnpj:"07.237.373/0325-95"},
+    {nome:"Cícero Dantas",end:"PRACA RAIMUNDO BORGES DE SANTANA, S/N - CENTRO, CICERO DANTAS - BA",cep:"48410-000",cnpj:"07.237.373/0013-63"},
+    {nome:"Conceição do Coité",end:"PRAÇA DR JOSE GONCALVES, 53 - CENTRO, CONCEICAO DO COITE - BA",cep:"48730-000",cnpj:"07.237.373/0213-99"},
+    {nome:"Correntina",end:"PRACA FELIPE SANTOS, 56 - CENTRO, CORRENTINA - BA",cep:"47650-000",cnpj:"07.237.373/0144-22"},
+    {nome:"Cruz das Almas",end:"PRACA SENADOR TEMISTOCLES, 360 - CENTRO, CRUZ DAS ALMAS - BA",cep:"44380-000",cnpj:"07.237.373/0244-95"},
+    {nome:"Dias d'Ávila",end:"AV RAUL SEIXAS, S/N - CENTRO, DIAS D'AVILA - BA",cep:"42850-000",cnpj:"07.237.373/0323-23"},
+    {nome:"Euclides da Cunha",end:"RUA CASTRO ALVES, 59 - CENTRO, EUCLIDES DA CUNHA - BA",cep:"48500-000",cnpj:"07.237.373/0321-61"},
+    {nome:"Eunápolis",end:"AV. DOM PEDRO II, 500 - CENTRO, EUNAPOLIS - BA",cep:"45820-081",cnpj:"07.237.373/0177-90"},
+    {nome:"Feira de Santana",end:"RUA CONSELHEIRO FRANCO, 534 - CENTRO, FEIRA DE SANTANA - BA",cep:"44002-272",cnpj:"07.237.373/0014-44"},
+    {nome:"Guanambi",end:"RUA DR. JOAQUIM MANOEL, 19 - CENTRO, GUANAMBI - BA",cep:"46430-000",cnpj:"07.237.373/0019-59"},
+    {nome:"Ibotirama",end:"TRAVESSA PEDRO OLIMPIO DE SOUZA, 288 - CENTRO, IBOTIRAMA - BA",cep:"47520-000",cnpj:"07.237.373/0283-00"},
+    {nome:"Ilhéus",end:"AV. SOARES LOPES, 798 - CIDADE NOVA, ILHEUS - BA",cep:"45652-065",cnpj:"07.237.373/0160-42"},
+    {nome:"Ipiaú",end:"PRACA RUY BARBOSA, 70 - CENTRO, IPIAU - BA",cep:"45570-000",cnpj:"07.237.373/0168-08"},
+    {nome:"Ipirá",end:"RUA VALDOMIRO LINS, 79 - CENTRO, IPIRA - BA",cep:"44600-000",cnpj:"07.237.373/0261-96"},
+    {nome:"Irecê",end:"RUA HERCULANO DOURADO, 53 - ED.MARIO D.SOBRINHO - CENTRO, IRECE - BA",cep:"44900-000",cnpj:"07.237.373/0022-54"},
+    {nome:"Itaberaba",end:"RUA 18 DE MAIO, 186 - ED-JOSE O.RIBEIRO - CENTRO, ITABERABA - BA",cep:"46880-000",cnpj:"07.237.373/0084-57"},
+    {nome:"Itabuna",end:"AV. CINQUENTENARIO, 979 - CENTRO, ITABUNA - BA",cep:"45600-903",cnpj:"07.237.373/0058-65"},
+    {nome:"Itamaraju",end:"PRACA DA INDEPENDENCIA, 198 - ED.LAERCIO A.ARAUJO - CENTRO, ITAMARAJU - BA",cep:"45836-000",cnpj:"07.237.373/0074-85"},
+    {nome:"Itapetinga",end:"PRACA AUGUSTO DE CARVALHO, 95 - ED. PEDRO LIMA - CENTRO, ITAPETINGA - BA",cep:"45700-000",cnpj:"07.237.373/0082-95"},
+    {nome:"Jacobina",end:"RUA SENADOR PEDRO LAGO, 203 - ED.FCO.R.PIRES - CENTRO, JACOBINA - BA",cep:"44700-000",cnpj:"07.237.373/0132-99"},
+    {nome:"Jaguaquara",end:"PRACA JJ SEABRA, 92 - CENTRO, JAGUAQUARA - BA",cep:"45345-000",cnpj:"07.237.373/0284-82"},
+    {nome:"Jequié",end:"PRACA RUY BARBOSA, 1-A - CENTRO, JEQUIE - BA",cep:"45200-250",cnpj:"07.237.373/0027-69"},
+    {nome:"Juazeiro",end:"RUA BARÃO DO RIO BRANCO, 171 - CENTRO, JUAZEIRO - BA",cep:"48903-902",cnpj:"07.237.373/0137-01"},
+    {nome:"Lauro de Freitas",end:"AV. SANTOS DUMONT, 2481 - LJ 07 COND SHOPPING - CENTRO, LAURO DE FREITAS - BA",cep:"42702-400",cnpj:"07.237.373/0322-42"},
+    {nome:"Luís Eduardo Magalhães",end:"RUA PARANA, 479 - CENTRO, LUIS EDUARDO MAGALHAES - BA",cep:"47850-000",cnpj:"07.237.373/0196-53"},
+    {nome:"Medeiros Neto",end:"RUA ADAO FERNANDES, 35 - CENTRO, MEDEIROS NETO - BA",cep:"45960-000",cnpj:"07.237.373/0143-41"},
+    {nome:"Monte Santo",end:"PRACA MONSENHOR BERENGUER, S/N - CENTRO, MONTE SANTO - BA",cep:"48800-000",cnpj:"07.237.373/0288-06"},
+    {nome:"Morro do Chapéu",end:"PRACA CAMILO CALAZANS, 71 - CENTRO, MORRO DO CHAPEU - BA",cep:"44850-000",cnpj:"07.237.373/0003-91"},
+    {nome:"Mundo Novo",end:"PRACA SENADOR COHIN, S/N - CENTRO, MUNDO NOVO - BA",cep:"44800-000",cnpj:"07.237.373/0117-50"},
+    {nome:"Paulo Afonso",end:"AV MINISTRO LANDULFO ALVES, 125 - CENTRO, PAULO AFONSO - BA",cep:"48602-490",cnpj:"07.237.373/0163-95"},
+    {nome:"Porto Seguro",end:"RUA TREZE DE MAIO, 50 - CENTRO, PORTO SEGURO - BA",cep:"45810-000",cnpj:"07.237.373/0251-14"},
+    {nome:"Salvador Barra",end:"AV ALMIRANTE MARQUES DE LEAO, 41 - BARRA, SALVADOR - BA",cep:"40140-230",cnpj:"07.237.373/0181-77"},
+    {nome:"Salvador Comércio",end:"PRAÇA DA INGLATERRA, 2 - COMÉRCIO, SALVADOR - BA",cep:"40015-140",cnpj:"07.237.373/0046-21"},
+    {nome:"Salvador Costa Azul",end:"RUA ARTHUR DE AZEVEDO MACHADO, 1225 - TORRE NIMBUS - COSTA AZUL, SALVADOR - BA",cep:"41760-000",cnpj:"07.237.373/0187-62"},
+    {nome:"Salvador Tancredo Neves",end:"AV TANCREDO NEVES, 1632 - LOJAS 03 E 29 - CAMINHO DAS ARVORES, SALVADOR - BA",cep:"41820-915",cnpj:"07.237.373/0249-08"},
+    {nome:"Santa Maria da Vitória",end:"PRACA DA BANDEIRA, 82 - ED.MANOEL COELHO - CENTRO, SANTA MARIA DA VITORIA - BA",cep:"47640-000",cnpj:"07.237.373/0121-36"},
+    {nome:"Santo Amaro",end:"AV IMPERADOR, 63 - CENTRO, SANTO AMARO - BA",cep:"44200-000",cnpj:"07.237.373/0262-77"},
+    {nome:"Santo Antônio de Jesus",end:"RUA GORGONIO JOSE DE ARAUJO, 93 - CENTRO, SANTO ANTONIO DE JESUS - BA",cep:"44430-086",cnpj:"07.237.373/0126-40"},
+    {nome:"Seabra",end:"RUA PIO XII, 168 - CENTRO, SEABRA - BA",cep:"46900-000",cnpj:"07.237.373/0243-04"},
+    {nome:"Senhor do Bonfim",end:"PCA DR. JOSE GONCALVES, 224 - CENTRO, SENHOR DO BONFIM - BA",cep:"48970-000",cnpj:"07.237.373/0104-35"},
+    {nome:"Serrinha",end:"PC LUIZ NOGUEIRA, 235 - CENTRO, SERRINHA - BA",cep:"48700-000",cnpj:"07.237.373/0302-07"},
+    {nome:"Simões Filho",end:"CENTRO INDUSTRIAL DE ARATU, Q 2 LOTE 1, SIMOES FILHO - BA",cep:"43700-000",cnpj:"07.237.373/0090-03"},
+    {nome:"Teixeira de Freitas",end:"AV. MARECHAL CASTELO BRANCO, 698 - CENTRO, TEIXEIRA DE FREITAS - BA",cep:"45985-154",cnpj:"07.237.373/0173-67"},
+    {nome:"Tucano",end:"RUA 7 DE SETEMBRO, 65 - CENTRO, TUCANO - BA",cep:"48790-000",cnpj:"07.237.373/0289-97"},
+    {nome:"Valença",end:"RUA BARAO DE JEQUIRICA, 253 - CENTRO, VALENCA - BA",cep:"45400-000",cnpj:"07.237.373/0212-08"},
+    {nome:"Vitória da Conquista",end:"PRACA BARAO DO RIO BRANCO, 106 - CENTRO, VITORIA DA CONQUISTA - BA",cep:"45000-385",cnpj:"07.237.373/0073-02"},
+    {nome:"Xique-Xique",end:"RUA CEL GUSTAVO COSTA, 3 - CENTRO, XIQUE-XIQUE - BA",cep:"47400-000",cnpj:"07.237.373/0287-25"},
+  ],
+  "CE": [
+    {nome:"Acaraú",end:"RUA EXPEDITO FARIAS, 71 - CENTRO, ACARAU - CE",cep:"62580-000",cnpj:"07.237.373/0264-39"},
+    {nome:"Acopiara",end:"RUA FRANCISCO GURGEL VALENTE, 216 - CENTRO, ACOPIARA - CE",cep:"63560-000",cnpj:"07.237.373/0230-90"},
+    {nome:"Aquiraz",end:"RUA PEDRO BRASIL, 399 - CENTRO, AQUIRAZ - CE",cep:"61700-000",cnpj:"07.237.373/0317-85"},
+    {nome:"Aracati",end:"RUA CORONEL ALEXANDRINO, 911 - CENTRO, ARACATI - CE",cep:"62800-029",cnpj:"07.237.373/0145-03"},
+    {nome:"Barbalha",end:"RUA DOS CARIRIS, 133 - CENTRO, BARBALHA - CE",cep:"63180-000",cnpj:"07.237.373/0231-70"},
+    {nome:"Baturité",end:"AV. 7 DE SETEMBRO, 714 - CENTRO, BATURITE - CE",cep:"62760-000",cnpj:"07.237.373/0088-80"},
+    {nome:"Boa Viagem",end:"AV SÃO VICENTE DE PAULO, 110 - CENTRO, BOA VIAGEM - CE",cep:"63870-000",cnpj:"07.237.373/0153-13"},
+    {nome:"Brejo Santo",end:"RUA JOSE MATIAS SAMPAIO, 107 - CENTRO, BREJO SANTO - CE",cep:"63260-000",cnpj:"07.237.373/0114-07"},
+    {nome:"Campos Sales",end:"RUA JULIO NOROES, 275 - ED.ANTONIO A.ARARIPE - CENTRO, CAMPOS SALES - CE",cep:"63150-000",cnpj:"07.237.373/0010-10"},
+    {nome:"Canindé",end:"RUA JOAQUIM MAGALHAES, 125 - CENTRO, CANINDE - CE",cep:"62700-000",cnpj:"07.237.373/0062-41"},
+    {nome:"Cascavel",end:"AVENIDA PREFEITO VITORIANO ANTUNES, 2397 - CENTRO, CASCAVEL - CE",cep:"62850-000",cnpj:"07.237.373/0221-07"},
+    {nome:"Caucaia",end:"RUA 15 DE NOVEMBRO, 1477 - CENTRO, CAUCAIA - CE",cep:"61600-090",cnpj:"07.237.373/0218-01"},
+    {nome:"Crateús",end:"RUA DOM PEDRO II, 718 - CENTRO, CRATEUS - CE",cep:"63700-079",cnpj:"07.237.373/0089-61"},
+    {nome:"Crato",end:"RUA CEL. LUIS TEIXEIRA, 1015 - CENTRO, CRATO - CE",cep:"63100-045",cnpj:"07.237.373/0124-89"},
+    {nome:"Eusébio",end:"AV. IRMA AMBROSINA, S/N - CENTRO, EUSEBIO - CE",cep:"61760-000",cnpj:"07.237.373/0313-51"},
+    {nome:"Fortaleza Aldeota",end:"AV. SANTOS DUMONT, 2287 - ANDAR TÉRREO - ALDEOTA, FORTALEZA - CE",cep:"60150-161",cnpj:"07.237.373/0152-32"},
+    {nome:"Fortaleza Bezerra de Menezes",end:"AV. BEZERRA DE MENEZES, 887 - PARQUE ARAXA, FORTALEZA - CE",cep:"60325-003",cnpj:"07.237.373/0182-58"},
+    {nome:"Fortaleza Centro",end:"AV PROFESSOR GOMES DE MATOS, 505 - PARREAO, FORTALEZA - CE",cep:"60410-357",cnpj:"07.237.373/0016-06"},
+    {nome:"Fortaleza Montese",end:"RUA MAJOR FACUNDO, 372 - ED HORACIO LAFER - CENTRO, FORTALEZA - CE",cep:"60025-100",cnpj:"07.237.373/0189-24"},
+    {nome:"Fortaleza Parangaba",end:"AV GENERAL OSORIO DE PAIVA, 1366 - LOJA 1 - PARANGABA, FORTALEZA - CE",cep:"60720-015",cnpj:"07.237.373/0318-66"},
+    {nome:"Fortaleza Passaré",end:"AV DR. SILAS MUNGUBA, 5650 - PASSARE, FORTALEZA - CE",cep:"60743-762",cnpj:"07.237.373/0300-37"},
+    {nome:"Fortaleza Washington Soares",end:"AV WASHINGTON SOARES, 3777 - LOJA 03 - SAPIRANGA, FORTALEZA - CE",cep:"60833-005",cnpj:"07.237.373/0228-75"},
+    {nome:"Granja",end:"RUA CONRADO PORTO, 320 - CENTRO, GRANJA - CE",cep:"62430-000",cnpj:"07.237.373/0105-16"},
+    {nome:"Horizonte",end:"AV PRESIDENTE CASTELO BRANCO, 4510 - CENTRO, HORIZONTE - CE",cep:"62880-384",cnpj:"07.237.373/0267-81"},
+    {nome:"Iguatu",end:"AV. AGENOR ARAUJO, 1153 - ED.HUMBERTO TEIXEIRA - CENTRO, IGUATU - CE",cep:"63500-063",cnpj:"07.237.373/0021-73"},
+    {nome:"Itapajé",end:"PC VICENTE POFIRIO SAMPAIO, S/N - CENTRO, ITAPAJE - CE",cep:"62600-000",cnpj:"07.237.373/0298-88"},
+    {nome:"Itapipoca",end:"RUA EUBIA BARROSO, 2850 - SÃO SEBASTIÃO, ITAPIPOCA - CE",cep:"62508-615",cnpj:"07.237.373/0119-11"},
+    {nome:"Jaguaribe",end:"PCA TEN BARREIRA, 280 - ED MAL JUAREZ TAVORA - CENTRO, JAGUARIBE - CE",cep:"63475-000",cnpj:"07.237.373/0024-16"},
+    {nome:"Juazeiro do Norte",end:"RUA SÃO PEDRO, 333 - CENTRO, JUAZEIRO DO NORTE - CE",cep:"63010-010",cnpj:"07.237.373/0029-20"},
+    {nome:"Lavras da Mangabeira",end:"PCA MAL.HUMBERTO DE ALENCAR CASTELO BRANCO, 2 - ED.DR.ALOYSIO FERRER - CENTRO, LAVRAS DA MANGABEIRA - CE",cep:"63300-000",cnpj:"07.237.373/0072-13"},
+    {nome:"Limoeiro do Norte",end:"TRAVESSA PEDRO ALVES DE FREITAS, 13 - CENTRO, LIMOEIRO DO NORTE - CE",cep:"62930-000",cnpj:"07.237.373/0030-64"},
+    {nome:"Maracanaú",end:"RUA JOAO DE ALENCAR, 113 - LOJA 10 - CENTRO, MARACANAU - CE",cep:"61900-150",cnpj:"07.237.373/0186-81"},
+    {nome:"Maranguape",end:"RUA CAPITAO JEOVA COLARES, 101 - CENTRO, MARANGUAPE - CE",cep:"61942-460",cnpj:"07.237.373/0265-10"},
+    {nome:"Mombaça",end:"RUA ANTONIO JAIME BENEVIDES, 39 - CENTRO, MOMBACA - CE",cep:"63610-000",cnpj:"07.237.373/0113-26"},
+    {nome:"Nova Russas",end:"RUA PE. FRANCISCO ROSA, 1275 - CENTRO, NOVA RUSSAS - CE",cep:"62200-000",cnpj:"07.237.373/0036-50"},
+    {nome:"Pacajus",end:"RUA CONEGO EDUARDO ARARIPE, 1202 - CENTRO, PACAJUS - CE",cep:"62870-000",cnpj:"07.237.373/0227-94"},
+    {nome:"Quixadá",end:"RUA PASCOAL CRISPINO, 215 - CENTRO, QUIXADA - CE",cep:"63900-153",cnpj:"07.237.373/0135-31"},
+    {nome:"Quixeramobim",end:"RUA CAP RAIMUNDO, 32 - CENTRO, QUIXERAMOBIM - CE",cep:"63800-000",cnpj:"07.237.373/0043-89"},
+    {nome:"Russas",end:"AV DOM LINO, 94 - CENTRO, RUSSAS - CE",cep:"62900-000",cnpj:"07.237.373/0305-41"},
+    {nome:"Santa Quitéria",end:"RUA CEL. MANOEL ALVES, 509 - CENTRO, SANTA QUITERIA - CE",cep:"62280-000",cnpj:"07.237.373/0292-92"},
+    {nome:"São Benedito",end:"PRACA JOAO ALMIR FREITAS BRANDAO, 492 - CENTRO, SAO BENEDITO - CE",cep:"62370-000",cnpj:"07.237.373/0048-93"},
+    {nome:"Sobral",end:"RUA CEL. JOSE SABOIA, 326 - ED.FCO. VIEIRA - CENTRO, SOBRAL - CE",cep:"62011-040",cnpj:"07.237.373/0052-70"},
+    {nome:"Tauá",end:"RUA CORONEL LOURENCO FEITOSA, 10 - CENTRO, TAUA - CE",cep:"63660-000",cnpj:"07.237.373/0055-12"},
+    {nome:"Tianguá",end:"RUA DEPUTADO MANOEL FRANCISCO, 453 - CENTRO, TIANGUA - CE",cep:"62320-053",cnpj:"07.237.373/0133-70"},
+    {nome:"Viçosa do Ceará",end:"RUA PADRE JOSE BEVILAQUA, 135 - CENTRO, VICOSA DO CEARA - CE",cep:"62300-000",cnpj:"07.237.373/0268-62"},
+  ],
+  "DF": [
+    {nome:"Brasília",end:"",cep:"",cnpj:"07.237.373/0001-20"},
+  ],
+  "ES": [
+    {nome:"Colatina",end:"RUA MOACYR AVIDOS, 53 - CENTRO, COLATINA - ES",cep:"29702-030",cnpj:"07.237.373/0198-15"},
+    {nome:"Linhares",end:"AV. JOAO FELIPE CALMON, 748 - CENTRO, LINHARES - ES",cep:"29900-022",cnpj:"07.237.373/0200-74"},
+    {nome:"Nova Venécia",end:"PRACA JONES DOS SANTOS NEVES, 68 - CENTRO, NOVA VENECIA - ES",cep:"29830-000",cnpj:"07.237.373/0219-84"},
+    {nome:"Pinheiros",end:"AV. AGENOR LUIZ HERINGER, 475 - CENTRO, PINHEIROS - ES",cep:"29980-000",cnpj:"07.237.373/0345-39"},
+    {nome:"São Mateus",end:"AV JONES DOS SANTOS NEVES, 609 - SERNAMBY, SAO MATEUS - ES",cep:"29930-445",cnpj:"07.237.373/0220-18"},
+  ],
+  "MA": [
+    {nome:"Açailândia",end:"AV. DORGIVAL PINHEIRO DE SOUZA, 1130 - CENTRO, ACAILANDIA - MA",cep:"65930-000",cnpj:"07.237.373/0166-38"},
+    {nome:"Bacabal",end:"RUA BARAO DE CAPANEMA, 303 - CENTRO, BACABAL - MA",cep:"65700-000",cnpj:"07.237.373/0106-05"},
+    {nome:"Balsas",end:"RUA BENEDITO LEITE, 355 - CENTRO, BALSAS - MA",cep:"65800-000",cnpj:"07.237.373/0139-65"},
+    {nome:"Barra do Corda",end:"RUA CORONEL JOSE NAVA, 374 - CENTRO, BARRA DO CORDA - MA",cep:"65950-000",cnpj:"07.237.373/0107-88"},
+    {nome:"Barreirinhas",end:"RUA CAZUZA RAMOS, S/N - CENTRO, BARREIRINHAS - MA",cep:"65590-000",cnpj:"07.237.373/0295-35"},
+    {nome:"Caxias",end:"R. SAO BENEDITO, 583 - CENTRO, CAXIAS - MA",cep:"65600-270",cnpj:"07.237.373/0093-48"},
+    {nome:"Chapadinha",end:"AV. JOSE CAETANO, 157 - CENTRO, CHAPADINHA - MA",cep:"65500-000",cnpj:"07.237.373/0108-69"},
+    {nome:"Codó",end:"RUA PROFESSOR FERNANDO DE CARVALHO, 1905 - CENTRO, CODO - MA",cep:"65400-000",cnpj:"07.237.373/0127-21"},
+    {nome:"Colinas",end:"AV DR OSANO BRANDAO, 348 - CENTRO, COLINAS - MA",cep:"65690-000",cnpj:"07.237.373/0290-20"},
+    {nome:"Governador Nunes Freire",end:"RUA 7 DE SETEMBRO, 223 - CENTRO, GOVERNADOR NUNES FREIRE - MA",cep:"65284-000",cnpj:"07.237.373/0291-01"},
+    {nome:"Grajaú",end:"RUA SENADOR PAULO DO NORTE, 16 - CENTRO, GRAJAU - MA",cep:"65940-000",cnpj:"07.237.373/0241-42"},
+    {nome:"Imperatriz",end:"AV. GETULIO VARGAS, 1933 - ED. MARCELINO BICE - CENTRO, IMPERATRIZ - MA",cep:"65903-280",cnpj:"07.237.373/0081-04"},
+    {nome:"Itapecuru Mirim",end:"PRAÇA CONEGO ALBINO CAMPOS, 420 - CENTRO, ITAPECURU MIRIM - MA",cep:"65485-000",cnpj:"07.237.373/0312-70"},
+    {nome:"Paço do Lumiar",end:"AV. 13, 36 - QD 122 - MAIOBAO, PACO DO LUMIAR - MA",cep:"65130-000",cnpj:"07.237.373/0278-34"},
+    {nome:"Pedreiras",end:"AV. RIO BRANCO, 500 - CENTRO, PEDREIRAS - MA",cep:"65725-000",cnpj:"07.237.373/0128-02"},
+    {nome:"Pinheiro",end:"PRAÇA JOSE SARNEY, 494 - CENTRO, PINHEIRO - MA",cep:"65200-000",cnpj:"07.237.373/0195-72"},
+    {nome:"Porto Franco",end:"TRAVESSA 7 DE SETEMBRO, S/N - CENTRO, PORTO FRANCO - MA",cep:"65970-000",cnpj:"07.237.373/0216-31"},
+    {nome:"Presidente Dutra",end:"TR. CEL. ANTONIO MACEDO, 12 - CENTRO, PRESIDENTE DUTRA - MA",cep:"65760-000",cnpj:"07.237.373/0102-73"},
+    {nome:"Santa Inês",end:"RUA DO COMERCIO, 187 - CENTRO, SANTA INES - MA",cep:"65300-046",cnpj:"07.237.373/0103-54"},
+    {nome:"Santa Luzia",end:"AV NEWTON BELO, 607-A - CENTRO, SANTA LUZIA - MA",cep:"65390-000",cnpj:"07.237.373/0242-23"},
+    {nome:"São João dos Patos",end:"RUA 7 DE SETEMBRO, S/N - ESQ. AV. MAR.CAST.B, SAO JOAO DOS PATOS - MA",cep:"65665-000",cnpj:"07.237.373/0311-90"},
+    {nome:"São José de Ribamar",end:"AV GONCALVES DIAS, 593 - CENTRO, SAO JOSE DE RIBAMAR - MA",cep:"65110-000",cnpj:"07.237.373/0253-86"},
+    {nome:"São Luís Calhau",end:"AV DOS HOLANDESES, 6916 - ED. MARCOS BAR L 07 - CALHAU, SAO LUIS - MA",cep:"65071-380",cnpj:"07.237.373/0193-00"},
+    {nome:"São Luís Centro",end:"OSWALDO CRUZ, 450 - CENTRO, SAO LUIS - MA",cep:"65020-907",cnpj:"07.237.373/0059-46"},
+    {nome:"São Luís São Cristovão",end:"AV GUAJAJARAS, 300-E - SAO CRISTOVAO, SAO LUIS - MA",cep:"65055-285",cnpj:"07.237.373/0240-61"},
+    {nome:"Timon",end:"AV FRANCISCO CARLOS JANSEN, 1513-A - PARQUE UNIAO, TIMON - MA",cep:"65631-415",cnpj:"07.237.373/0224-41"},
+    {nome:"Tutóia",end:"RUA CELSON FONSECA, 270 - CENTRO, TUTOIA - MA",cep:"65580-000",cnpj:"07.237.373/0277-53"},
+    {nome:"Viana",end:"AV LUIS DE ALMEIDA COUTO, S/N - CENTRO, VIANA - MA",cep:"65215-000",cnpj:"07.237.373/0296-16"},
+    {nome:"Zé Doca",end:"AV. DO COMERCIO, 125 - CENTRO, ZE DOCA - MA",cep:"65365-000",cnpj:"07.237.373/0147-75"},
+  ],
+  "MG": [
+    {nome:"Almenara",end:"PRACA DR HELIO ROCHA GUIMARAES, 100 - CENTRO, ALMENARA - MG",cep:"39900-000",cnpj:"07.237.373/0217-12"},
+    {nome:"Araçuaí",end:"RUA DOUTOR TULO HOSTILO, 545-A - ALTO MERCADO, ARAÇUAÍ - MG",cep:"39600-000",cnpj:"07.237.373/0334-86"},
+    {nome:"Arinos",end:"AV ARISTOTELES FERNANDES VALADARES, 1359 - CENTRO, ARINOS - MG",cep:"38680-000",cnpj:"07.237.373/0254-67"},
+    {nome:"Bocaiúva",end:"PRAÇA PEDRO CALDEIRA, 15 - CENTRO, BOCAIUVA - MG",cep:"39390-000",cnpj:"07.237.373/0333-03"},
+    {nome:"Brasília de Minas",end:"AV. RUI BARBOSA, 55 - CENTRO, BRASILIA DE MINAS - MG",cep:"39330-000",cnpj:"07.237.373/0070-51"},
+    {nome:"Capelinha",end:"RUA CAPITAO CLEMENTINO, 17 - CENTRO, CAPELINHA - MG",cep:"39680-000",cnpj:"07.237.373/0197-34"},
+    {nome:"Diamantina",end:"RUA DO CARMO, 91 - CENTRO, DIAMANTINA - MG",cep:"39100-000",cnpj:"07.237.373/0255-48"},
+    {nome:"Jaíba",end:"AV. CORONEL MOACIR J SILVA, 609 - CENTRO, JAIBA - MG",cep:"39508-000",cnpj:"07.237.373/0335-67"},
+    {nome:"Janaúba",end:"PCA. DR. ROMULO SALES DE AZEVEDO, 22 - CENTRO, JANAUBA - MG",cep:"39442-054",cnpj:"07.237.373/0140-07"},
+    {nome:"Januária",end:"RUA MATA MACHADO, 155 - CENTRO, JANUARIA - MG",cep:"39480-000",cnpj:"07.237.373/0025-05"},
+    {nome:"Montalvânia",end:"AV. MADAME CURIE, 60 - ED.JOSE SOARES - CENTRO, MONTALVANIA - MG",cep:"39495-000",cnpj:"07.237.373/0109-40"},
+    {nome:"Monte Azul",end:"RUA DOS FERNANDES, 15 - CENTRO, MONTE AZUL - MG",cep:"39500-000",cnpj:"07.237.373/0085-38"},
+    {nome:"Montes Claros",end:"RUA CORONEL ALTINO DE FREITAS, 327 - CENTRO, MONTES CLAROS - MG",cep:"39400-023",cnpj:"07.237.373/0034-98"},
+    {nome:"Nanuque",end:"RUA SÃO JOAO DEL REY, 218 - CENTRO, NANUQUE - MG",cep:"39860-000",cnpj:"07.237.373/0332-14"},
+    {nome:"Pirapora",end:"PRACA MELO VIANA, 42 - CENTRO, PIRAPORA - MG",cep:"39270-086",cnpj:"07.237.373/0077-28"},
+    {nome:"Porteirinha",end:"PCA CEL ODILON COELHO, 217 - CENTRO, PORTEIRINHA - MG",cep:"39520-000",cnpj:"07.237.373/0042-06"},
+    {nome:"Salinas",end:"RUA BARAO DO RIO BRANCO, 32 - CENTRO, SALINAS - MG",cep:"39560-000",cnpj:"07.237.373/0060-80"},
+    {nome:"São Francisco",end:"AV. BRASILIANO BRAZ, 810-A - CENTRO, SAO FRANCISCO - MG",cep:"39300-000",cnpj:"07.237.373/0260-05"},
+    {nome:"Teófilo Otoni",end:"RUA DOUTOR MANOEL ESTEVES, 87 - SALA 1 - CENTRO, TEOFILO OTONI - MG",cep:"39800-090",cnpj:"07.237.373/0199-04"},
+  ],
+  "PB": [
+    {nome:"Alagoa Grande",end:"PRACA CEL ELISIO SOBREIRA, S/N - CENTRO, ALAGOA GRANDE - PB",cep:"58388-000",cnpj:"07.237.373/0002-00"},
+    {nome:"Bayeux",end:"AV LIBERDADE, 3650 - SESI, BAYEUX - PB",cep:"58111-400",cnpj:"07.237.373/0293-73"},
+    {nome:"Cabedelo",end:"RUA JOAO VITALIANO, 101 - PONTA DE MATOS, CABEDELO - PB",cep:"58100-683",cnpj:"07.237.373/0327-57"},
+    {nome:"Cajazeiras",end:"RUA PADRE ROLIM, 653 - CENTRO, CAJAZEIRAS - PB",cep:"58900-000",cnpj:"07.237.373/0091-86"},
+    {nome:"Campina Grande",end:"RUA SETE DE SETEMBRO, 86 - ED CRIST.LAURITZEN - CENTRO, CAMPINA GRANDE - PB",cep:"58400-105",cnpj:"07.237.373/0009-87"},
+    {nome:"Catolé do Rocha",end:"AV. DEPUTADO AMERICO MAIA, 129 - CENTRO, CATOLE DO ROCHA - PB",cep:"58884-000",cnpj:"07.237.373/0012-82"},
+    {nome:"Coronel João Pessoa",end:"RUA WALFREDO MACEDO BRANDAO, 741 - J. CID UNIVERSITARIA, JOAO PESSOA - PB",cep:"58052-200",cnpj:"07.237.373/0225-22"},
+    {nome:"Guarabira",end:"RUA D PEDRO II, 435 - CENTRO, GUARABIRA - PB",cep:"58200-000",cnpj:"07.237.373/0020-92"},
+    {nome:"Itaporanga",end:"AV IRINEU RODRIGUES DA SILVA, 22 - CENTRO, ITAPORANGA - PB",cep:"58780-000",cnpj:"07.237.373/0023-35"},
+    {nome:"João Pessoa Centro",end:"RUA GAMA E MELO, 53 - VARADOURO, JOAO PESSOA - PB",cep:"58010-450",cnpj:"07.237.373/0028-40"},
+    {nome:"João Pessoa Epitácio",end:"AV. EPITACIO PESSOA, 752 - TORRE, JOAO PESSOA - PB",cep:"58040-000",cnpj:"07.237.373/0185-09"},
+    {nome:"Monteiro",end:"AVENIDA OLIMPIO GOMES, 266 - NOVO HORIZONTE, MONTEIRO - PB",cep:"58500-000",cnpj:"07.237.373/0350-04"},
+    {nome:"Patos",end:"AV. SOLON DE LUCENA, 11 - CENTRO, PATOS - PB",cep:"58700-004",cnpj:"07.237.373/0067-56"},
+    {nome:"Picuí",end:"RUA SAO SEBASTIAO, 38 - CENTRO, PICUI - PB",cep:"58187-000",cnpj:"07.237.373/0328-38"},
+    {nome:"Pombal",end:"RUA PADRE AMANCIO LEITE, 35 - CENTRO, POMBAL - PB",cep:"58840-000",cnpj:"07.237.373/0164-76"},
+    {nome:"Santa Rita",end:"RUA JOAO RIBEIRO COUTINHO, 12 - CENTRO, SANTA RITA - PB",cep:"58300-230",cnpj:"07.237.373/0226-03"},
+    {nome:"Sapé",end:"RUA GETULIO VARGAS, 100 - QUADRA 2, LOTE 100-B - CENTRO, SAPE - PB",cep:"58340-000",cnpj:"07.237.373/0172-86"},
+    {nome:"Solânea",end:"PRACA 26 DE NOVEMBRO, 25 - ED.SAMUEL DUARTE - CENTRO, SOLANEA - PB",cep:"58225-000",cnpj:"07.237.373/0097-71"},
+    {nome:"Sousa",end:"RUA CEL.JOSE GOMES DE SA, 5 - CENTRO, SOUSA - PB",cep:"58800-050",cnpj:"07.237.373/0053-50"},
+    {nome:"Sumé",end:"AVENIDA PRIMEIRO DE ABRIL, S/N - BR 412 - CENTRO, SUME - PB",cep:"58540-000",cnpj:"07.237.373/0141-80"},
+  ],
+  "PE": [
+    {nome:"Abreu e Lima",end:"AV. DUQUE DE CAXIAS, 952 - 956 - CENTRO, ABREU E LIMA - PE",cep:"53510-050",cnpj:"07.237.373/0320-80"},
+    {nome:"Araripina",end:"RUA JOAQUIM RODRIGUES NOGUEIRA, 116 - CENTRO, ARARIPINA - PE",cep:"56280-000",cnpj:"07.237.373/0150-70"},
+    {nome:"Arcoverde",end:"AV CORONEL ANTONIO JAPIASSU, 287 - CENTRO, ARCOVERDE - PE",cep:"56506-100",cnpj:"07.237.373/0259-71"},
+    {nome:"Belo Jardim",end:"RUA CLETO CAMPELO, 340 - CENTRO, BELO JARDIM - PE",cep:"55150-160",cnpj:"07.237.373/0308-94"},
+    {nome:"Bezerros",end:"RUA CORONEL BEZERRA, 147 - CENTRO, BEZERROS - PE",cep:"55660-000",cnpj:"07.237.373/0008-04"},
+    {nome:"Bom Conselho",end:"RUA SETE DE SETEMBRO, 126 - CENTRO, BOM CONSELHO - PE",cep:"55330-000",cnpj:"07.237.373/0303-80"},
+    {nome:"Cabo de Santo Agostinho",end:"AV. HISTORIADOR PEREIRA DA COSTA, 804 - CENTRO, CABO DE SANTO AGOSTINHO - PE",cep:"54510-360",cnpj:"07.237.373/0319-47"},
+    {nome:"Camaragibe",end:"AV DOUTOR BELMINO CORREIA, 2309 - NOVO CARMELO, CAMARAGIBE - PE",cep:"54762-303",cnpj:"07.237.373/0233-32"},
+    {nome:"Carpina",end:"AV ESTACIO COIMBRA, 750 - SAO JOSE, CARPINA - PE",cep:"55815-000",cnpj:"07.237.373/0245-76"},
+    {nome:"Caruaru",end:"AV. RIO BRANCO, 267 - NOSSA SRA DAS DORES, CARUARU - PE",cep:"55004-180",cnpj:"07.237.373/0099-33"},
+    {nome:"Escada",end:"AV. COMENDADOR JOSÉ PEREIRA, 47 - CENTRO, ESCADA - PE",cep:"55500-000",cnpj:"07.237.373/0309-75"},
+    {nome:"Floresta",end:"AV. DEP AUDOMAR FERRAZ, 37 - CENTRO, FLORESTA - PE",cep:"56400-000",cnpj:"07.237.373/0015-25"},
+    {nome:"Garanhuns",end:"RUA DANTAS BARRETO, 30 - SAO JOSE, GARANHUNS - PE",cep:"55295-080",cnpj:"07.237.373/0017-97"},
+    {nome:"Goiana",end:"AV. MANOEL BORBA, 45 - CENTRO, GOIANA - PE",cep:"55900-000",cnpj:"07.237.373/0122-17"},
+    {nome:"Gravatá",end:"AV AGAMENON MAGALHAES, 73 - PRADO, GRAVATA - PE",cep:"55642-210",cnpj:"07.237.373/0276-72"},
+    {nome:"Igarassu",end:"AV BARAO DE VERA CRUZ, S/N - CRUZ DE REBOUÇAS, IGARASSU - PE",cep:"53625-015",cnpj:"07.237.373/0304-60"},
+    {nome:"Ipojuca",end:"AV FRANCISCO ALVES DE SOUZA, 3 - CENTRO, IPOJUCA - PE",cep:"55590-000",cnpj:"07.237.373/0306-22"},
+    {nome:"Jaboatão dos Guararapes",end:"AV BERNARDO VIEIRA DE MELO, 3985 - PIEDADE, JABOATAO DOS GUARARAPES - PE",cep:"54410-010",cnpj:"07.237.373/0232-51"},
+    {nome:"Limoeiro",end:"RUA DA ALEGRIA, 1400 - CENTRO, LIMOEIRO - PE",cep:"55700-000",cnpj:"07.237.373/0307-03"},
+    {nome:"Moreno",end:"AV CLETO CAMPELO, 2911 - CENTRO, MORENO - PE",cep:"54800-000",cnpj:"07.237.373/0272-49"},
+    {nome:"Olinda",end:"AV GETULIO VARGAS, 1820 - NOVO, OLINDA - PE",cep:"53030-010",cnpj:"07.237.373/0237-66"},
+    {nome:"Ouricuri",end:"PRACA FRANCISCO PEDRO DA SILVA, S/N - ED.JOAQUIM ANGELIN - CENTRO, OURICURI - PE",cep:"56200-000",cnpj:"07.237.373/0063-22"},
+    {nome:"Palmares",end:"RUA CEL. AUSTRICLINIO, 842 - CENTRO, PALMARES - PE",cep:"55540-000",cnpj:"07.237.373/0238-47"},
+    {nome:"Paudalho",end:"RUA MARECHAL DEODORO, 877 - CENTRO, PAUDALHO - PE",cep:"55825-000",cnpj:"07.237.373/0316-02"},
+    {nome:"Paulista",end:"PRACA FREDERICO LUNDGREN, 17 - CENTRO, PAULISTA - PE",cep:"53401-250",cnpj:"07.237.373/0120-55"},
+    {nome:"Pesqueira",end:"RUA DUQUE DE CAXIAS, 110 - CENTRO, PESQUEIRA - PE",cep:"55200-000",cnpj:"07.237.373/0040-36"},
+    {nome:"Petrolina",end:"AV. FERNANDO MENEZES DE GOES, 161 - CENTRO, PETROLINA - PE",cep:"56304-907",cnpj:"07.237.373/0041-17"},
+    {nome:"Recife Agamenon Magalhães",end:"AV GOVERNADOR AGAMENON MAGALHÃES, 2764 - ED.ANT. A.GALVÃO-BNB - ESPINHEIRO, RECIFE - PE",cep:"52020-000",cnpj:"07.237.373/0076-47"},
+    {nome:"Recife Casa Forte",end:"RUA NESTOR SILVA, 144 - SANTANA, RECIFE - PE",cep:"52060-410",cnpj:"07.237.373/0274-00"},
+    {nome:"Recife Centro",end:"AV CONDE DA BOA VISTA, 800 - ED. APOLÔNIO SALES - BOA VISTA, RECIFE - PE",cep:"50060-004",cnpj:"07.237.373/0044-60"},
+    {nome:"Recife Domingos Ferreira",end:"AV. ENGENHEIRO DOMINGOS FERREIRA, 3023 - BOA VIAGEM, RECIFE - PE",cep:"51020-031",cnpj:"07.237.373/0192-20"},
+    {nome:"Salgueiro",end:"AV. AGAMENON MAGALHAES, 789 - CENTRO, SALGUEIRO - PE",cep:"56000-000",cnpj:"07.237.373/0045-40"},
+    {nome:"Santa Cruz do Capibaribe",end:"AV TEONILO SILVESTRE, 734 - SAO CRISTOVAO, SANTA CRUZ DO CAPIBARIBE - PE",cep:"55194-142",cnpj:"07.237.373/0273-20"},
+    {nome:"São Bento do Una",end:"AV VEREADOR VALDEMAR CORDEIRO DE MORAES, 48 - CENTRO, SAO BENTO DO UNA - PE",cep:"55370-000",cnpj:"07.237.373/0275-91"},
+    {nome:"São Lourenço da Mata",end:"AV DR FRANCISCO CORREIA, 1263 - PIXETE, SAO LOURENCO DA MATA - PE",cep:"54730-000",cnpj:"07.237.373/0271-68"},
+    {nome:"Serra Talhada",end:"RUA DOUTOR SERGIO MAGALHAES, 820 - ED.AGAMENON MAGALHAE - CENTRO, SERRA TALHADA - PE",cep:"56903-914",cnpj:"07.237.373/0111-64"},
+    {nome:"Sertânia",end:"PRACA CEL.FRANCISCO SALES DE OLIVEIRA, 8 - CENTRO, SERTANIA - PE",cep:"56600-000",cnpj:"07.237.373/0050-08"},
+    {nome:"Surubim",end:"AV. PAULO AFONSO, 97 - CENTRO, SURUBIM - PE",cep:"55750-000",cnpj:"07.237.373/0054-31"},
+    {nome:"Timbaúba",end:"RUA DR. ALCEBIADES, 110 - CENTRO, TIMBAUBA - PE",cep:"55870-000",cnpj:"07.237.373/0130-27"},
+    {nome:"Vitória de Santo Antão",end:"RUA PREFEITO JOAO CLEOFAS DE OLIVEIRA, 151 - MATRIZ, VITORIA DE SANTO ANTAO - PE",cep:"55602-125",cnpj:"07.237.373/0118-30"},
+  ],
+  "PI": [
+    {nome:"Água Branca",end:"AV. NECO TEIXEIRA, 430 - CENTRO, AGUA BRANCA - PI",cep:"64460-000",cnpj:"07.237.373/0123-06"},
+    {nome:"Bom Jesus",end:"RUA ARSÊNIO SANTOS, 855 - CENTRO, BOM JESUS - PI",cep:"64900-000",cnpj:"07.237.373/0138-84"},
+    {nome:"Campo Maior",end:"AV. DEMEVAL LOBAO, 861 - ED.SIGEFREDO PACHECO - CENTRO, CAMPO MAIOR - PI",cep:"64280-000",cnpj:"07.237.373/0096-90"},
+    {nome:"Corrente",end:"RUA IPIRANGA, 288 - CENTRO, CORRENTE - PI",cep:"64980-000",cnpj:"07.237.373/0095-00"},
+    {nome:"Esperantina",end:"RUA CORONEL JOSE FORTES, 859 - CENTRO, ESPERANTINA - PI",cep:"64180-000",cnpj:"07.237.373/0159-09"},
+    {nome:"Floriano",end:"AV GETULIO VARGAS, 108 - CENTRO, FLORIANO - PI",cep:"64800-060",cnpj:"07.237.373/0068-37"},
+    {nome:"Oeiras",end:"AV. JOSE TAPETY, 76 - CENTRO, OEIRAS - PI",cep:"64500-000",cnpj:"07.237.373/0037-30"},
+    {nome:"Parnaíba",end:"PRACA DA GRACA, 624 - CENTRO, PARNAIBA - PI",cep:"64200-904",cnpj:"07.237.373/0038-11"},
+    {nome:"Paulistana",end:"AV. MARECHAL DEODORO, 33 - CENTRO, PAULISTANA - PI",cep:"64750-000",cnpj:"07.237.373/0178-71"},
+    {nome:"Picos",end:"AV. GETULIO VARGAS, 535 - CENTRO, PICOS - PI",cep:"64600-002",cnpj:"07.237.373/0086-19"},
+    {nome:"Piracuruca",end:"AVENIDA AURELIO BRITO, S/N - CENTRO, PIRACURUCA - PI",cep:"64240-000",cnpj:"07.237.373/0342-96"},
+    {nome:"Piripiri",end:"AV. QUATRO DE JULHO, 277 - CENTRO, PIRIPIRI - PI",cep:"64260-000",cnpj:"07.237.373/0125-60"},
+    {nome:"São João do Piauí",end:"RUA RODRIGO CARVALHO, 974 - CENTRO, SAO JOAO DO PIAUI - PI",cep:"64760-000",cnpj:"07.237.373/0214-70"},
+    {nome:"São Raimundo Nonato",end:"AV. PROF. JOAO MENEZES, 567 - ED.JULIO PAIXAO - CENTRO, SAO RAIMUNDO NONATO - PI",cep:"64770-000",cnpj:"07.237.373/0049-74"},
+    {nome:"Teresina Centro",end:"RUA RUI BARBOSA, 163 - ZONA NORTE - CENTRO, TERESINA - PI",cep:"64000-090",cnpj:"07.237.373/0056-01"},
+    {nome:"Teresina Dirceu",end:"AV JOAQUIM NELSON, 3167 - PARQUE IDEAL, TERESINA - PI",cep:"64078-625",cnpj:"07.237.373/0246-57"},
+    {nome:"Teresina João XXIII",end:"AV JOAO XXIII, 3083 - SAO CRISTOVAO, TERESINA - PI",cep:"64051-005",cnpj:"07.237.373/0194-91"},
+    {nome:"União",end:"RUA 15 DE NOVEMBRO, S/N - CENTRO, UNIAO - PI",cep:"64120-000",cnpj:"07.237.373/0330-52"},
+    {nome:"Uruçuí",end:"RUA DAVID CALDAS, 946 - CENTRO, URUCUI - PI",cep:"64860-000",cnpj:"07.237.373/0211-27"},
+    {nome:"Valença do Piauí",end:"RUA EPAMINONDAS NOGUEIRA, 473 - CENTRO, VALENCA DO PIAUI - PI",cep:"64300-000",cnpj:"07.237.373/0057-84"},
+  ],
+  "RN": [
+    {nome:"Angicos",end:"RUA VEREADOR JOAQUIM BERNARDO, 20 - CENTRO, ANGICOS - RN",cep:"59515-000",cnpj:"07.237.373/0004-72"},
+    {nome:"Apodi",end:"RUA MARECHAL FLORIANO PEIXOTO, 29 - CENTRO, APODI - RN",cep:"59700-000",cnpj:"07.237.373/0112-45"},
+    {nome:"Assú",end:"PRACA PEDRO VELHO, 116 - CENTRO, ACU - RN",cep:"59650-000",cnpj:"07.237.373/0115-98"},
+    {nome:"Caicó",end:"AV CORONEL MARTINIANO, 621 - CENTRO, CAICO - RN",cep:"59300-000",cnpj:"07.237.373/0101-92"},
+    {nome:"Ceará-Mirim",end:"RUA HERACLITO VILLAR, S/N - CENTRO, CEARA-MIRIM - RN",cep:"59570-000",cnpj:"07.237.373/0236-85"},
+    {nome:"Currais Novos",end:"AV.DR.SILVIO BEZERRA DE MELO, 730 - CENTRO, CURRAIS NOVOS - RN",cep:"59380-000",cnpj:"07.237.373/0100-01"},
+    {nome:"Goianinha",end:"RUA VIGARIO ANTONIO MONTENEGRO, 85 - CENTRO, GOIANINHA - RN",cep:"59173-000",cnpj:"07.237.373/0329-19"},
+    {nome:"Jardim do Seridó",end:"RUA DR. OTAVIO LAMARTINE, 400 - CENTRO, JARDIM DO SERIDO - RN",cep:"59343-000",cnpj:"07.237.373/0026-88"},
+    {nome:"João Câmara",end:"RUA MARIA DE FATIMA RAFAEL DE FREITAS, 58 - CENTRO, JOAO CAMARA - RN",cep:"59550-000",cnpj:"07.237.373/0301-18"},
+    {nome:"Macaíba",end:"RUA NOSSA SENHORA APARECIDA, S/N - TAVARES DE LIRA - CENTRO, MACAIBA - RN",cep:"59285-524",cnpj:"07.237.373/0258-90"},
+    {nome:"Macau",end:"RUA MARTINS FERREIRA, 197 - ED.DJALMA A MARINHO - CENTRO, MACAU - RN",cep:"59500-000",cnpj:"07.237.373/0087-08"},
+    {nome:"Mossoró",end:"PRACA GETULIO VARGAS, 45 - CENTRO, MOSSORO - RN",cep:"59600-115",cnpj:"07.237.373/0033-07"},
+    {nome:"Natal Prudente de Morais",end:"AV PRUDENTE DE MORAIS, 3213 - LAGOA SECA, NATAL - RN",cep:"59022-310",cnpj:"07.237.373/0183-39"},
+    {nome:"Natal Roberto Freire",end:"AV ENGENHEIRO ROBERTO FREIRE, 1546 - LOJA 08 - CAPIM MACIO, NATAL - RN",cep:"59082-095",cnpj:"07.237.373/0248-19"},
+    {nome:"Natal Tirol",end:"AV PRUDENTE DE MORAIS, 675 - TERREO E 1 ANDAR - TIROL, NATAL - RN",cep:"59020-505",cnpj:"07.237.373/0035-79"},
+    {nome:"Parnamirim",end:"AV TENENTE MEDEIROS, 1000 - CENTRO, PARNAMIRIM - RN",cep:"59140-020",cnpj:"07.237.373/0215-50"},
+    {nome:"Pau dos Ferros",end:"PRACA DA MATRIZ, 104 - ED.MANOEL REGINALDO - CENTRO, PAU DOS FERROS - RN",cep:"59900-000",cnpj:"07.237.373/0039-00"},
+    {nome:"Santa Cruz",end:"RUA MANOEL CICERO DE LIMA, 95 - CENTRO, SANTA CRUZ - RN",cep:"59200-000",cnpj:"07.237.373/0047-02"},
+    {nome:"Santo Antônio",end:"AV. LINDOLFO GOMES VIDAL, 360 - CENTRO, SANTO ANTONIO - RN",cep:"59255-000",cnpj:"07.237.373/0061-60"},
+    {nome:"São Gonçalo do Amarante",end:"RUA BENEDITO SANTANA, S/N - GANCHO DE IGAPO, SAO GONCALO DO AMARANTE - RN",cep:"59290-000",cnpj:"07.237.373/0266-09"},
+    {nome:"Umarizal",end:"RUA PORCINO COSTA, 267 - CENTRO, UMARIZAL - RN",cep:"59865-000",cnpj:"07.237.373/0269-43"},
+  ],
+  "SE": [
+    {nome:"Aracaju Centro",end:"RUA ITABAIANINHA, 44 - ED J ORLANDO DANTAS - CENTRO, ARACAJU - SE",cep:"49010-190",cnpj:"07.237.373/0005-53"},
+    {nome:"Aracaju Jardins",end:"AV MINISTRO GERALDO BARRETO SOBRAL, 1368 - GRAGERU, ARACAJU - SE",cep:"49027-255",cnpj:"07.237.373/0235-02"},
+    {nome:"Aracaju Siqueira Campos",end:"RUA MARIANO SALMERON, 273 - ED.LEANDRO MACIEL - SIQUEIRA CAMPOS, ARACAJU - SE",cep:"49075-370",cnpj:"07.237.373/0180-96"},
+    {nome:"Boquim",end:"AV SIMPLICIANO FERNANDES DA FONSECA, 140 - ED. HERMES FONTES - CENTRO, BOQUIM - SE",cep:"49360-000",cnpj:"07.237.373/0155-85"},
+    {nome:"Carira",end:"PRACA OLIMPIO RABELO DE MORAIS, 120 - CENTRO, CARIRA - SE",cep:"49550-000",cnpj:"07.237.373/0011-00"},
+    {nome:"Estância",end:"PRAÇA ORLANDO GOMES DOS SANTOS, 370 - CENTRO, ESTANCIA - SE",cep:"49200-000",cnpj:"07.237.373/0129-93"},
+    {nome:"Gararu",end:"PRAÇA RIO BRANCO, 9 - CENTRO, GARARU - SE",cep:"49830-000",cnpj:"07.237.373/0018-78"},
+    {nome:"Itabaiana",end:"RUA FRANCISCO SANTOS, 209 - CENTRO, ITABAIANA - SE",cep:"49500-067",cnpj:"07.237.373/0116-79"},
+    {nome:"Lagarto",end:"PRACA DA PIEDADE, 30 - CENTRO, LAGARTO - SE",cep:"49400-000",cnpj:"07.237.373/0146-94"},
+    {nome:"Laranjeiras",end:"RUA GETULIO VARGAS, 30 - CENTRO, LARANJEIRAS - SE",cep:"49170-000",cnpj:"07.237.373/0161-23"},
+    {nome:"Neópolis",end:"RUA BATISTA GOMES, 69-A - CENTRO, NEOPOLIS - SE",cep:"49980-000",cnpj:"07.237.373/0171-03"},
+    {nome:"Nossa Senhora da Glória",end:"PRAÇA FILEMON BEZERRA LEMOS, 30 - CENTRO, NOSSA SENHORA DA GLORIA - SE",cep:"49680-000",cnpj:"07.237.373/0134-50"},
+    {nome:"Nossa Senhora das Dores",end:"PRACA MARECHAL DEODORO DA FONSECA, 25 - CENTRO, NOSSA SENHORA DAS DORES - SE",cep:"49600-000",cnpj:"07.237.373/0078-09"},
+    {nome:"Nossa Senhora do Socorro",end:"AV COLETORA A, 140 - QUADRA 10 - JOAO ALVES FILHO, NOSSA SENHORA DO SOCORRO - SE",cep:"49160-000",cnpj:"07.237.373/0257-00"},
+    {nome:"Propriá",end:"AV. AUGUSTO MAYNARD, 167 - CENTRO, PROPRIA - SE",cep:"49900-000",cnpj:"07.237.373/0069-18"},
+    {nome:"Simão Dias",end:"RUA FELISBERTO PRATA, 214 - CENTRO, SIMAO DIAS - SE",cep:"49480-000",cnpj:"07.237.373/0051-99"},
+    {nome:"Tobias Barreto",end:"AV. SETE DE JUNHO, 618 - ED.EPIFANIO DA FONSE - CENTRO, TOBIAS BARRETO - SE",cep:"49300-000",cnpj:"07.237.373/0098-52"},
+  ],
+};
+
+function onUFChange() {
+  var uf = document.getElementById('f-uf').value;
+  var sel = document.getElementById('f-unidade');
+  sel.innerHTML = '<option value="">-- Selecione a unidade --</option>';
+  document.getElementById('f-cnpj').value = '';
+  document.getElementById('f-endereco').value = '';
+  document.getElementById('f-cep').value = '';
+  if (!uf || !UNIDADES_BNB[uf]) { sel.disabled = true; return; }
+  sel.disabled = false;
+  UNIDADES_BNB[uf].forEach(function(u) {
+    var opt = document.createElement('option');
+    opt.value = u.nome;
+    opt.textContent = u.nome;
+    sel.appendChild(opt);
+  });
+}
+
+function onUnidadeChange() {
+  var uf   = document.getElementById('f-uf').value;
+  var nome = document.getElementById('f-unidade').value;
+  if (!uf || !nome) return;
+  var lista = UNIDADES_BNB[uf] || [];
+  var u = lista.find(function(x) { return x.nome === nome; });
+  if (!u) return;
+  document.getElementById('f-cnpj').value    = u.cnpj;
+  document.getElementById('f-endereco').value = u.end;
+  document.getElementById('f-cep').value     = u.cep;
+}
+
+function initUFSelect() {
+  var sel = document.getElementById('f-uf');
+  Object.keys(UNIDADES_BNB).sort().forEach(function(uf) {
+    var opt = document.createElement('option');
+    opt.value = uf; opt.textContent = uf;
+    sel.appendChild(opt);
+  });
+}
+
+function toggleGarantia() {
+  var val = document.querySelector('input[name="garantia-exige"]:checked').value;
+  document.getElementById('wrapper-garantia-pct').style.display = val === 'sim' ? '' : 'none';
+}
+
 function getCentralLabel() {
   // Monta o texto de Central/Celula a partir dos setores das assinaturas executivas
   var setores = [];
@@ -1007,6 +1385,7 @@ window.addEventListener('DOMContentLoaded', function() {
   addSubItem('7222');
   addSubItem('7322');
   addSubItem('111');
+  initUFSelect();
 
   var inputValor   = document.getElementById('f-preco-valor');
   var inputExtenso = document.getElementById('f-preco-extenso');
@@ -1268,10 +1647,11 @@ function gerar() {
   setText('out-justificativa', justificativa || '[Explicar, resumidamente, a necessidade da contratação pretendida].', null, !justificativa);
 
   // Seção 6
-  const rubrica = document.getElementById('f-rubrica').value.trim();
+  var rubricasSel = Array.from(document.querySelectorAll('input[name="rubrica"]:checked')).map(function(c) { return c.value; });
+  var rubricaTexto = rubricasSel.length > 0 ? (rubricasSel.length === 1 ? rubricasSel[0] : rubricasSel.slice(0,-1).join(', ') + ' e ' + rubricasSel[rubricasSel.length-1]) : '[INFORMAR RUBRICA DA PLC – NÚMERO]';
   setText('out-dotacao',
-    `Os custos decorrentes da contratação correrão à conta de recursos previstos em dotação orçamentária própria, sob a(s) rubrica(s) ${rubrica || '[INFORMAR RUBRICA DA PLC – NÚMERO]'}.`,
-    null, !rubrica);
+    'Os custos decorrentes da contratação correrão à conta de recursos previstos em dotação orçamentária própria, sob a(s) rubrica(s) ' + rubricaTexto + '.',
+    null, rubricasSel.length === 0);
 
   // 7.1.1.1
   const numAnexo = anexo || '___';
@@ -1372,8 +1752,8 @@ function gerar() {
   const modoDisputa = document.querySelector('input[name="modo-disputa"]:checked').value;
   document.getElementById('out-modo-disputa').textContent = modoDisputa + '.';
 
-  // Seção 9
-  const criterio = document.querySelector('input[name="criterio-julgamento"]:checked').value;
+  // Seção 9 — automático baseado na seção 1
+  var criterio = porItens ? 'Maior Desconto por Item' : 'Maior Desconto';
   document.getElementById('out-criterio').textContent = criterio + '.';
 
   // Seção 10
@@ -1449,10 +1829,14 @@ function gerar() {
   setFaturamento('out-cep',     'CEP:',     document.getElementById('f-cep').value.trim());
 
   // Seção 16 — Garantia Contratual
+  var garantiaExige = document.querySelector('input[name="garantia-exige"]:checked').value;
   const garantiaPct = document.getElementById('f-garantia-pct').value.trim();
   const elGarantia = document.getElementById('out-garantia-contratual');
-  if (garantiaPct) {
-    elGarantia.textContent = `Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ${pctFormatado(garantiaPct)}% (${pctPorExtenso(garantiaPct)} por cento) do preço global contratado.`;
+  if (garantiaExige === 'nao') {
+    elGarantia.textContent = 'Não será exigida garantia contratual vez que só ocorrerá pagamento após efetiva realização dos serviços.';
+    elGarantia.style.color = 'var(--ink)'; elGarantia.style.fontStyle = 'normal';
+  } else if (garantiaPct) {
+    elGarantia.textContent = 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ' + pctFormatado(garantiaPct) + '% (' + pctPorExtenso(garantiaPct) + ' por cento) do preço global contratado.';
     elGarantia.style.color = 'var(--ink)'; elGarantia.style.fontStyle = 'normal';
   } else {
     elGarantia.textContent = 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ____% (_____ por cento) do preço global contratado.';
@@ -1739,8 +2123,9 @@ function exportarPDF() {
     // 6
     printBlock('6. DOTAÇÃO ORÇAMENTÁRIA', 'bold', false);
     y += espacoGrande;
-    const rubrica = document.getElementById('f-rubrica').value.trim();
-    printBlock(`Os custos decorrentes da contratação correrão à conta de recursos previstos em dotação orçamentária própria, sob a(s) rubrica(s) ${rubrica || '[INFORMAR RUBRICA DA PLC – NÚMERO]'}.`, rubrica ? 'normal' : 'italic', true, 0, rubrica ? [26,23,20] : [150,140,130]);
+    var rubricasSelPDF = Array.from(document.querySelectorAll('input[name="rubrica"]:checked')).map(function(c) { return c.value; });
+    var rubricaPDF = rubricasSelPDF.length > 0 ? (rubricasSelPDF.length === 1 ? rubricasSelPDF[0] : rubricasSelPDF.slice(0,-1).join(', ') + ' e ' + rubricasSelPDF[rubricasSelPDF.length-1]) : '[INFORMAR RUBRICA DA PLC – NÚMERO]';
+    printBlock('Os custos decorrentes da contratação correrão à conta de recursos previstos em dotação orçamentária própria, sob a(s) rubrica(s) ' + rubricaPDF + '.', rubricasSelPDF.length > 0 ? 'normal' : 'italic', true, 0, rubricasSelPDF.length > 0 ? [26,23,20] : [150,140,130]);
     y += gapSecao;
 
     // 7
@@ -1843,7 +2228,8 @@ function exportarPDF() {
     // 9
     printBlock('9. CRITÉRIO DE JULGAMENTO', 'bold', false);
     y += espacoGrande;
-    printBlock(document.querySelector('input[name="criterio-julgamento"]:checked').value + '.', 'normal', false);
+    var criterioPDF = porItens ? 'Maior Desconto por Item' : 'Maior Desconto';
+    printBlock(criterioPDF + '.', 'normal', false);
     y += gapSecao;
 
     // 10
@@ -2021,10 +2407,16 @@ function exportarPDF() {
     // 16 — Garantia Contratual
     printBlock('16. GARANTIA CONTRATUAL', 'bold', false);
     y += espacoGrande;
+    var garantiaExigePDF = document.querySelector('input[name="garantia-exige"]:checked').value;
     const garantiaPctPDF = document.getElementById('f-garantia-pct').value.trim();
-    const garantiaTexto = garantiaPctPDF
-      ? `Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ${pctFormatado(garantiaPctPDF)}% (${pctPorExtenso(garantiaPctPDF)} por cento) do preço global contratado.`
-      : 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ____% (_____ por cento) do preço global contratado.';
+    var garantiaTexto;
+    if (garantiaExigePDF === 'nao') {
+      garantiaTexto = 'Não será exigida garantia contratual vez que só ocorrerá pagamento após efetiva realização dos serviços.';
+    } else if (garantiaPctPDF) {
+      garantiaTexto = 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ' + pctFormatado(garantiaPctPDF) + '% (' + pctPorExtenso(garantiaPctPDF) + ' por cento) do preço global contratado.';
+    } else {
+      garantiaTexto = 'Para assegurar o integral cumprimento de todas as obrigações contratuais assumidas, o CONTRATADO deverá apresentar, no prazo de 10 (dez) dias úteis, prorrogável por igual período, a critério do BANCO, a contar do início da vigência do Contrato, comprovante de prestação de garantia de execução equivalente a ____% (_____ por cento) do preço global contratado.';
+    }
     printBlock(garantiaTexto, 'normal', true);
     y += gapSecao;
 
