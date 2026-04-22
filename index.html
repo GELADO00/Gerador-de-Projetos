@@ -229,21 +229,7 @@
     </div>
   </div>
 
-  <div class="form-section">
-    <p class="form-section-label">Logotipo do documento</p>
-    <div class="logo-upload-area">
-      <div class="logo-upload-row">
-        <button type="button" class="btn-upload-logo" onclick="document.getElementById('logo-file-input').click()">Selecionar imagem</button>
-        <span class="logo-upload-status" id="logo-status">Nenhuma imagem selecionada</span>
-        <input type="file" id="logo-file-input" accept="image/*" onchange="carregarLogo(this)">
-      </div>
-      <div class="logo-preview-wrap" id="logo-preview-wrap">
-        <img id="logo-preview-img" src="" alt="Preview">
-        <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--ink-3);flex:1" id="logo-dims"></span>
-        <button type="button" class="btn-remove-logo" onclick="removerLogo()" title="Remover">×</button>
-      </div>
-    </div>
-  </div>
+  <!-- Logo fixa via GitHub: IMG_8645.png -->
 
   <div class="form-section">
     <p class="form-section-label">Seção 1 — Objeto</p>
@@ -1589,6 +1575,8 @@ window.addEventListener('DOMContentLoaded', function() {
   addSubItem('7322');
   addSubItem('111');
   initUFSelect();
+  atualizarLogoDoc();
+  carregarLogoFixa();
 
   var inputValor   = document.getElementById('f-preco-valor');
   var inputExtenso = document.getElementById('f-preco-extenso');
@@ -1601,50 +1589,36 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function carregarLogo(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    logoBase64 = e.target.result;
-    const img = new Image();
-    img.onload = function() {
-      logoNaturalW = img.naturalWidth;
-      logoNaturalH = img.naturalHeight;
-      document.getElementById('logo-preview-img').src = logoBase64;
-      document.getElementById('logo-preview-wrap').classList.add('visible');
-      document.getElementById('logo-dims').textContent = logoNaturalW + ' × ' + logoNaturalH + ' px';
-      const status = document.getElementById('logo-status');
-      status.textContent = file.name;
-      status.classList.add('ok');
-      atualizarLogoDoc();
-    };
-    img.src = logoBase64;
-  };
-  reader.readAsDataURL(file);
-}
-
-function removerLogo() {
-  logoBase64 = null; logoNaturalW = 0; logoNaturalH = 0;
-  document.getElementById('logo-file-input').value = '';
-  document.getElementById('logo-preview-img').src = '';
-  document.getElementById('logo-preview-wrap').classList.remove('visible');
-  document.getElementById('logo-dims').textContent = '';
-  const status = document.getElementById('logo-status');
-  status.textContent = 'Nenhuma imagem selecionada';
-  status.classList.remove('ok');
-  atualizarLogoDoc();
+function carregarLogoFixa() {
+  var url = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8645.png';
+  fetch(url)
+    .then(function(r) { return r.blob(); })
+    .then(function(blob) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        logoBase64 = e.target.result;
+        var img = new Image();
+        img.onload = function() {
+          logoNaturalW = img.naturalWidth;
+          logoNaturalH = img.naturalHeight;
+        };
+        img.src = logoBase64;
+      };
+      reader.readAsDataURL(blob);
+    })
+    .catch(function() {
+      // Se fetch falhar (ex: sem internet), ignora silenciosamente
+      logoBase64 = null;
+    });
 }
 
 function atualizarLogoDoc() {
-  const wrap = document.getElementById('doc-header-logos');
+  var wrap = document.getElementById('doc-header-logos');
   wrap.innerHTML = '';
-  if (logoBase64) {
-    const img = document.createElement('img');
-    img.src = logoBase64;
-    img.className = 'doc-logo-left';
-    wrap.appendChild(img);
-  }
+  var img = document.createElement('img');
+  img.src = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8645.png';
+  img.className = 'doc-logo-left';
+  wrap.appendChild(img);
 }
 
 let subItemCounts = { '7222': 0, '7322': 0, '111': 0, 'sub18': 0 };
@@ -2293,17 +2267,17 @@ function exportarPDF() {
       if (textColor) doc.setTextColor(26, 23, 20);
     }
 
-    // Tratamento seguro do Logo
+    // Logo fixa do GitHub
     if (logoBase64 && logoNaturalH > 0) {
       try {
-        let format = logoBase64.split(';')[0].split('/')[1].toUpperCase();
-        if (format === 'JPG') format = 'JPEG';
-        const b64data = logoBase64.split(',')[1];
-        const imgRatio = logoNaturalW / logoNaturalH;
-        const logoH = 18, logoW = logoH * imgRatio;
-        doc.addImage(b64data, format, marginL, 16, logoW, logoH);
+        var fmt = logoBase64.split(';')[0].split('/')[1].toUpperCase();
+        if (fmt === 'JPG') fmt = 'JPEG';
+        var b64data = logoBase64.split(',')[1];
+        var imgRatio = logoNaturalW / logoNaturalH;
+        var logoH = 18, logoW = logoH * imgRatio;
+        doc.addImage(b64data, fmt, marginL, 16, logoW, logoH);
       } catch (err) {
-        console.warn("Erro ao processar imagem no PDF. Continuando sem logo...", err);
+        console.warn("Erro ao processar logo no PDF.", err);
       }
     }
 
