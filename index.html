@@ -422,33 +422,71 @@
     </div>
 
     <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">14.1.7 — Dados para Faturamento</p>
-    <div class="field">
-      <label for="f-uf">Estado (UF)</label>
-      <select id="f-uf" onchange="onUFChange()" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
-        <option value="">-- Selecione o estado --</option>
-      </select>
+
+    <div class="toggle-field" style="padding:6px 0;margin-bottom:8px;">
+      <label for="chk-multiplas" style="font-size:0.85rem;font-weight:400;color:var(--ink);">Múltiplas unidades</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-multiplas" onchange="toggleMultiplas()">
+        <span class="slider"></span>
+      </label>
     </div>
-    <div class="field">
-      <label for="f-unidade">Unidade</label>
-      <select id="f-unidade" onchange="onUnidadeChange()" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;" disabled>
-        <option value="">-- Selecione a unidade --</option>
-      </select>
+
+    <!-- MODO SIMPLES -->
+    <div id="wrapper-fat-simples">
+      <div class="field">
+        <label for="f-uf">Estado (UF)</label>
+        <select id="f-uf" onchange="onUFChange()" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
+          <option value="">-- Selecione o estado --</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-unidade">Unidade</label>
+        <select id="f-unidade" onchange="onUnidadeChange()" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;" disabled>
+          <option value="">-- Selecione a unidade --</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tomador</label>
+        <input type="text" id="f-tomador" readonly value="Banco do Nordeste do Brasil S.A." style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+      </div>
+      <div class="field">
+        <label>CNPJ</label>
+        <input type="text" id="f-cnpj" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+      </div>
+      <div class="field">
+        <label>Endereço</label>
+        <input type="text" id="f-endereco" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+      </div>
+      <div class="field">
+        <label>CEP</label>
+        <input type="text" id="f-cep" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+      </div>
     </div>
-    <div class="field">
-      <label>Tomador</label>
-      <input type="text" id="f-tomador" readonly value="Banco do Nordeste do Brasil S.A." style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
-    </div>
-    <div class="field">
-      <label>CNPJ</label>
-      <input type="text" id="f-cnpj" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
-    </div>
-    <div class="field">
-      <label>Endereço</label>
-      <input type="text" id="f-endereco" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
-    </div>
-    <div class="field">
-      <label>CEP</label>
-      <input type="text" id="f-cep" readonly placeholder="Preenchido automaticamente" style="width:100%;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink-2);outline:none;cursor:not-allowed;">
+
+    <!-- MODO MÚLTIPLO -->
+    <div id="wrapper-fat-multiplo" style="display:none;">
+
+      <!-- Toggle estados diversos -->
+      <div class="toggle-field" style="padding:4px 0;margin-bottom:10px;">
+        <label for="chk-estados-diversos" style="font-size:0.85rem;font-weight:400;color:var(--ink);">Estados diversos</label>
+        <label class="switch">
+          <input type="checkbox" id="chk-estados-diversos" onchange="toggleEstadosDiversos()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <p style="font-size:0.75rem;color:var(--ink-3);margin-bottom:8px;" id="fat-ufs-label">Selecione o estado:</p>
+      <div id="fat-ufs-grid" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+      <div id="fat-unidades-wrap" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <p style="font-size:0.75rem;color:var(--ink-2);font-weight:500;" id="fat-unidades-titulo">Unidades</p>
+          <div style="display:flex;gap:6px;">
+            <button type="button" onclick="fatMarcarTodas()" style="font-size:0.72rem;font-family:var(--font-mono);background:none;border:1px solid var(--rule);border-radius:3px;padding:3px 8px;cursor:pointer;color:var(--ink-3);">Marcar todas</button>
+            <button type="button" onclick="fatDesmarcarTodas()" style="font-size:0.72rem;font-family:var(--font-mono);background:none;border:1px solid var(--rule);border-radius:3px;padding:3px 8px;cursor:pointer;color:var(--ink-3);">Desmarcar todas</button>
+          </div>
+        </div>
+        <div id="fat-unidades-lista" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;border:1px solid var(--rule);border-radius:4px;padding:8px;background:var(--paper-2);"></div>
+      </div>
     </div>
   </div>
 
@@ -663,6 +701,7 @@
     <p class="doc-body indent-2" id="out-cnpj"></p>
     <p class="doc-body indent-2" id="out-endereco"></p>
     <p class="doc-body indent-2" id="out-cep"></p>
+    <div id="out-fat-tabela" style="margin:8pt 0 0 56px;display:none;"></div>
 
     <p class="doc-body hanging" style="margin-top:8pt;">14.2. Para a liberação da 1ª parcela, o CONTRATADO deverá apresentar, obrigatoriamente, o seguinte:</p>
     <p class="doc-body hanging indent-1">14.2.1. comprovante de inscrição da obra ou serviço no CNO (Cadastro Nacional de Obras);</p>
@@ -1324,6 +1363,162 @@ var UNIDADES_BNB = {
   ],
 };
 
+function toggleMultiplas() {
+  var multi = document.getElementById('chk-multiplas').checked;
+  document.getElementById('wrapper-fat-simples').style.display  = multi ? 'none' : '';
+  document.getElementById('wrapper-fat-multiplo').style.display = multi ? '' : 'none';
+  if (multi && document.getElementById('fat-ufs-grid').children.length === 0) {
+    fatInitUFGrid();
+  }
+}
+
+function fatInitUFGrid() {
+  var grid = document.getElementById('fat-ufs-grid');
+  grid.innerHTML = '';
+  Object.keys(UNIDADES_BNB).sort().forEach(function(uf) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'fat-uf-btn-' + uf;
+    btn.textContent = uf;
+    btn.style.cssText = 'padding:5px 10px;font-family:var(--font-mono);font-size:0.72rem;border:1px solid var(--rule);border-radius:3px;background:var(--paper-2);cursor:pointer;color:var(--ink-2);transition:all 0.15s;';
+    btn.onclick = function() { fatSelecionarUF(uf, btn); };
+    grid.appendChild(btn);
+  });
+}
+
+var fatUFAtivo = null;
+var fatUFsAtivos = {}; // para modo multi-estado
+
+function toggleEstadosDiversos() {
+  var diversos = document.getElementById('chk-estados-diversos').checked;
+  // Resetar estado atual
+  fatUFAtivo = null;
+  fatUFsAtivos = {};
+  document.getElementById('fat-ufs-label').textContent = diversos
+    ? 'Selecione os estados (pode marcar vários):'
+    : 'Selecione o estado:';
+  document.getElementById('fat-unidades-wrap').style.display = 'none';
+  document.getElementById('fat-unidades-lista').innerHTML = '';
+  // Resetar visual dos botoes
+  document.querySelectorAll('#fat-ufs-grid button').forEach(function(b) {
+    b.style.background = 'var(--paper-2)'; b.style.color = 'var(--ink-2)'; b.style.borderColor = 'var(--rule)';
+  });
+}
+
+function fatSelecionarUF(uf, btn) {
+  var diversos = document.getElementById('chk-estados-diversos').checked;
+
+  if (!diversos) {
+    // MODO SIMPLES: apenas um estado ativo por vez
+    if (fatUFAtivo && fatUFAtivo !== uf) {
+      var prev = document.getElementById('fat-uf-btn-' + fatUFAtivo);
+      if (prev) { prev.style.background = 'var(--paper-2)'; prev.style.color = 'var(--ink-2)'; prev.style.borderColor = 'var(--rule)'; }
+    }
+    fatUFAtivo = uf;
+    btn.style.background = 'var(--accent)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--accent)';
+    fatCarregarUnidades([uf]);
+  } else {
+    // MODO MÚLTIPLOS ESTADOS: toggle do estado clicado
+    if (fatUFsAtivos[uf]) {
+      delete fatUFsAtivos[uf];
+      btn.style.background = 'var(--paper-2)'; btn.style.color = 'var(--ink-2)'; btn.style.borderColor = 'var(--rule)';
+    } else {
+      fatUFsAtivos[uf] = true;
+      btn.style.background = 'var(--accent)'; btn.style.color = 'white'; btn.style.borderColor = 'var(--accent)';
+    }
+    var ufsAtivas = Object.keys(fatUFsAtivos);
+    if (ufsAtivas.length > 0) {
+      fatCarregarUnidades(ufsAtivas);
+    } else {
+      document.getElementById('fat-unidades-wrap').style.display = 'none';
+      document.getElementById('fat-unidades-lista').innerHTML = '';
+    }
+  }
+}
+
+function fatCarregarUnidades(ufs) {
+  var lista = document.getElementById('fat-unidades-lista');
+  var titulo = document.getElementById('fat-unidades-titulo');
+  lista.innerHTML = '';
+
+  // Coletar todas as unidades dos UFs selecionados (ordenado por UF, depois por nome)
+  var todas = [];
+  ufs.sort().forEach(function(uf) {
+    (UNIDADES_BNB[uf] || []).forEach(function(u) {
+      todas.push({ uf: uf, nome: u.nome, cnpj: u.cnpj, end: u.end, cep: u.cep });
+    });
+  });
+
+  var totalStr = todas.length + ' agência' + (todas.length !== 1 ? 's' : '');
+  titulo.textContent = ufs.length === 1
+    ? 'Unidades — ' + ufs[0] + ' (' + totalStr + ')'
+    : 'Unidades — ' + ufs.join(', ') + ' (' + totalStr + ')';
+
+  // Agrupar por UF com separador visual se múltiplos estados
+  var ufAtual = null;
+  todas.forEach(function(u) {
+    if (ufs.length > 1 && u.uf !== ufAtual) {
+      ufAtual = u.uf;
+      var sep = document.createElement('div');
+      sep.style.cssText = 'font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);padding:6px 2px 2px;border-top:1px solid var(--rule);margin-top:4px;';
+      sep.textContent = u.uf;
+      lista.appendChild(sep);
+    }
+    var label = document.createElement('label');
+    label.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 6px;background:var(--accent-light);border:1px solid #a3c4ab;border-radius:3px;font-size:0.82rem;font-weight:300;cursor:pointer;';
+    var chk = document.createElement('input');
+    chk.type = 'checkbox'; chk.checked = true;
+    chk.value = u.nome; chk.dataset.cnpj = u.cnpj; chk.dataset.end = u.end; chk.dataset.cep = u.cep;
+    chk.style.accentColor = 'var(--accent)'; chk.style.flexShrink = '0';
+    var span = document.createElement('span');
+    span.textContent = u.nome + (ufs.length > 1 ? '' : '');
+    label.appendChild(chk); label.appendChild(span);
+    label.onchange = function() {
+      label.style.background = chk.checked ? 'var(--accent-light)' : 'white';
+      label.style.borderColor = chk.checked ? '#a3c4ab' : 'var(--rule)';
+    };
+    lista.appendChild(label);
+  });
+  document.getElementById('fat-unidades-wrap').style.display = '';
+}
+
+function fatMarcarTodas() {
+  document.querySelectorAll('#fat-unidades-lista input[type=checkbox]').forEach(function(chk) {
+    chk.checked = true;
+    var label = chk.closest('label');
+    if (label) { label.style.background = 'var(--accent-light)'; label.style.borderColor = '#a3c4ab'; }
+  });
+}
+
+function fatDesmarcarTodas() {
+  document.querySelectorAll('#fat-unidades-lista input[type=checkbox]').forEach(function(chk) {
+    chk.checked = false;
+    var label = chk.closest('label');
+    if (label) { label.style.background = 'white'; label.style.borderColor = 'var(--rule)'; }
+  });
+}
+
+function getFaturamentoData() {
+  var multi = document.getElementById('chk-multiplas').checked;
+  if (!multi) {
+    // Modo simples
+    return {
+      multiplo: false,
+      tomador: document.getElementById('f-tomador').value.trim(),
+      cnpj: document.getElementById('f-cnpj').value.trim(),
+      end: document.getElementById('f-endereco').value.trim(),
+      cep: document.getElementById('f-cep').value.trim(),
+      unidades: []
+    };
+  }
+  // Modo múltiplo
+  var unidades = [];
+  document.querySelectorAll('#fat-unidades-lista input[type=checkbox]:checked').forEach(function(chk) {
+    unidades.push({ nome: chk.value, cnpj: chk.dataset.cnpj, end: chk.dataset.end, cep: chk.dataset.cep });
+  });
+  return { multiplo: true, unidades: unidades };
+}
+
 function onUFChange() {
   var uf = document.getElementById('f-uf').value;
   var sel = document.getElementById('f-unidade');
@@ -1813,20 +2008,53 @@ function gerar() {
   document.getElementById('out-1411').textContent = `14.1.1. mediante medições ${periodicidadeLabel};`;
   document.getElementById('out-1412').textContent = `14.1.2. É obrigação do fornecedor solicitar ${periodicidadeAdv} a medição apresentando toda a documentação pertinente;`;
 
-  function setFaturamento(id, label, valor) {
-    const el = document.getElementById(id);
-    if (valor) {
-      el.textContent = label + ' ' + valor;
-      el.style.color = 'var(--ink)'; el.style.fontStyle = 'normal';
-    } else {
-      el.textContent = label + ' ____';
+  var fatData = getFaturamentoData();
+  var outTabela = document.getElementById('out-fat-tabela');
+  ['out-tomador','out-cnpj','out-endereco','out-cep'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.textContent = '';
+  });
+  outTabela.style.display = 'none'; outTabela.innerHTML = '';
+
+  if (!fatData.multiplo) {
+    function setFat(id, label, valor) {
+      var el = document.getElementById(id);
+      el.textContent = valor ? label + ' ' + valor : label + ' ____';
+      el.style.color = valor ? 'var(--ink)' : 'var(--ink-3)';
+      el.style.fontStyle = valor ? 'normal' : 'italic';
+    }
+    setFat('out-tomador', 'Tomador:', fatData.tomador);
+    setFat('out-cnpj',    'CNPJ:',    fatData.cnpj);
+    setFat('out-endereco', 'Endereço:', fatData.end);
+    setFat('out-cep',     'CEP:',     fatData.cep);
+  } else {
+    // Tabela múltiplas unidades
+    var uds = fatData.unidades;
+    if (uds.length === 0) {
+      var el = document.getElementById('out-tomador');
+      el.textContent = '[Nenhuma unidade selecionada]';
       el.style.color = 'var(--ink-3)'; el.style.fontStyle = 'italic';
+    } else {
+      outTabela.style.display = '';
+      var tbl = document.createElement('table');
+      tbl.style.cssText = 'width:100%;border-collapse:collapse;font-family:var(--font-doc);font-size:9pt;';
+      var thead = '<thead><tr>' +
+        '<th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;text-align:left;">Unidade</th>' +
+        '<th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;text-align:left;white-space:nowrap;">CNPJ</th>' +
+        '<th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;text-align:left;">Endereço</th>' +
+        '<th style="border:1px solid var(--ink);padding:4px 6px;background:#f0f0f0;text-align:left;white-space:nowrap;">CEP</th>' +
+        '</tr></thead>';
+      var tbody = '<tbody>' + uds.map(function(u) {
+        return '<tr>' +
+          '<td style="border:1px solid var(--ink);padding:4px 6px;">' + u.nome + '</td>' +
+          '<td style="border:1px solid var(--ink);padding:4px 6px;white-space:nowrap;">' + u.cnpj + '</td>' +
+          '<td style="border:1px solid var(--ink);padding:4px 6px;">' + u.end + '</td>' +
+          '<td style="border:1px solid var(--ink);padding:4px 6px;white-space:nowrap;">' + u.cep + '</td>' +
+          '</tr>';
+      }).join('') + '</tbody>';
+      tbl.innerHTML = thead + tbody;
+      outTabela.appendChild(tbl);
     }
   }
-  setFaturamento('out-tomador', 'Tomador:', document.getElementById('f-tomador').value.trim());
-  setFaturamento('out-cnpj',    'CNPJ:',    document.getElementById('f-cnpj').value.trim());
-  setFaturamento('out-endereco','Endereço:',document.getElementById('f-endereco').value.trim());
-  setFaturamento('out-cep',     'CEP:',     document.getElementById('f-cep').value.trim());
 
   // Seção 16 — Garantia Contratual
   var garantiaExige = document.querySelector('input[name="garantia-exige"]:checked').value;
@@ -2314,18 +2542,63 @@ function exportarPDF() {
     printHangingBlock('14.1.7.', 'os Dados para Faturamento são os seguintes:', 10);
     y += espacoPequeno;
 
-    const tomadorPDF   = document.getElementById('f-tomador').value.trim();
-    const cnpjPDF      = document.getElementById('f-cnpj').value.trim();
-    const enderecoPDF  = document.getElementById('f-endereco').value.trim();
-    const cepPDF       = document.getElementById('f-cep').value.trim();
-    const indFat = 20;
-    printBlock('Tomador: ' + (tomadorPDF || '____'), 'normal', false, indFat);
-    y += espacoPequeno;
-    printBlock('CNPJ: '    + (cnpjPDF    || '____'), 'normal', false, indFat);
-    y += espacoPequeno;
-    printBlock('Endereço: '+ (enderecoPDF|| '____'), 'normal', false, indFat);
-    y += espacoPequeno;
-    printBlock('CEP: '     + (cepPDF     || '____'), 'normal', false, indFat);
+    var fatDataPDF = getFaturamentoData();
+    var indFat = 20;
+    if (!fatDataPDF.multiplo) {
+      printBlock('Tomador: ' + (fatDataPDF.tomador || '____'), 'normal', false, indFat);
+      y += espacoPequeno;
+      printBlock('CNPJ: '    + (fatDataPDF.cnpj    || '____'), 'normal', false, indFat);
+      y += espacoPequeno;
+      printBlock('Endereço: ' + (fatDataPDF.end     || '____'), 'normal', false, indFat);
+      y += espacoPequeno;
+      printBlock('CEP: '     + (fatDataPDF.cep     || '____'), 'normal', false, indFat);
+    } else {
+      // Tabela de multiplas unidades no PDF
+      var udsPDF = fatDataPDF.unidades;
+      if (udsPDF.length === 0) {
+        printBlock('[Nenhuma unidade selecionada]', 'italic', false, indFat, [150,140,130]);
+      } else {
+        // Colunas: nome 35%, cnpj 22%, endereco 33%, cep 10%
+        var tCols = [contentW * 0.35, contentW * 0.22, contentW * 0.33, contentW * 0.10];
+        var tX = marginL;
+        var tHeaders = ['Unidade', 'CNPJ', 'Endereço', 'CEP'];
+        doc.setFontSize(8);
+        // Cabeçalho
+        doc.setFont('helvetica', 'bold');
+        var hRowH = lh + 3;
+        checkPage();
+        doc.setFillColor(230,230,230);
+        doc.rect(tX, y - lh + 1, contentW, hRowH, 'F');
+        doc.setDrawColor(26,23,20); doc.setLineWidth(0.2);
+        var cx = tX;
+        tCols.forEach(function(cw, ci) {
+          doc.rect(cx, y - lh + 1, cw, hRowH);
+          doc.text(tHeaders[ci], cx + 2, y + 1);
+          cx += cw;
+        });
+        y += hRowH;
+        // Linhas
+        doc.setFont('helvetica', 'normal');
+        udsPDF.forEach(function(u) {
+          var col1 = doc.splitTextToSize(u.nome, tCols[0] - 4);
+          var col2 = doc.splitTextToSize(u.cnpj, tCols[1] - 4);
+          var col3 = doc.splitTextToSize(u.end,  tCols[2] - 4);
+          var col4 = doc.splitTextToSize(u.cep,  tCols[3] - 4);
+          var maxL = Math.max(col1.length, col2.length, col3.length, col4.length);
+          var rH = maxL * (lh - 0.5) + 3;
+          checkPage();
+          doc.setDrawColor(26,23,20); doc.setLineWidth(0.2);
+          cx = tX;
+          [col1,col2,col3,col4].forEach(function(lines, ci) {
+            doc.rect(cx, y - lh + 1, tCols[ci], rH);
+            lines.forEach(function(l, li) { doc.text(l, cx + 2, y + li * (lh - 0.5)); });
+            cx += tCols[ci];
+          });
+          y += rH;
+        });
+        doc.setFontSize(10);
+      }
+    }
     y += espacoMedio;
 
     // 14.2
