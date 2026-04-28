@@ -260,6 +260,10 @@
     <div class="setores-grid" id="setores-sec2">
       <label class="setor-option"><input type="checkbox" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
       <label class="setor-option"><input type="checkbox" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
+      <label class="setor-option"><input type="checkbox" value="Central de Aquisições e Contratações"> Central de Aquisições e Contratações</label>
+      <label class="setor-option"><input type="checkbox" value="Célula de Planejamento e Gestão em Engenharia e Arquitetura"> Célula de Planejamento e Gestão em Engenharia e Arquitetura</label>
+      <label class="setor-option"><input type="checkbox" value="Célula de Obras e Serviços de Engenharia"> Célula de Obras e Serviços de Engenharia</label>
+      <label class="setor-option"><input type="checkbox" value="Célula de Administração do CAPGV"> Célula de Administração do CAPGV</label>
     </div>
   </div>
 
@@ -268,6 +272,10 @@
     <div class="setores-grid" id="setores-sec3">
       <label class="setor-option"><input type="checkbox" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
       <label class="setor-option"><input type="checkbox" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
+      <label class="setor-option"><input type="checkbox" value="Central de Aquisições e Contratações"> Central de Aquisições e Contratações</label>
+      <label class="setor-option"><input type="checkbox" value="Célula de Planejamento e Gestão em Engenharia e Arquitetura"> Célula de Planejamento e Gestão em Engenharia e Arquitetura</label>
+      <label class="setor-option"><input type="checkbox" value="Célula de Obras e Serviços de Engenharia"> Célula de Obras e Serviços de Engenharia</label>
+      <label class="setor-option"><input type="checkbox" value="Célula de Administração do CAPGV"> Célula de Administração do CAPGV</label>
     </div>
   </div>
 
@@ -276,6 +284,10 @@
     <div class="setores-grid" id="setores-sec4">
       <label class="setor-option"><input type="radio" name="sec4" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
       <label class="setor-option"><input type="radio" name="sec4" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Central de Aquisições e Contratações"> Central de Aquisições e Contratações</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Célula de Planejamento e Gestão em Engenharia e Arquitetura"> Célula de Planejamento e Gestão em Engenharia e Arquitetura</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Célula de Obras e Serviços de Engenharia"> Célula de Obras e Serviços de Engenharia</label>
+      <label class="setor-option"><input type="radio" name="sec4" value="Célula de Administração do CAPGV"> Célula de Administração do CAPGV</label>
     </div>
   </div>
 
@@ -2153,6 +2165,25 @@ function exportarPDF() {
 
     let y = marginT;
 
+    function renderHeaderFooter(pageNum, totalPages) {
+      // Logo em todas as paginas
+      if (logoBase64 && logoNaturalH > 0) {
+        try {
+          var fmt = logoBase64.split(';')[0].split('/')[1].toUpperCase();
+          if (fmt === 'JPG') fmt = 'JPEG';
+          var b64 = logoBase64.split(',')[1];
+          var lRatio = logoNaturalW / logoNaturalH;
+          var lH = 18, lW = lH * lRatio;
+          doc.addImage(b64, fmt, marginL, 16, lW, lH);
+        } catch(e) {}
+      }
+      // Numero de pagina centralizado no rodape
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+      doc.setTextColor(150, 140, 130);
+      doc.text(pageNum + ' / ' + totalPages, pageW / 2, pageH - 10, { align: 'center' });
+      doc.setTextColor(26, 23, 20);
+    }
+
     function checkPage() {
       if (y >= pageH - marginB) { doc.addPage(); y = marginT; }
     }
@@ -2267,19 +2298,7 @@ function exportarPDF() {
       if (textColor) doc.setTextColor(26, 23, 20);
     }
 
-    // Logo fixa do GitHub
-    if (logoBase64 && logoNaturalH > 0) {
-      try {
-        var fmt = logoBase64.split(';')[0].split('/')[1].toUpperCase();
-        if (fmt === 'JPG') fmt = 'JPEG';
-        var b64data = logoBase64.split(',')[1];
-        var imgRatio = logoNaturalW / logoNaturalH;
-        var logoH = 18, logoW = logoH * imgRatio;
-        doc.addImage(b64data, fmt, marginL, 16, logoW, logoH);
-      } catch (err) {
-        console.warn("Erro ao processar logo no PDF.", err);
-      }
-    }
+    // Logo sera adicionada em todas as paginas pelo loop final
 
     // Cabeçalho
     doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
@@ -2900,14 +2919,21 @@ function exportarPDF() {
       y = rowMaxY;
     }
 
-    // Rodapé
-    const footerY = pageH - marginB + 8;
-    doc.setDrawColor(212, 207, 200); doc.setLineWidth(0.2);
-    doc.line(marginL, footerY - 4, pageW - marginR, footerY - 4);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 140, 130);
-    const dataStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-    doc.text((anexo ? 'ANEXO ' + anexo.toUpperCase() + '  ·  ' : '') + titulo, marginL, footerY);
-    doc.text(dataStr, pageW - marginR, footerY, { align: 'right' });
+    // Aplicar header/footer em TODAS as paginas
+    var totalPages = doc.getNumberOfPages();
+    for (var pi = 1; pi <= totalPages; pi++) {
+      doc.setPage(pi);
+      renderHeaderFooter(pi, totalPages);
+      // Linha e textos do rodape
+      var footerY = pageH - marginB + 8;
+      doc.setDrawColor(212, 207, 200); doc.setLineWidth(0.2);
+      doc.line(marginL, footerY - 4, pageW - marginR, footerY - 4);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 140, 130);
+      var dataStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+      doc.text((anexo ? 'ANEXO ' + anexo.toUpperCase() + '  ·  ' : '') + titulo, marginL, footerY);
+      doc.text(dataStr, pageW - marginR, footerY, { align: 'right' });
+      doc.setTextColor(26, 23, 20);
+    }
 
     doc.save('ProjetoBasico.pdf');
     
