@@ -119,11 +119,12 @@
         .model-opt .model-label { flex: 1; }
 
         .items-wrapper-sub { background: var(--accent-light); border: 1px solid #c3d9c9; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; }
-        .item-row-sub { display: grid; grid-template-columns: 52px 1fr 28px; gap: 6px; align-items: start; margin-bottom: 6px; }
-        .item-row-sub .item-num-label { padding-top: 9px; }
-        .item-row-sub textarea { background: white; border: 1px solid #c3d9c9; border-radius: 3px; padding: 7px 10px; font-family: var(--font-display); font-size: 0.83rem; font-weight: 300; color: var(--ink); outline: none; resize: vertical; min-height: 64px; line-height: 1.5; width: 100%; }
+        .item-row-sub { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+        .item-row-sub-header { display: flex; justify-content: space-between; align-items: center; }
+        .item-row-sub .item-num-label { padding-top: 0; font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); font-weight: 400; }
+        .item-row-sub textarea { background: white; border: 1px solid #c3d9c9; border-radius: 3px; padding: 10px 12px; font-family: var(--font-display); font-size: 0.88rem; font-weight: 300; color: var(--ink); outline: none; resize: vertical; min-height: 110px; line-height: 1.6; width: 100%; }
         .item-row-sub textarea:focus { border-color: var(--accent); }
-        .item-row-sub .item-remove { padding-top: 8px; background: none; border: none; cursor: pointer; color: var(--ink-3); font-size: 1rem; line-height: 1; border-radius: 2px; transition: color 0.15s; }
+        .item-row-sub .item-remove { background: none; border: none; cursor: pointer; color: var(--ink-3); font-size: 1rem; line-height: 1; border-radius: 2px; transition: color 0.15s; padding: 0; }
         .item-row-sub .item-remove:hover { color: var(--danger); }
         .item-row-sub .item-remove[disabled] { opacity: 0.2; cursor: default; pointer-events: none; }
 
@@ -316,6 +317,13 @@
     <p class="form-section-label">Seção 7 — Critérios para seleção do fornecedor</p>
 
     <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin-bottom:6px;">7.2.2 — Acervo Técnico-Operacional (parcelas de maior relevância)</p>
+    <div class="toggle-field" style="padding:4px 0;margin-bottom:8px;">
+      <label for="chk-replicar-7322" style="font-size:0.85rem;font-weight:400;color:var(--ink);">Replicar itens em 7.3.2</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-replicar-7322" checked onchange="toggleReplicar7322()">
+        <span class="slider"></span>
+      </label>
+    </div>
     <div class="models-panel" id="models-panel-7222">
       <p class="items-header" style="margin-bottom:6px;">Sugestões — marque para adicionar</p>
       <div class="models-list" id="models-list-7222"></div>
@@ -323,18 +331,28 @@
     <div id="items-wrapper-7222" class="items-wrapper-sub visible" style="margin-top:8px;">
       <p class="items-header">Itens 7.2.2.x</p>
       <div id="items-list-7222"></div>
-      <button type="button" class="btn-add-item" onclick="addSubItem('7222')">+ Adicionar item em branco</button>
+      <button type="button" class="btn-add-item" onclick="addSubItem7222Blank()">+ Adicionar item em branco</button>
     </div>
 
     <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:14px 0 6px;">7.3.2 — Acervo Técnico-Profissional (parcelas de maior relevância)</p>
-    <div class="models-panel" id="models-panel-7322">
-      <p class="items-header" style="margin-bottom:6px;">Sugestões — marque para adicionar</p>
-      <div class="models-list" id="models-list-7322"></div>
+
+    <!-- Painel independente 7.3.2 — visivel apenas quando NAO replicar -->
+    <div id="wrapper-7322-independente" style="display:none;">
+      <div class="models-panel" id="models-panel-7322">
+        <p class="items-header" style="margin-bottom:6px;">Sugestões — marque para adicionar</p>
+        <div class="models-list" id="models-list-7322"></div>
+      </div>
+      <div id="items-wrapper-7322" class="items-wrapper-sub visible" style="margin-top:8px;">
+        <p class="items-header">Itens 7.3.2.x</p>
+        <div id="items-list-7322"></div>
+        <button type="button" class="btn-add-item" onclick="addSubItem7322Blank()">+ Adicionar item em branco</button>
+      </div>
     </div>
-    <div id="items-wrapper-7322" class="items-wrapper-sub visible" style="margin-top:8px;">
-      <p class="items-header">Itens 7.3.2.x</p>
-      <div id="items-list-7322"></div>
-      <button type="button" class="btn-add-item" onclick="addSubItem('7322')">+ Adicionar item em branco</button>
+
+    <!-- Preview replicado (somente leitura) -->
+    <div id="wrapper-7322-replicado" style="background:var(--accent-light);border:1px solid #c3d9c9;border-radius:4px;padding:10px;margin-bottom:4px;opacity:0.75;">
+      <p class="items-header" style="margin-bottom:6px;">Itens 7.3.2.x — replicados de 7.2.2</p>
+      <div id="preview-7322-replicado" style="font-family:var(--font-display);font-size:0.82rem;font-weight:300;color:var(--ink-2);display:flex;flex-direction:column;gap:4px;"></div>
     </div>
 
     <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:14px 0 6px;">Soma de atestados (7.4)</p>
@@ -882,39 +900,108 @@ function initModelosPanel(group) {
 }
 
 function toggleModelo(group, modeloId) {
-  const chk = document.getElementById('chk-' + group + '-' + modeloId);
-  const modelo = MODELOS_722.find(m => m.id === modeloId);
+  var chk = document.getElementById('chk-' + group + '-' + modeloId);
+  var modelo = MODELOS_722.find(function(m) { return m.id === modeloId; });
   if (!modelo) return;
 
   if (chk.checked) {
-    // Adicionar item com texto do modelo
-    const n = ++subItemCounts[group];
-    const list = document.getElementById('items-list-' + group);
-    const row = document.createElement('div');
+    var n = ++subItemCounts[group];
+    var list = document.getElementById('items-list-' + group);
+    var prefix = group === '7222' ? '7.2.2.' : '7.3.2.';
+
+    var row = document.createElement('div');
     row.className = 'item-row-sub';
     row.id = 'subrow-' + group + '-' + n;
-    const prefix = group === '7222' ? '7.2.2.' : '7.3.2.';
-    const isFirst = (list.querySelectorAll('.item-row-sub').length === 0);
-    row.innerHTML = `
-      <span class="item-num-label" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);font-weight:400;text-align:right;padding-right:4px;">${prefix}${n}</span>
-      <textarea id="subtext-${group}-${n}" placeholder="Descrição…">${modelo.texto};</textarea>
-      <button type="button" class="item-remove" onclick="removeModeloItem('${group}', ${n}, '${modeloId}')" ${isFirst && list.querySelectorAll('.item-row-sub').length === 0 ? '' : ''}>×</button>`;
+
+    var header = document.createElement('div');
+    header.className = 'item-row-sub-header';
+
+    var spanNum = document.createElement('span');
+    spanNum.className = 'item-num-label';
+    spanNum.textContent = prefix + n;
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'item-remove';
+    btn.textContent = '×';
+    (function(g, num, mid) {
+      btn.addEventListener('click', function() { removeModeloItem(g, num, mid); });
+    })(group, n, modeloId);
+
+    header.appendChild(spanNum);
+    header.appendChild(btn);
+
+    var ta = document.createElement('textarea');
+    ta.id = 'subtext-' + group + '-' + n;
+    ta.placeholder = 'Descrição…';
+    ta.value = modelo.texto + ';';
+
+    // Se grupo 7222: atualizar preview ao digitar
+    if (group === '7222') {
+      ta.addEventListener('input', function() {
+        var chkRep = document.getElementById('chk-replicar-7322');
+        if (chkRep && chkRep.checked) atualizarPreview7322();
+      });
+    }
+
+    row.appendChild(header);
+    row.appendChild(ta);
     list.appendChild(row);
+
     modeloItemMap[group][modeloId] = n;
     renumerarSub(group);
-    // Garante que o botão do primeiro item seja habilitado quando há mais de 1
     atualizarBotoesRemover(group);
+    if (group === '7222' && document.getElementById('chk-replicar-7322') && document.getElementById('chk-replicar-7322').checked) { atualizarPreview7322(); }
   } else {
-    // Remover item correspondente
-    const n = modeloItemMap[group][modeloId];
-    if (n !== undefined) {
-      const el = document.getElementById('subrow-' + group + '-' + n);
+    var num = modeloItemMap[group][modeloId];
+    if (num !== undefined) {
+      var el = document.getElementById('subrow-' + group + '-' + num);
       if (el) el.remove();
       delete modeloItemMap[group][modeloId];
       renumerarSub(group);
       atualizarBotoesRemover(group);
+      if (group === '7222' && document.getElementById('chk-replicar-7322') && document.getElementById('chk-replicar-7322').checked) { atualizarPreview7322(); }
     }
   }
+}
+
+function toggleReplicar7322() {
+  var replicar = document.getElementById('chk-replicar-7322').checked;
+  document.getElementById('wrapper-7322-replicado').style.display  = replicar ? '' : 'none';
+  document.getElementById('wrapper-7322-independente').style.display = replicar ? 'none' : '';
+  if (replicar) atualizarPreview7322();
+}
+
+function atualizarPreview7322() {
+  var preview = document.getElementById('preview-7322-replicado');
+  if (!preview) return;
+  preview.innerHTML = '';
+  var itens = getSubItems('7222');
+  if (itens.length === 0 || itens.every(function(t){ return !t; })) {
+    var vazio = document.createElement('p');
+    vazio.style.cssText = 'color:var(--ink-3);font-style:italic;font-size:0.8rem;';
+    vazio.textContent = 'Nenhum item em 7.2.2 ainda.';
+    preview.appendChild(vazio);
+  } else {
+    itens.forEach(function(texto, i) {
+      if (!texto) return;
+      var p = document.createElement('p');
+      p.style.cssText = 'padding:4px 6px;background:white;border:1px solid #c3d9c9;border-radius:3px;';
+      p.textContent = '7.3.2.' + (i+1) + '. ' + texto;
+      preview.appendChild(p);
+    });
+  }
+}
+
+// Adicionar item em branco em 7.2.2 e atualizar preview se replicando
+function addSubItem7222Blank() {
+  addSubItem('7222');
+  if (document.getElementById('chk-replicar-7322').checked) atualizarPreview7322();
+}
+
+// Adicionar item em branco em 7.3.2 (modo independente)
+function addSubItem7322Blank() {
+  addSubItem('7322');
 }
 
 function atualizarBotoesRemover(group) {
@@ -1583,8 +1670,8 @@ function getCentralLabel() {
 window.addEventListener('DOMContentLoaded', function() {
   initModelosPanel('7222');
   initModelosPanel('7322');
-  addSubItem('7222');
-  addSubItem('7322');
+  // 7222 e 7322 começam vazios — usuario adiciona ou marca sugestoes
+  toggleReplicar7322();
   addSubItem('111');
   initUFSelect();
   atualizarLogoDoc();
@@ -1637,19 +1724,61 @@ let subItemCounts = { '7222': 0, '7322': 0, '111': 0, 'sub18': 0 };
 
 function addSubItem(group, value) {
   subItemCounts[group]++;
-  const n = subItemCounts[group];
-  const list = document.getElementById('items-list-' + group);
-  const row = document.createElement('div');
+  var n = subItemCounts[group];
+  var list = document.getElementById('items-list-' + group);
+  var isFirst = (list.querySelectorAll('.item-row-sub').length === 0);
+  var prefix = group === '7222' ? '7.2.2.' : group === '7322' ? '7.3.2.' : group === 'sub18' ? '18.1.' : '11.1.';
+  var isBlank = (!value);
+
+  var row = document.createElement('div');
   row.className = 'item-row-sub';
   row.id = 'subrow-' + group + '-' + n;
-  const isFirst = (list.querySelectorAll('.item-row-sub').length === 0);
-  const prefix = group === '7222' ? '7.2.2.' : group === '7322' ? '7.3.2.' : group === 'sub18' ? '18.1.' : '11.1.';
-  row.innerHTML = `
-    <span class="item-num-label" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent);font-weight:400;text-align:right;padding-right:4px;">${prefix}${n}</span>
-    <textarea id="subtext-${group}-${n}" placeholder="Descrição…">${value || ''}</textarea>
-    <button type="button" class="item-remove${isFirst ? '' : ''}" onclick="removeSubItem('${group}', ${n})" ${isFirst ? 'disabled' : ''}>×</button>`;
+
+  // Header: numero + botao x
+  var header = document.createElement('div');
+  header.className = 'item-row-sub-header';
+
+  var spanNum = document.createElement('span');
+  spanNum.className = 'item-num-label';
+  spanNum.textContent = prefix + n;
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'item-remove';
+  btn.textContent = '×';
+  if (isFirst) btn.setAttribute('disabled', '');
+  (function(g, num) {
+    btn.addEventListener('click', function() { removeSubItem(g, num); });
+  })(group, n);
+
+  header.appendChild(spanNum);
+  header.appendChild(btn);
+
+  // Textarea ocupa largura total
+  var ta = document.createElement('textarea');
+  ta.id = 'subtext-' + group + '-' + n;
+  ta.placeholder = 'Descrição…';
+  if (value) ta.value = value;
+
+  // Se grupo 7222: atualizar preview ao digitar
+  if (group === '7222') {
+    ta.addEventListener('input', function() {
+      var chkRep = document.getElementById('chk-replicar-7322');
+      if (chkRep && chkRep.checked) atualizarPreview7322();
+    });
+  }
+
+  row.appendChild(header);
+  row.appendChild(ta);
   list.appendChild(row);
+
+  if (isBlank) setTimeout(function(){ ta.focus(); }, 50);
+
   renumerarSub(group);
+
+  if (group === '7222' && document.getElementById('chk-replicar-7322') && document.getElementById('chk-replicar-7322').checked) {
+    atualizarPreview7322();
+  }
 }
 
 function removeSubItem(group, n) {
@@ -1845,7 +1974,7 @@ function gerar() {
   // 7.1.1.1
   const numAnexo = anexo || '___';
   document.getElementById('out-sec7-item711').innerHTML =
-    `7.1.1.1. os quantitativos fornecidos pelo Banco, bem como os serviços constantes da planilha modelo, <strong>Anexo denominado ${numAnexo}</strong>, NÃO poderão ser alterados;`;
+    '7.1.1.1. os quantitativos fornecidos pelo Banco, bem como os serviços constantes da planilha modelo, <strong>Anexo denominado Planilha de Orçamento</strong>, NÃO poderão ser alterados;';
 
   // itens dependentes do tipo de contratação
   const tipoContratacao = document.querySelector('input[name="tipo-contratacao"]:checked').value;
@@ -1873,9 +2002,11 @@ function gerar() {
   });
 
   // 7.3.2.x — lista dinâmica
+  // Se replicando, usa os itens do 7.2.2; senão usa os do próprio 7.3.2
+  var replicando732 = document.getElementById('chk-replicar-7322') && document.getElementById('chk-replicar-7322').checked;
   const container732x = document.getElementById('out-732x');
   container732x.innerHTML = '';
-  const items732 = getSubItems('7322');
+  const items732 = replicando732 ? getSubItems('7222') : getSubItems('7322');
   const prefix732 = '7.3.2.';
   items732.forEach((val, i) => {
     const p = document.createElement('p');
@@ -2368,8 +2499,8 @@ function exportarPDF() {
     printHangingBlock('7.1.1.', `cronograma físico-financeiro, em formato Excel (.xls ou .xlsx), elaborado com base na planilha de orçamento divulgada no edital, observando que esta deverá ter seus valores readequados ao último lance ofertado aplicando linearmente o desconto sobre a totalidade dos itens. O cronograma físico-financeiro deverá explicitar, dentre outros dados, os valores referentes a materiais/equipamentos e à mão de obra correspondente a cada etapa da ${eObraPDF ? 'obra' : 'serviço'}:`, 10);
     y += espacoPequeno;
     printBlockWithBoldJustified(
-      `os quantitativos fornecidos pelo Banco, bem como os serviços constantes da planilha modelo, Anexo denominado ${numAnexo}, NÃO poderão ser alterados;`,
-      `Anexo denominado ${numAnexo}`, 20, '7.1.1.1.', false);
+      'os quantitativos fornecidos pelo Banco, bem como os serviços constantes da planilha modelo, Anexo denominado Planilha de Orçamento, NÃO poderão ser alterados;',
+      'Anexo denominado Planilha de Orçamento', 20, '7.1.1.1.', false);
     y += espacoPequeno;
     printHangingBlock('7.1.2.', 'caso conste a indicação de marcas nas especificações dos produtos constantes da planilha, projeto, caderno de especificações ou qualquer outra peça técnica anexa do edital, além dessas poderão ser cotadas outras marcas, desde que mantida ou superada a qualidade dos produtos indicados.', 10);
     y += espacoMedio;
@@ -2404,7 +2535,8 @@ function exportarPDF() {
     printHangingBlock('7.3.2.', `Certidão de Acervo Técnico, fornecida pelo conselho profissional competente, ou atestado devidamente registrado no referido conselho, emitido(s) por pessoa jurídica de direito público ou privado, atestando a execução de ${eObraPDF ? 'obra' : 'serviço'} de características semelhantes, de complexidade tecnológica e operacionais equivalentes ou superiores às constantes adiante, as quais representam maior relevância técnica e valor significativo:`, 10);
     y += espacoPequeno;
 
-    const items732pdf = getSubItems('7322');
+    var replicando732pdf = document.getElementById('chk-replicar-7322') && document.getElementById('chk-replicar-7322').checked;
+    const items732pdf = replicando732pdf ? getSubItems('7222') : getSubItems('7322');
     items732pdf.forEach((val, i) => {
       const num = '7.3.2.' + (i + 1) + '.';
       printHangingBlock(num, val || '[Ver exemplos contidos na NOTA 5 a seguir, ou definir o que pode ser considerada parcela de maior relevância para o caso concreto];', 20, !val);
