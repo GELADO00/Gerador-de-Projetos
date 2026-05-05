@@ -407,6 +407,10 @@
       <div id="items-list-111"></div>
       <button type="button" class="btn-add-item" onclick="addSubItem('111')">+ Adicionar item</button>
     </div>
+    <div class="field" style="margin-top:10px;">
+      <label for="f-anexo-112">11.2 — Nome do Anexo</label>
+      <input type="text" id="f-anexo-112" placeholder="Ex: Planilha de Orçamento">
+    </div>
 
   </div>
 
@@ -1878,7 +1882,7 @@ function numeroPorExtenso(n) {
   const unidades = ['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove',
     'dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
   const dezenas = ['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
-  const centenas = ['','cem','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+  const centenas = ['','cento','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
   if (n === 100) return 'cem';
   if (n < 20) return unidades[n];
   if (n < 100) {
@@ -1887,7 +1891,7 @@ function numeroPorExtenso(n) {
   }
   if (n < 1000) {
     const c = Math.floor(n / 100), resto = n % 100;
-    return centenas[c] + (resto ? ' e ' + numeroPorExtenso(resto) : '');
+    return (c === 1 && resto === 0 ? 'cem' : centenas[c]) + (resto ? ' e ' + numeroPorExtenso(resto) : '');
   }
   if (n < 1000000) {
     const mil = Math.floor(n / 1000), resto = n % 1000;
@@ -2100,9 +2104,9 @@ function gerar() {
     container111.appendChild(p);
   });
 
-  const anexo11 = document.getElementById('f-anexo').value.trim();
+  const anexo11 = document.getElementById('f-anexo-112').value.trim();
   const el112 = document.getElementById('out-112');
-  el112.textContent = `11.2. O detalhamento das informações consta do Anexo denominado ${anexo11 || '____'}.`;
+  el112.textContent = '11.2. O detalhamento das informações consta do Anexo denominado ' + (anexo11 || '____') + '.';
   if (!anexo11) { el112.style.color = 'var(--ink-3)'; el112.style.fontStyle = 'italic'; }
   else { el112.style.color = 'var(--ink)'; el112.style.fontStyle = 'normal'; }
 
@@ -2616,8 +2620,8 @@ function exportarPDF() {
     });
     y += espacoPequeno;
 
-    const anexo11pdf = document.getElementById('f-anexo').value.trim();
-    printHangingBlock('11.2.', `O detalhamento das informações consta do Anexo denominado ${anexo11pdf || '____'}.`, 0, !anexo11pdf);
+    var anexo11pdf = document.getElementById('f-anexo-112').value.trim();
+    printHangingBlock('11.2.', 'O detalhamento das informações consta do Anexo denominado ' + (anexo11pdf || '____') + '.', 0, !anexo11pdf);
     y += gapSecao;
 
     // 12
