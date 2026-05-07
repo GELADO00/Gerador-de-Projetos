@@ -433,6 +433,14 @@
   <div class="form-section">
     <p class="form-section-label">Seção 14 — Condições de Pagamento</p>
 
+    <div class="toggle-field" style="padding:4px 0;margin-bottom:10px;">
+      <label for="chk-asbuilt" style="font-size:0.85rem;font-weight:400;color:var(--ink);">Solicitar As Built (14.3.1)</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-asbuilt" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <div class="field">
       <label>Periodicidade das medições (14.1.1)</label>
       <div class="radio-group">
@@ -729,8 +737,8 @@
     <p class="doc-body hanging indent-1">14.2.3. alvará da obra ou serviço.</p>
 
     <p class="doc-body hanging" style="margin-top:8pt;">14.3. As demais parcelas serão liberadas quando cumpridas, conforme o cronograma físico-financeiro da obra ou serviço, sendo que a última só o será por ocasião do "Recebimento Provisório", e desde que atendidas as seguintes exigências:</p>
-    <p class="doc-body hanging indent-1">14.3.1. apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;</p>
-    <p class="doc-body hanging indent-1">14.3.2. apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.</p>
+    <p class="doc-body hanging indent-1" id="out-1431">14.3.1. apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;</p>
+    <p class="doc-body hanging indent-1" id="out-1432">14.3.2. apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.</p>
 
     <p class="doc-body hanging" style="margin-top:8pt;">14.4. Para os itens que envolvem o fornecimento/instalação de equipamentos deverão ser observadas as seguintes etapas:</p>
     <table class="doc-table" style="margin:8pt 0 0 28px;width:calc(100% - 28px);border-collapse:collapse;font-family:var(--font-doc);font-size:10pt;table-layout:fixed;">
@@ -2123,14 +2131,25 @@ function gerar() {
     el121.style.color = 'var(--ink-3)'; el121.style.fontStyle = 'italic';
   }
 
-  const termoInicio12 = eObra ? 'da obra' : 'do serviço';
-  document.getElementById('out-122').textContent =
-    `12.2. O efetivo início ${termoInicio12} deverá ocorrer em até 20 (vinte) dias após a assinatura do instrumento contratual, podendo ser prorrogado, a critério do Banco ou mediante solicitação formal da empresa, desde que devidamente justificada e acatada pelo CONTRATANTE.`;
+  var termoInicio12 = eObra ? 'da obra' : 'do serviço';
+  document.getElementById('out-122').textContent = '12.2. O efetivo início ' + termoInicio12 + ' deverá ocorrer em até 20 (vinte) dias após a convocação para assinatura do instrumento contratual, podendo ser prorrogado, a critério do Banco ou mediante solicitação formal da empresa, desde que devidamente justificada e acatada pelo CONTRATANTE.';
 
   document.getElementById('out-123').textContent =
     '12.3. É obrigação do contratado adotar todas as medidas necessárias para efetivo e correto início da intervenção no prazo acima citado, considerando que tomou conhecimento das condições de execução e do porte da intervenção desde a publicação do edital. Para tal, deve atentar para providências como:';
 
   // Seção 14
+  var asBuilt = document.getElementById('chk-asbuilt').checked;
+  var el1431 = document.getElementById('out-1431');
+  var el1432 = document.getElementById('out-1432');
+  if (asBuilt) {
+    el1431.style.display = '';
+    el1431.textContent = '14.3.1. apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;';
+    el1432.textContent = '14.3.2. apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.';
+  } else {
+    el1431.style.display = 'none';
+    el1432.textContent = '14.3.1. apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.';
+  }
+
   const periodicidade = document.querySelector('input[name="periodicidade"]:checked').value;
   const periodicidadeLabel = periodicidade === 'quinzenal' ? 'quinzenais' : 'mensais';
   const periodicidadeAdv = periodicidade === 'quinzenal' ? 'quinzenalmente' : 'mensalmente';
@@ -2638,8 +2657,8 @@ function exportarPDF() {
     }
     y += espacoPequeno;
 
-    const termoInicio12pdf = eObraPDF ? 'da obra' : 'do serviço';
-    printHangingBlock('12.2.', `O efetivo início ${termoInicio12pdf} deverá ocorrer em até 20 (vinte) dias após a assinatura do instrumento contratual, podendo ser prorrogado, a critério do Banco ou mediante solicitação formal da empresa, desde que devidamente justificada e acatada pelo CONTRATANTE.`, 0);
+    var termoInicio12pdf = eObraPDF ? 'da obra' : 'do serviço';
+    printHangingBlock('12.2.', 'O efetivo início ' + termoInicio12pdf + ' deverá ocorrer em até 20 (vinte) dias após a convocação para assinatura do instrumento contratual, podendo ser prorrogado, a critério do Banco ou mediante solicitação formal da empresa, desde que devidamente justificada e acatada pelo CONTRATANTE.', 0);
     y += espacoPequeno;
 
     printHangingBlock('12.3.', 'É obrigação do contratado adotar todas as medidas necessárias para efetivo e correto início da intervenção no prazo acima citado, considerando que tomou conhecimento das condições de execução e do porte da intervenção desde a publicação do edital. Para tal, deve atentar para providências como:', 0);
@@ -2751,9 +2770,14 @@ function exportarPDF() {
     // 14.3
     printHangingBlock('14.3.', 'As demais parcelas serão liberadas quando cumpridas, conforme o cronograma físico-financeiro da obra ou serviço, sendo que a última só o será por ocasião do "Recebimento Provisório", e desde que atendidas as seguintes exigências:', 0);
     y += espacoPequeno;
-    printHangingBlock('14.3.1.', 'apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;', 10);
-    y += espacoPequeno;
-    printHangingBlock('14.3.2.', 'apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.', 10);
+    var asBuiltPDF = document.getElementById('chk-asbuilt').checked;
+    if (asBuiltPDF) {
+      printHangingBlock('14.3.1.', 'apresentação do As Built, compreendendo todos os projetos licitados e outro(s) surgido(s) no decorrer da obra, em meio magnético (DWG) nas escalas devidas e uma cópia em PDF devidamente assinado por responsável técnico e pelo representante legal da empresa;', 10);
+      y += espacoPequeno;
+      printHangingBlock('14.3.2.', 'apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.', 10);
+    } else {
+      printHangingBlock('14.3.1.', 'apresentação do Relatório de Certificação do Cabeamento Estruturado em meio magnético (PDF) devidamente assinado por responsável técnico e pelo representante legal da empresa.', 10);
+    }
     y += espacoMedio;
 
     // 14.4 — tabela
