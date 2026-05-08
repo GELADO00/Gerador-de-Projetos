@@ -56,12 +56,29 @@
 
         aside {
             grid-column: 1; grid-row: 2;
-            padding: 2rem 2rem 2rem 3rem;
             border-right: 1px solid var(--rule);
-            overflow-y: auto;
             height: calc(100vh - 74px);
             position: sticky;
             top: 74px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .aside-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem 2rem 1rem 3rem;
+        }
+
+        .aside-footer {
+            flex-shrink: 0;
+            background: var(--paper);
+            border-top: 1px solid var(--rule);
+            padding: 12px 2rem 12px 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .form-section { margin-bottom: 2rem; }
@@ -133,6 +150,10 @@
         .setor-option:has(input:checked) { background: var(--accent-light); border-color: #a3c4ab; color: var(--accent); font-weight: 500; }
         .setor-option input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
 
+        .setor-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-light); border: 1px solid #a3c4ab; border-radius: 20px; padding: 4px 10px 4px 12px; font-family: var(--font-display); font-size: 0.78rem; font-weight: 400; color: var(--accent); }
+        .setor-tag button { background: none; border: none; cursor: pointer; color: var(--accent); font-size: 1rem; line-height: 1; padding: 0; opacity: 0.7; }
+        .setor-tag button:hover { opacity: 1; }
+
         .radio-group { display: flex; flex-direction: column; gap: 6px; }
         .radio-opt { display: flex; align-items: center; gap: 8px; padding: 8px 11px; background: var(--paper-2); border: 1px solid var(--rule); border-radius: 3px; cursor: pointer; font-size: 0.88rem; font-weight: 300; color: var(--ink); transition: border-color 0.15s, background 0.15s; }
         .radio-opt:has(input:checked) { background: var(--accent-light); border-color: #a3c4ab; color: var(--accent); font-weight: 500; }
@@ -197,7 +218,8 @@
         @media (max-width: 860px) {
             body { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
             header { grid-column: 1; padding: 1.2rem 1.5rem; }
-            aside { grid-column: 1; grid-row: 2; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--rule); padding: 1.5rem; }
+            aside { grid-column: 1; grid-row: 2; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--rule); display: block; overflow: visible; }
+            .aside-scroll { padding: 1.5rem; overflow-y: visible; }
             main { grid-column: 1; grid-row: 3; padding: 1.5rem; height: auto; }
             .page-sheet { padding: 30px 24px; }
             .doc-header-logos { top: 15px; left: 24px; }
@@ -214,6 +236,7 @@
 </header>
 
 <aside>
+  <div class="aside-scroll">
   <div class="form-section">
     <p class="form-section-label">Tipo de contratação</p>
     <div class="radio-group">
@@ -258,38 +281,48 @@
 
   <div class="form-section">
     <p class="form-section-label">Seção 2 — Unidade(s) responsável(eis) pelas informações</p>
-    <div class="setores-grid" id="setores-sec2">
-      <label class="setor-option"><input type="checkbox" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
-      <label class="setor-option"><input type="checkbox" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
-      <label class="setor-option"><input type="checkbox" value="Central de Aquisições e Contratações"> Central de Aquisições e Contratações</label>
-      <label class="setor-option"><input type="checkbox" value="Célula de Planejamento e Gestão em Engenharia e Arquitetura"> Célula de Planejamento e Gestão em Engenharia e Arquitetura</label>
-      <label class="setor-option"><input type="checkbox" value="Célula de Obras e Serviços de Engenharia"> Célula de Obras e Serviços de Engenharia</label>
-      <label class="setor-option"><input type="checkbox" value="Célula de Administração do CAPGV"> Célula de Administração do CAPGV</label>
-    </div>
+          <select style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;cursor:pointer;" onchange="addSetor('sec2', this)">
+<option value="">-- Selecionar --</option>
+        <option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>
+        <option value="Ambiente de Engenharia e Arquitetura">Ambiente de Engenharia e Arquitetura</option>
+        <option value="Central de Aquisições e Contratações">Central de Aquisições e Contratações</option>
+        <option value="Célula de Planejamento e Gestão em Engenharia e Arquitetura">Célula de Planejamento e Gestão em Engenharia e Arquitetura</option>
+        <option value="Célula de Obras e Serviços de Engenharia">Célula de Obras e Serviços de Engenharia</option>
+        <option value="Célula de Administração do CAPGV">Célula de Administração do CAPGV</option>
+      </select>
+      <div id="tags-sec2" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+      <!-- hidden checkboxes mantidos para compatibilidade com gerar() -->
+      <div id="setores-sec2" style="display:none;"></div>
   </div>
 
   <div class="form-section">
     <p class="form-section-label">Seção 3 — Unidade(s) responsável(eis) pela elaboração</p>
-    <div class="setores-grid" id="setores-sec3">
-      <label class="setor-option"><input type="checkbox" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
-      <label class="setor-option"><input type="checkbox" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
-      <label class="setor-option"><input type="checkbox" value="Central de Aquisições e Contratações"> Central de Aquisições e Contratações</label>
-      <label class="setor-option"><input type="checkbox" value="Célula de Planejamento e Gestão em Engenharia e Arquitetura"> Célula de Planejamento e Gestão em Engenharia e Arquitetura</label>
-      <label class="setor-option"><input type="checkbox" value="Célula de Obras e Serviços de Engenharia"> Célula de Obras e Serviços de Engenharia</label>
-      <label class="setor-option"><input type="checkbox" value="Célula de Administração do CAPGV"> Célula de Administração do CAPGV</label>
-    </div>
+          <select style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;cursor:pointer;" onchange="addSetor('sec3', this)">
+<option value="">-- Selecionar --</option>
+        <option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>
+        <option value="Ambiente de Engenharia e Arquitetura">Ambiente de Engenharia e Arquitetura</option>
+        <option value="Central de Aquisições e Contratações">Central de Aquisições e Contratações</option>
+        <option value="Célula de Planejamento e Gestão em Engenharia e Arquitetura">Célula de Planejamento e Gestão em Engenharia e Arquitetura</option>
+        <option value="Célula de Obras e Serviços de Engenharia">Célula de Obras e Serviços de Engenharia</option>
+        <option value="Célula de Administração do CAPGV">Célula de Administração do CAPGV</option>
+      </select>
+      <div id="tags-sec3" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"></div>
+      <!-- hidden checkboxes mantidos para compatibilidade com gerar() -->
+      <div id="setores-sec3" style="display:none;"></div>
   </div>
 
   <div class="form-section">
     <p class="form-section-label">Seção 4 — Unidade responsável pela fiscalização</p>
-    <div class="setores-grid" id="setores-sec4">
-      <label class="setor-option"><input type="radio" name="sec4" value="Central de Serviços Prediais e Manutenções"> Central de Serviços Prediais e Manutenções</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Ambiente de Engenharia e Arquitetura"> Ambiente de Engenharia e Arquitetura</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Central de Aquisições e Contratações"> Central de Aquisições e Contratações</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Célula de Planejamento e Gestão em Engenharia e Arquitetura"> Célula de Planejamento e Gestão em Engenharia e Arquitetura</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Célula de Obras e Serviços de Engenharia"> Célula de Obras e Serviços de Engenharia</label>
-      <label class="setor-option"><input type="radio" name="sec4" value="Célula de Administração do CAPGV"> Célula de Administração do CAPGV</label>
-    </div>
+          <select id="sel-sec4" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;cursor:pointer;" onchange="setSec4(this.value)">
+<option value="">-- Selecionar --</option>
+        <option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>
+        <option value="Ambiente de Engenharia e Arquitetura">Ambiente de Engenharia e Arquitetura</option>
+        <option value="Central de Aquisições e Contratações">Central de Aquisições e Contratações</option>
+        <option value="Célula de Planejamento e Gestão em Engenharia e Arquitetura">Célula de Planejamento e Gestão em Engenharia e Arquitetura</option>
+        <option value="Célula de Obras e Serviços de Engenharia">Célula de Obras e Serviços de Engenharia</option>
+        <option value="Célula de Administração do CAPGV">Célula de Administração do CAPGV</option>
+      </select>
+      <div id="setores-sec4" style="display:none;"></div>
   </div>
 
   <div class="form-section">
@@ -370,6 +403,13 @@
       <div class="field" style="margin-top:0.8rem;">
         <label for="f-just-soma">7.4.1 — Justificativa para não permissão de soma</label>
         <textarea id="f-just-soma" placeholder="Descreva a justificativa para não permitir a soma de atestados…" style="min-height:80px;"></textarea>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Informações adicionais (7.4.x)</p>
+      <div id="items-wrapper-74" class="items-wrapper-sub visible">
+        <div id="items-list-74"></div>
+        <button type="button" class="btn-add-item" onclick="addSubItem74Blank()">+ Adicionar subitem</button>
       </div>
     </div>
   </div>
@@ -571,13 +611,15 @@
     <div style="display:none;">
       <input type="text" id="f-preco-extenso" readonly>
     </div>
-    <p style="font-size:0.78rem;font-weight:500;color:var(--ink-2);margin:12px 0 6px;">Bloco de Assinaturas</p>
-    <div class="field">
-      <label>Ambiente (fixo)</label>
-      <div style="padding:8px 11px;background:var(--paper-3);border:1px solid var(--rule);border-radius:3px;font-family:var(--font-display);font-size:0.88rem;font-weight:500;color:var(--ink-2);">AMBIENTE DE ENGENHARIA E ARQUITETURA</div>
+    <div class="toggle-field" style="padding:4px 0;margin-bottom:8px;">
+      <label for="chk-ass-gerente" style="font-size:0.85rem;font-weight:500;color:var(--ink);">Incluir assinatura do Gerente de Ambiente</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-ass-gerente" checked onchange="document.getElementById('wrapper-ass-gerente').style.display=this.checked?'':'none'">
+        <span class="slider"></span>
+      </label>
     </div>
-
-    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:10px 0 4px;">1ª Assinatura — Gerente de Ambiente</p>
+    <div id="wrapper-ass-gerente">
+    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:4px 0 4px;">1ª Assinatura — Gerente de Ambiente</p>
     <div class="field" style="margin-bottom:0;">
       <label for="ass-gerente-sel">Selecionar Gerente de Ambiente</label>
       <select id="ass-gerente-sel" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
@@ -592,7 +634,17 @@
       </select>
     </div>
 
-    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:14px 0 4px;">2ª Assinatura — Gerente Executivo</p>
+    </div><!-- /wrapper-ass-gerente -->
+
+    <div class="toggle-field" style="padding:4px 0;margin-bottom:8px;margin-top:10px;">
+      <label for="chk-ass-exec" style="font-size:0.85rem;font-weight:500;color:var(--ink);">Incluir assinatura do Gerente Executivo</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-ass-exec" checked onchange="document.getElementById('wrapper-ass-exec').style.display=this.checked?'':'none'">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="wrapper-ass-exec">
+    <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:4px 0 4px;">2ª Assinatura — Gerente Executivo</p>
     <div id="ass-exec-bloco-1" class="ass-exec-bloco">
       <div class="field" style="margin-bottom:6px;">
         <label>Setor</label>
@@ -600,6 +652,10 @@
           <option value="">-- Selecione o setor --</option>
           <option value="Célula de Projeto de Engenharia e Arquitetura">Célula de Projeto de Engenharia e Arquitetura</option>
           <option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>
+          <option value="Célula de Planejamento e Gestão em Engenharia e Arquitetura">Célula de Planejamento e Gestão em Engenharia e Arquitetura</option>
+          <option value="Célula de Obras e Serviços de Engenharia">Célula de Obras e Serviços de Engenharia</option>
+          <option value="Célula de Administração do CAPGV">Célula de Administração do CAPGV</option>
+          <option value="Central de Aquisições e Contratações">Central de Aquisições e Contratações</option>
         </select>
       </div>
       <div class="field" style="margin-bottom:0;">
@@ -616,6 +672,63 @@
           <option value="Sergio Lessa Costa Barboza|Gerente Executivo em Exercício">Sergio Lessa Costa Barboza</option>
           <option value="Matheus Benício de Castro Uchôa|Gerente Executivo em Exercício">Matheus Benício de Castro Uchôa</option>
           <option value="Mauro César do Nascimento|Gerente Executivo em Exercício">Mauro César do Nascimento</option>
+          <option value="ALBERTO Pessoa Rocha|Gerente Executivo em Exercício">ALBERTO Pessoa Rocha</option>
+          <option value="HESIO Alan Nery Vaz|Gerente Executivo em Exercício">HESIO Alan Nery Vaz</option>
+          <option value="RENATO Gadelha Claudio|Gerente Executivo em Exercício">RENATO Gadelha Claudio</option>
+          <option value="RODRIGO Mendes Alves|Gerente Executivo em Exercício">RODRIGO Mendes Alves</option>
+          <option value="JHONATHAN de Moura Batista|Gerente Executivo em Exercício">JHONATHAN de Moura Batista</option>
+          <option value="DAVID Gomes Almeida|Gerente Executivo em Exercício">DAVID Gomes Almeida</option>
+          <option value="JOSE MARIO Rodrigues Rocha Junior|Gerente Executivo em Exercício">JOSE MARIO Rodrigues Rocha Junior</option>
+          <option value="ANDRE Parente Ribeiro Mendes|Gerente Executivo em Exercício">ANDRE Parente Ribeiro Mendes</option>
+          <option value="Marcos BRÁS Moreira|Gerente Executivo em Exercício">Marcos BRÁS Moreira</option>
+          <option value="Antonia KELVIANE da Silva Jorge Adriano|Gerente Executivo em Exercício">Antonia KELVIANE da Silva Jorge Adriano</option>
+          <option value="EILSON Ferreira de Araújo|Gerente Executivo em Exercício">EILSON Ferreira de Araújo</option>
+          <option value="Francisco EDSON Coelho Azevedo|Gerente Executivo em Exercício">Francisco EDSON Coelho Azevedo</option>
+          <option value="Josefa JANEcleide Carvalho de Matos|Gerente Executivo em Exercício">Josefa JANEcleide Carvalho de Matos</option>
+          <option value="VENUS LEITE Silva|Gerente Executivo em Exercício">VENUS LEITE Silva</option>
+        </select>
+      </div>
+    </div>
+
+    </div><!-- /wrapper-ass-exec -->
+
+    <div class="toggle-field" style="padding:4px 0;margin-bottom:8px;margin-top:10px;">
+      <label for="chk-ass-fiscal" style="font-size:0.85rem;font-weight:500;color:var(--ink);">Incluir assinatura do Fiscal do Processo</label>
+      <label class="switch">
+        <input type="checkbox" id="chk-ass-fiscal" onchange="document.getElementById('wrapper-ass-fiscal').style.display=this.checked?'':'none'">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="wrapper-ass-fiscal" style="display:none;">
+      <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin:4px 0 4px;">3ª Assinatura — Fiscal do Processo</p>
+      <div class="field" style="margin-bottom:0;">
+        <label for="ass-fiscal-sel">Selecionar Fiscal</label>
+        <select id="ass-fiscal-sel" style="width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;">
+          <option value="">-- Selecione --</option>
+          <option value="Lívia Lorena Freitas Gomes|Fiscal do Processo">Lívia Lorena Freitas Gomes</option>
+          <option value="Lidyci Thatielle Gurgel Cruz|Fiscal do Processo">Lidyci Thatielle Gurgel Cruz</option>
+          <option value="Paulo Cesar Rodrigues Pinheiro|Fiscal do Processo">Paulo Cesar Rodrigues Pinheiro</option>
+          <option value="Erico de Macedo Gurgel|Fiscal do Processo">Erico de Macedo Gurgel</option>
+          <option value="Gilberto Ferreira e Silva Filho|Fiscal do Processo">Gilberto Ferreira e Silva Filho</option>
+          <option value="Fernanda Linard de Paula|Fiscal do Processo">Fernanda Linard de Paula</option>
+          <option value="Valmir Silva Pereira|Fiscal do Processo">Valmir Silva Pereira</option>
+          <option value="Sergio Lessa Costa Barboza|Fiscal do Processo">Sergio Lessa Costa Barboza</option>
+          <option value="Matheus Benício de Castro Uchôa|Fiscal do Processo">Matheus Benício de Castro Uchôa</option>
+          <option value="Mauro César do Nascimento|Fiscal do Processo">Mauro César do Nascimento</option>
+          <option value="ALBERTO Pessoa Rocha|Fiscal do Processo">ALBERTO Pessoa Rocha</option>
+          <option value="HESIO Alan Nery Vaz|Fiscal do Processo">HESIO Alan Nery Vaz</option>
+          <option value="RENATO Gadelha Claudio|Fiscal do Processo">RENATO Gadelha Claudio</option>
+          <option value="RODRIGO Mendes Alves|Fiscal do Processo">RODRIGO Mendes Alves</option>
+          <option value="JHONATHAN de Moura Batista|Fiscal do Processo">JHONATHAN de Moura Batista</option>
+          <option value="DAVID Gomes Almeida|Fiscal do Processo">DAVID Gomes Almeida</option>
+          <option value="JOSE MARIO Rodrigues Rocha Junior|Fiscal do Processo">JOSE MARIO Rodrigues Rocha Junior</option>
+          <option value="ANDRE Parente Ribeiro Mendes|Fiscal do Processo">ANDRE Parente Ribeiro Mendes</option>
+          <option value="Marcos BRÁS Moreira|Fiscal do Processo">Marcos BRÁS Moreira</option>
+          <option value="Antonia KELVIANE da Silva Jorge Adriano|Fiscal do Processo">Antonia KELVIANE da Silva Jorge Adriano</option>
+          <option value="EILSON Ferreira de Araújo|Fiscal do Processo">EILSON Ferreira de Araújo</option>
+          <option value="Francisco EDSON Coelho Azevedo|Fiscal do Processo">Francisco EDSON Coelho Azevedo</option>
+          <option value="Josefa JANEcleide Carvalho de Matos|Fiscal do Processo">Josefa JANEcleide Carvalho de Matos</option>
+          <option value="VENUS LEITE Silva|Fiscal do Processo">VENUS LEITE Silva</option>
         </select>
       </div>
     </div>
@@ -624,7 +737,9 @@
     <button type="button" class="btn-add-item" onclick="addExtraAssinatura()" style="margin-top:8px;margin-bottom:0;">+ Adicionar outra assinatura</button>
   </div>
 
-  <div class="form-section">
+  </div><!-- /aside-scroll -->
+  <!-- Botoes fixos no rodape da barra lateral -->
+  <div class="aside-footer">
     <button type="button" class="btn-gerar" onclick="gerar()">Visualizar documento</button>
     <button type="button" class="btn-pdf" id="btn-pdf" onclick="exportarPDF()">↓ Baixar PDF</button>
   </div>
@@ -646,10 +761,10 @@
     <p class="doc-body" id="out-objeto"></p>
     <ul class="doc-items" id="out-items"></ul>
 
-    <div class="doc-section-title">2. UNIDADE(S) RESPONSÁVEL(EIS) PELAS INFORMAÇÕES DO PROJETO BÁSICO</div>
+    <div class="doc-section-title" id="title-sec2">2. UNIDADE RESPONSÁVEL PELAS INFORMAÇÕES DO PROJETO BÁSICO</div>
     <ul class="doc-setores-list" id="out-sec2"></ul>
 
-    <div class="doc-section-title">3. UNIDADE(S) RESPONSÁVEL(EIS) PELA ELABORAÇÃO DO PROJETO BÁSICO</div>
+    <div class="doc-section-title" id="title-sec3">3. UNIDADE RESPONSÁVEL PELA ELABORAÇÃO DO PROJETO BÁSICO</div>
     <ul class="doc-setores-list" id="out-sec3"></ul>
 
     <div class="doc-section-title">4. UNIDADE RESPONSÁVEL PELA FISCALIZAÇÃO</div>
@@ -1078,11 +1193,29 @@ var SELOPT = '<option value="">-- Selecione --</option>' +
   '<option value="Valmir Silva Pereira|Gerente Executivo em Exercício">Valmir Silva Pereira</option>' +
   '<option value="Sergio Lessa Costa Barboza|Gerente Executivo em Exercício">Sergio Lessa Costa Barboza</option>' +
   '<option value="Matheus Benício de Castro Uchôa|Gerente Executivo em Exercício">Matheus Benício de Castro Uchôa</option>' +
-  '<option value="Mauro César do Nascimento|Gerente Executivo em Exercício">Mauro César do Nascimento</option>';
+  '<option value="Mauro César do Nascimento|Gerente Executivo em Exercício">Mauro César do Nascimento</option>' +
+  '<option value="ALBERTO Pessoa Rocha|Gerente Executivo em Exercício">ALBERTO Pessoa Rocha</option>' +
+  '<option value="HESIO Alan Nery Vaz|Gerente Executivo em Exercício">HESIO Alan Nery Vaz</option>' +
+  '<option value="RENATO Gadelha Claudio|Gerente Executivo em Exercício">RENATO Gadelha Claudio</option>' +
+  '<option value="RODRIGO Mendes Alves|Gerente Executivo em Exercício">RODRIGO Mendes Alves</option>' +
+  '<option value="JHONATHAN de Moura Batista|Gerente Executivo em Exercício">JHONATHAN de Moura Batista</option>' +
+  '<option value="DAVID Gomes Almeida|Gerente Executivo em Exercício">DAVID Gomes Almeida</option>' +
+  '<option value="JOSE MARIO Rodrigues Rocha Junior|Gerente Executivo em Exercício">JOSE MARIO Rodrigues Rocha Junior</option>' +
+  '<option value="ANDRE Parente Ribeiro Mendes|Gerente Executivo em Exercício">ANDRE Parente Ribeiro Mendes</option>' +
+  '<option value="Marcos BRÁS Moreira|Gerente Executivo em Exercício">Marcos BRÁS Moreira</option>' +
+  '<option value="Antonia KELVIANE da Silva Jorge Adriano|Gerente Executivo em Exercício">Antonia KELVIANE da Silva Jorge Adriano</option>' +
+  '<option value="EILSON Ferreira de Araújo|Gerente Executivo em Exercício">EILSON Ferreira de Araújo</option>' +
+  '<option value="Francisco EDSON Coelho Azevedo|Gerente Executivo em Exercício">Francisco EDSON Coelho Azevedo</option>' +
+  '<option value="Josefa JANEcleide Carvalho de Matos|Gerente Executivo em Exercício">Josefa JANEcleide Carvalho de Matos</option>' +
+  '<option value="VENUS LEITE Silva|Gerente Executivo em Exercício">VENUS LEITE Silva</option>';
 
 var SELOPTS = '<option value="">-- Selecione o setor --</option>' +
   '<option value="Célula de Projeto de Engenharia e Arquitetura">Célula de Projeto de Engenharia e Arquitetura</option>' +
-  '<option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>';
+  '<option value="Central de Serviços Prediais e Manutenções">Central de Serviços Prediais e Manutenções</option>' +
+  '<option value="Célula de Planejamento e Gestão em Engenharia e Arquitetura">Célula de Planejamento e Gestão em Engenharia e Arquitetura</option>' +
+  '<option value="Célula de Obras e Serviços de Engenharia">Célula de Obras e Serviços de Engenharia</option>' +
+  '<option value="Célula de Administração do CAPGV">Célula de Administração do CAPGV</option>' +
+  '<option value="Central de Aquisições e Contratações">Central de Aquisições e Contratações</option>';
 
 var SEL_STYLE = 'width:100%;background:var(--paper-2);border:1px solid var(--rule);border-radius:3px;padding:8px 11px;font-family:var(--font-display);font-size:0.85rem;font-weight:300;color:var(--ink);outline:none;';
 
@@ -1113,17 +1246,26 @@ function removeExtraAssinatura(n) {
 function getAssinaturas() {
   var result = [];
 
-  // 1a assinatura: Gerente de Ambiente
-  var gerenteSel = document.getElementById('ass-gerente-sel');
-  if (gerenteSel && gerenteSel.value) {
-    var parts = gerenteSel.value.split('|');
-    result.push({ nome: parts[0], cargo: parts[1] || '', setor: '' });
-  } else {
-    result.push({ nome: '', cargo: 'Gerente de Ambiente', setor: '' });
+  // 1a assinatura: Gerente de Ambiente (opcional)
+  var chkGerente = document.getElementById('chk-ass-gerente');
+  if (chkGerente && chkGerente.checked) {
+    var gerenteSel = document.getElementById('ass-gerente-sel');
+    if (gerenteSel && gerenteSel.value) {
+      var parts = gerenteSel.value.split('|');
+      result.push({ nome: parts[0], cargo: parts[1] || '', setor: '' });
+    } else {
+      result.push({ nome: '', cargo: 'Gerente de Ambiente', setor: '' });
+    }
   }
 
-  // 2a assinatura fixa + extras
-  var execBlocos = document.querySelectorAll('.ass-exec-bloco, [id^="ass-extra-"]');
+  // 2a assinatura fixa (opcional) + extras
+  var chkExec = document.getElementById('chk-ass-exec');
+  var execBlocos = [];
+  if (!chkExec || chkExec.checked) {
+    execBlocos = Array.from(document.querySelectorAll('.ass-exec-bloco, [id^="ass-extra-"]'));
+  } else {
+    execBlocos = Array.from(document.querySelectorAll('[id^="ass-extra-"]'));
+  }
   execBlocos.forEach(function(bloco) {
     var setorSel = bloco.querySelector('.ass-setor-sel');
     var execSel  = bloco.querySelector('.ass-exec-sel');
@@ -1136,6 +1278,18 @@ function getAssinaturas() {
       result.push({ nome: '', cargo: 'Gerente Executivo', setor: setor });
     }
   });
+
+    // 3a assinatura: Fiscal do Processo (opcional)
+  var chkFiscal = document.getElementById('chk-ass-fiscal');
+  if (chkFiscal && chkFiscal.checked) {
+    var fiscalSel = document.getElementById('ass-fiscal-sel');
+    if (fiscalSel && fiscalSel.value) {
+      var fp = fiscalSel.value.split('|');
+      result.push({ nome: fp[0], cargo: fp[1] || 'Fiscal do Processo', setor: '' });
+    } else {
+      result.push({ nome: '', cargo: 'Fiscal do Processo', setor: '' });
+    }
+  }
 
   return result;
 }
@@ -1662,6 +1816,109 @@ function initUFSelect() {
   });
 }
 
+function addSetor(secId, sel) {
+  var val = sel.value;
+  if (!val) return;
+  sel.value = ''; // resetar dropdown
+
+  // Evitar duplicata
+  var hidden = document.getElementById('setores-' + secId);
+  var existing = Array.from(hidden.querySelectorAll('input')).map(function(i){ return i.value; });
+  if (existing.indexOf(val) !== -1) return;
+
+  // Adicionar checkbox oculto (compatibilidade com gerar())
+  var chk = document.createElement('input');
+  chk.type = 'checkbox'; chk.checked = true; chk.value = val;
+  chk.id = 'chk-' + secId + '-' + Date.now();
+  hidden.appendChild(chk);
+
+  // Criar tag visual
+  var tag = document.createElement('div');
+  tag.className = 'setor-tag';
+  tag.id = 'tag-' + secId + '-' + chk.id;
+  var span = document.createElement('span');
+  span.textContent = val;
+  var btn = document.createElement('button');
+  btn.type = 'button'; btn.textContent = '×'; btn.title = 'Remover';
+  btn.addEventListener('click', function() {
+    tag.remove(); chk.remove();
+  });
+  tag.appendChild(span); tag.appendChild(btn);
+  document.getElementById('tags-' + secId).appendChild(tag);
+}
+
+function setSec4(val) {
+  var hidden = document.getElementById('setores-sec4');
+  hidden.innerHTML = '';
+  if (!val) return;
+  var chk = document.createElement('input');
+  chk.type = 'radio'; chk.name = 'sec4'; chk.checked = true; chk.value = val;
+  hidden.appendChild(chk);
+}
+
+var subItemCounts74 = 0;
+
+function addSubItem74Blank() {
+  subItemCounts74++;
+  var n = subItemCounts74;
+  var list = document.getElementById('items-list-74');
+  var isFirst = (list.querySelectorAll('.item-row-sub').length === 0);
+
+  var row = document.createElement('div');
+  row.className = 'item-row-sub';
+  row.id = 'subrow-74-' + n;
+
+  var header = document.createElement('div');
+  header.className = 'item-row-sub-header';
+
+  var spanNum = document.createElement('span');
+  spanNum.className = 'item-num-label';
+  spanNum.textContent = '7.4.' + n + '.';
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'item-remove';
+  btn.textContent = '×';
+  if (isFirst) btn.setAttribute('disabled', '');
+  (function(num) {
+    btn.addEventListener('click', function() {
+      document.getElementById('subrow-74-' + num).remove();
+      renumerar74();
+    });
+  })(n);
+
+  header.appendChild(spanNum);
+  header.appendChild(btn);
+
+  var ta = document.createElement('textarea');
+  ta.id = 'subtext-74-' + n;
+  ta.placeholder = 'Informação adicional…';
+
+  row.appendChild(header);
+  row.appendChild(ta);
+  list.appendChild(row);
+  setTimeout(function(){ ta.focus(); }, 50);
+  renumerar74();
+}
+
+function renumerar74() {
+  document.querySelectorAll('#items-list-74 .item-row-sub').forEach(function(r, i) {
+    r.querySelector('.item-num-label').textContent = '7.4.' + (i + 1) + '.';
+    var btn = r.querySelector('.item-remove');
+    if (document.querySelectorAll('#items-list-74 .item-row-sub').length === 1) {
+      btn.setAttribute('disabled', '');
+    } else {
+      btn.removeAttribute('disabled');
+    }
+  });
+}
+
+function getSubItems74() {
+  return Array.from(document.querySelectorAll('#items-list-74 .item-row-sub'))
+    .map(function(r) { return r.querySelector('textarea').value.trim(); })
+    .filter(function(v) { return v; });
+}
+
 function toggleGarantia() {
   var val = document.querySelector('input[name="garantia-exige"]:checked').value;
   document.getElementById('wrapper-garantia-pct').style.display = val === 'sim' ? '' : 'none';
@@ -1953,24 +2210,43 @@ function gerar() {
   document.getElementById('out-footer-right').textContent = dataStr;
 
   // Seções 2 e 3
-  ['sec2', 'sec3'].forEach(sec => {
-    const checks = document.querySelectorAll('#setores-' + sec + ' input:checked');
-    const ul = document.getElementById('out-' + sec);
+  // Seções 2 e 3: título plural + bullet
+  ['sec2', 'sec3'].forEach(function(sec) {
+    var checks = document.querySelectorAll('#setores-' + sec + ' input:checked');
+    var ul = document.getElementById('out-' + sec);
     ul.innerHTML = '';
+
+    // Atualizar título da seção no documento
+    var secTitles = {
+      'sec2': { singular: '2. UNIDADE RESPONSÁVEL PELAS INFORMAÇÕES DO PROJETO BÁSICO', plural: '2. UNIDADES RESPONSÁVEIS PELAS INFORMAÇÕES DO PROJETO BÁSICO' },
+      'sec3': { singular: '3. UNIDADE RESPONSÁVEL PELA ELABORAÇÃO DO PROJETO BÁSICO', plural: '3. UNIDADES RESPONSÁVEIS PELA ELABORAÇÃO DO PROJETO BÁSICO' }
+    };
+    var titleEl = ul.previousElementSibling;
+    if (titleEl && secTitles[sec]) {
+      titleEl.textContent = checks.length > 1 ? secTitles[sec].plural : secTitles[sec].singular;
+    }
+
     if (!checks.length) {
-      const li = document.createElement('li');
+      var li = document.createElement('li');
       li.textContent = '[Informar Unidade]'; li.style.color = 'var(--ink-3)'; li.style.fontStyle = 'italic';
       ul.appendChild(li);
     } else {
-      checks.forEach(c => { const li = document.createElement('li'); li.textContent = c.value; ul.appendChild(li); });
+      checks.forEach(function(c) {
+        var li = document.createElement('li');
+        li.textContent = '•  ' + c.value;
+        ul.appendChild(li);
+      });
     }
   });
 
   // Seção 4
-  const radio4 = document.querySelector('#setores-sec4 input:checked');
-  const ul4 = document.getElementById('out-sec4');
-  ul4.innerHTML = `<li>${radio4 ? radio4.value : '[Informar Unidade]'}</li>`;
-  if (!radio4) { ul4.firstChild.style.color = 'var(--ink-3)'; ul4.firstChild.style.fontStyle = 'italic'; }
+  var radio4 = document.querySelector('#setores-sec4 input:checked');
+  var ul4 = document.getElementById('out-sec4');
+  ul4.innerHTML = '';
+  var li4 = document.createElement('li');
+  li4.textContent = radio4 ? '•  ' + radio4.value : '[Informar Unidade]';
+  if (!radio4) { li4.style.color = 'var(--ink-3)'; li4.style.fontStyle = 'italic'; }
+  ul4.appendChild(li4);
 
   // Seção 5
   const justificativa = document.getElementById('f-justificativa').value.trim();
@@ -2052,6 +2328,18 @@ function gerar() {
       elJustSoma.style.color = 'var(--ink-3)'; elJustSoma.style.fontStyle = 'italic';
     }
   }
+  // Subitens adicionais 7.4.x
+  var container74 = document.getElementById('out-soma-atestados').parentNode;
+  document.querySelectorAll('.out-74x').forEach(function(el) { el.remove(); });
+  var itens74 = getSubItems74();
+  var baseNum74 = (somaVal === 'nao-permite') ? 2 : 1;
+  itens74.forEach(function(val, i) {
+    var p = document.createElement('p');
+    p.className = 'doc-body hanging indent-1 out-74x';
+    p.textContent = '7.4.' + (baseNum74 + i) + '. ' + val;
+    elJustSoma.parentNode.insertBefore(p, elJustSoma.nextSibling);
+    baseNum74++;
+  });
 
   // 7.2.1
   document.getElementById('out-721').textContent =
@@ -2328,18 +2616,23 @@ function exportarPDF() {
           var b64 = logoBase64.split(',')[1];
           var lRatio = logoNaturalW / logoNaturalH;
           var lH = 18, lW = lH * lRatio;
-          doc.addImage(b64, fmt, marginL, 16, lW, lH);
+          doc.addImage(b64, fmt, marginL, 8, lW, lH); // logo no cabecalho: 8mm do topo, 18mm altura, termina em 26mm (dentro dos 38mm)
         } catch(e) {}
       }
-      // Numero de pagina centralizado no rodape
+      // Numero de pagina centralizado dentro da margem inferior
       doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
       doc.setTextColor(150, 140, 130);
-      doc.text(pageNum + ' / ' + totalPages, pageW / 2, pageH - 10, { align: 'center' });
+      doc.text(pageNum + ' / ' + totalPages, pageW / 2, pageH - marginB + 18, { align: 'center' }); // 287mm — dentro da margem inferior
       doc.setTextColor(26, 23, 20);
     }
 
-    function checkPage() {
-      if (y >= pageH - marginB) { doc.addPage(); y = marginT; }
+    function checkPage(linhasExtras) {
+      linhasExtras = linhasExtras || 0;
+      // Parar o conteudo antes da margem inferior (28mm = 269mm)
+      if (y + (linhasExtras * lh) >= pageH - marginB) {
+        doc.addPage();
+        y = marginT;
+      }
     }
 
     function printJustifiedLine(line, isLastLine, xStart, maxW) {
@@ -2488,10 +2781,12 @@ function exportarPDF() {
     }
 
     const s2 = Array.from(document.querySelectorAll('#setores-sec2 input:checked')).map(c => c.value);
-    renderSecao('2. UNIDADE(S) RESPONSÁVEL(EIS) PELAS INFORMAÇÕES DO PROJETO BÁSICO', s2.length ? s2 : ['[Informar Unidade]']);
+    var titulo2 = s2.length > 1 ? '2. UNIDADES RESPONSÁVEIS PELAS INFORMAÇÕES DO PROJETO BÁSICO' : '2. UNIDADE RESPONSÁVEL PELAS INFORMAÇÕES DO PROJETO BÁSICO';
+    renderSecao(titulo2, s2.length ? s2 : ['[Informar Unidade]']);
 
     const s3 = Array.from(document.querySelectorAll('#setores-sec3 input:checked')).map(c => c.value);
-    renderSecao('3. UNIDADE(S) RESPONSÁVEL(EIS) PELA ELABORAÇÃO DO PROJETO BÁSICO', s3.length ? s3 : ['[Informar Unidade]']);
+    var titulo3 = s3.length > 1 ? '3. UNIDADES RESPONSÁVEIS PELA ELABORAÇÃO DO PROJETO BÁSICO' : '3. UNIDADE RESPONSÁVEL PELA ELABORAÇÃO DO PROJETO BÁSICO';
+    renderSecao(titulo3, s3.length ? s3 : ['[Informar Unidade]']);
 
     const r4 = document.querySelector('#setores-sec4 input:checked');
     renderSecao('4. UNIDADE RESPONSÁVEL PELA FISCALIZAÇÃO', [r4 ? r4.value : '[Informar Unidade]']);
@@ -2577,6 +2872,13 @@ function exportarPDF() {
       const justSoma = document.getElementById('f-just-soma').value.trim();
       printHangingBlock('7.4.1.', justSoma || '[Justificativa para não permissão de soma de atestados].', 10);
     }
+    // Subitens adicionais 7.4.x
+    var itens74pdf = getSubItems74();
+    var baseNum74pdf = (somaVal === 'nao-permite') ? 2 : 1;
+    itens74pdf.forEach(function(val, i) {
+      y += espacoPequeno;
+      printHangingBlock('7.4.' + (baseNum74pdf + i) + '.', val, 10);
+    });
     y += espacoMedio;
 
     // 7.5 — responsável técnico
@@ -2800,13 +3102,12 @@ function exportarPDF() {
     tblRows.forEach((row, ri) => {
       const isHeader = ri === 0;
       doc.setFont('helvetica', isHeader ? 'bold' : 'normal');
-      // quebrar texto de AMBAS as colunas
       const col1Lines = doc.splitTextToSize(row[0], colDesc - cellPad * 2);
       const col2Lines = doc.splitTextToSize(row[1], colPerc - cellPad * 2);
-      // altura baseada na coluna com mais linhas
       const maxLines = Math.max(col1Lines.length, col2Lines.length);
       const rowH = maxLines * lh + cellPad * 2;
-      checkPage();
+      // Verificar espaco antes de desenhar
+      if (y - lh + 1 + rowH >= pageH - marginB) { doc.addPage(); y = marginT; }
       // fundo cabecalho
       if (isHeader) { doc.setFillColor(230, 230, 230); doc.rect(tblX, y - lh + 1, tblW, rowH, 'F'); }
       // bordas
@@ -2937,7 +3238,7 @@ function exportarPDF() {
       const isH = ri === 0;
       doc.setFont('helvetica', isH ? 'bold' : 'normal');
       const rowH = lh + 4;
-      checkPage();
+      if (y - lh + 1 + rowH >= pageH - marginB) { doc.addPage(); y = marginT; }
       if (isH) { doc.setFillColor(230,230,230); doc.rect(marginL, y - lh + 1, t1W1 + t1W2, rowH, 'F'); }
       doc.setDrawColor(26,23,20); doc.setLineWidth(0.3);
       doc.rect(marginL, y - lh + 1, t1W1, rowH);
@@ -2989,8 +3290,14 @@ function exportarPDF() {
       doc.setFont('helvetica', (isH || isSub) ? 'bold' : 'normal');
       const descW = isSub ? contentW - 4 : t2cw[1] - 4;
       const descLines = doc.splitTextToSize(row[isSub ? 0 : 1], descW);
-      const rowH = Math.max(descLines.length * (lh - 0.5) + 3, lh + 3);
-      checkPage();
+      const incLines = (!isSub && row[3]) ? doc.splitTextToSize(row[3], t2cw[3] - 4) : [];
+      const maxLines = Math.max(descLines.length, incLines.length || 0);
+      const rowH = Math.max(maxLines * (lh - 0.5) + 3, lh + 3);
+      // Verificar espaco ANTES de desenhar — se nao couber, nova pagina
+      if (y - lh + 1 + rowH >= pageH - marginB) {
+        doc.addPage();
+        y = marginT;
+      }
       if (isH) { doc.setFillColor(230,230,230); doc.rect(marginL, y - lh + 1, contentW, rowH, 'F'); }
       if (isSub) { doc.setFillColor(245,245,245); doc.rect(marginL, y - lh + 1, contentW, rowH, 'F'); }
       doc.setDrawColor(26,23,20); doc.setLineWidth(0.2);
@@ -3003,7 +3310,6 @@ function exportarPDF() {
         doc.text(row[0], marginL + t2cw[0] / 2, y + 1, { align: 'center' });
         descLines.forEach((l, li) => doc.text(l, marginL + t2cw[0] + 2, y + li * (lh - 0.5)));
         doc.text(row[2], marginL + t2cw[0] + t2cw[1] + t2cw[2] / 2, y + 1, { align: 'center' });
-        const incLines = doc.splitTextToSize(row[3], t2cw[3] - 4);
         incLines.forEach((l, li) => doc.text(l, marginL + t2cw[0] + t2cw[1] + t2cw[2] + 2, y + li * (lh - 0.5)));
       }
       y += rowH;
@@ -3021,6 +3327,8 @@ function exportarPDF() {
     } else {
       printBlock('O preço global estimado para a contratação é R$ _______ (        ).', 'normal', true);
     }
+    // Garantir espaco minimo para o bloco de assinaturas (pelo menos 80mm)
+    if (y > pageH - marginB - 80) { doc.addPage(); y = marginT; }
     y += 14;
     // Cabecalho do bloco de assinaturas
     var ambientePDF = 'AMBIENTE DE ENGENHARIA E ARQUITETURA';
@@ -3085,13 +3393,15 @@ function exportarPDF() {
       doc.setPage(pi);
       renderHeaderFooter(pi, totalPages);
       // Linha e textos do rodape
-      var footerY = pageH - marginB + 8;
+      // Rodape dentro da margem inferior (28mm = 269mm a 297mm)
+      var footerLineY  = pageH - marginB + 3;  // 272mm — linha separadora
+      var footerTextY  = pageH - marginB + 8;  // 277mm — PROJETO BASICO + data
       doc.setDrawColor(212, 207, 200); doc.setLineWidth(0.2);
-      doc.line(marginL, footerY - 4, pageW - marginR, footerY - 4);
+      doc.line(marginL, footerLineY, pageW - marginR, footerLineY);
       doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 140, 130);
       var dataStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-      doc.text((anexo ? 'ANEXO ' + anexo.toUpperCase() + '  ·  ' : '') + titulo, marginL, footerY);
-      doc.text(dataStr, pageW - marginR, footerY, { align: 'right' });
+      doc.text((anexo ? 'ANEXO ' + anexo.toUpperCase() + '  ·  ' : '') + titulo, marginL, footerTextY);
+      doc.text(dataStr, pageW - marginR, footerTextY, { align: 'right' });
       doc.setTextColor(26, 23, 20);
     }
 
