@@ -223,7 +223,7 @@
             .aside-scroll { padding: 1.5rem; overflow-y: visible; }
             main { grid-column: 1; grid-row: 3; padding: 1.5rem; height: auto; }
             .page-sheet { padding: 30px 24px; }
-            .doc-header-logos { top: 15px; left: 24px; right: 24px; }
+            .doc-header-logos { top: 15px; left: 24px; }
         }
     </style>
 </head>
@@ -997,9 +997,12 @@
 
 <script>
 let itemCount = 0;
-let logoBase64 = null;
+let logoBase64 = undefined;
 let logoNaturalW = 0;
 let logoNaturalH = 0;
+let logo2Base64 = undefined;
+let logo2NaturalW = 0;
+let logo2NaturalH = 0;
 
 // Inicializa listas de subitens com 1 item obrigatório
 // Modelos de sugestão para 7.2.2 e 7.3.2
@@ -1946,6 +1949,7 @@ window.addEventListener('DOMContentLoaded', function() {
   initUFSelect();
   atualizarLogoDoc();
   carregarLogoFixa();
+  carregarLogo2Fixa();
 
   var inputValor   = document.getElementById('f-preco-valor');
   var inputExtenso = document.getElementById('f-preco-extenso');
@@ -1958,50 +1962,66 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-var logoRightBase64 = null;
-var logoRightW = 0, logoRightH = 0;
+// Carrega uma imagem via fetch+blob→base64 (evita problemas de CORS com canvas)
+function carregarImagemParaPDF(url, onSuccess, onError) {
+  fetch(url)
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.blob();
+    })
+    .then(function(blob) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var dataUrl = e.target.result;
+        var img = new Image();
+        img.onload = function() {
+          onSuccess(dataUrl, img.naturalWidth, img.naturalHeight);
+        };
+        img.onerror = function() { onError && onError(); };
+        img.src = dataUrl;
+      };
+      reader.onerror = function() { onError && onError(); };
+      reader.readAsDataURL(blob);
+    })
+    .catch(function() { onError && onError(); });
+}
 
 function carregarLogoFixa() {
-  fetch( + URL_LEFT + )
-    .then(function(r) { return r.blob(); })
-    .then(function(blob) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        logoBase64 = e.target.result;
-        var img = new Image();
-        img.onload = function() { logoNaturalW = img.naturalWidth; logoNaturalH = img.naturalHeight; };
-        img.src = logoBase64;
-      };
-      reader.readAsDataURL(blob);
-    })
-    .catch(function() { logoBase64 = null; });
+  var url = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8645.png';
+  carregarImagemParaPDF(url,
+    function(dataUrl, w, h) {
+      logoBase64   = dataUrl;
+      logoNaturalW = w;
+      logoNaturalH = h;
+    },
+    function() { logoBase64 = null; }
+  );
+}
 
-  fetch( + URL_RIGHT + )
-    .then(function(r) { return r.blob(); })
-    .then(function(blob) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        logoRightBase64 = e.target.result;
-        var img = new Image();
-        img.onload = function() { logoRightW = img.naturalWidth; logoRightH = img.naturalHeight; };
-        img.src = logoRightBase64;
-      };
-      reader.readAsDataURL(blob);
-    })
-    .catch(function() { logoRightBase64 = null; });
+function carregarLogo2Fixa() {
+  var url = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8728.png';
+  carregarImagemParaPDF(url,
+    function(dataUrl, w, h) {
+      logo2Base64   = dataUrl;
+      logo2NaturalW = w;
+      logo2NaturalH = h;
+    },
+    function() { logo2Base64 = null; }
+  );
 }
 
 function atualizarLogoDoc() {
   var wrap = document.getElementById('doc-header-logos');
   wrap.innerHTML = '';
-  var imgL = document.createElement('img');
-  imgL.src = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8645.png';
-  imgL.className = 'doc-logo-left';
-  var imgR = document.createElement('img');
-  imgR.src = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8725.png';
-  imgR.className = 'doc-logo-right';
-  wrap.appendChild(imgL);
-  wrap.appendChild(imgR);
+  var img = document.createElement('img');
+  img.src = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8645.png';
+  img.className = 'doc-logo-left';
+  wrap.appendChild(img);
+  // ⬇️ Segunda imagem (direita)
+  var img2 = document.createElement('img');
+  img2.src = 'https://raw.githubusercontent.com/gelado00/Gerador-de-Projetos/main/IMG_8728.png';
+  img2.className = 'doc-logo-right';
+  wrap.appendChild(img2);
 }
 
 let subItemCounts = { '7222': 0, '7322': 0, '111': 0, 'sub18': 0 };
@@ -2091,7 +2111,14 @@ function renumerarSub(group) {
   });
 }
 
-
+function atualizarBotoesRemover(group) {
+  const rows = document.querySelectorAll('#items-list-' + group + ' .item-row-sub');
+  rows.forEach((r, i) => {
+    const btn = r.querySelector('.item-remove');
+    if (rows.length === 1) btn.setAttribute('disabled', '');
+    else btn.removeAttribute('disabled');
+  });
+}
 
 function getSubItems(group) {
   return Array.from(document.querySelectorAll('#items-list-' + group + ' .item-row-sub'))
@@ -2591,6 +2618,26 @@ function gerar() {
 
 /* ─── EXPORTAÇÃO PDF ────────────────────────────────────────── */
 function exportarPDF() {
+  // Aguarda as imagens carregarem antes de gerar o PDF
+  // logo*Base64 === undefined → ainda carregando | null → falhou | string → ok
+  function esperarImagens(callback) {
+    var tentativas = 0;
+    var maxTentativas = 60; // 6 segundos no máximo
+    function checar() {
+      var logo1pronto = (logoBase64 !== undefined);
+      var logo2pronto = (logo2Base64 !== undefined);
+      if (logo1pronto && logo2pronto) { callback(); return; }
+      tentativas++;
+      if (tentativas >= maxTentativas) { callback(); return; }
+      setTimeout(checar, 100);
+    }
+    checar();
+  }
+
+  esperarImagens(function() { _gerarPDFInterno(); });
+}
+
+function _gerarPDFInterno() {
   try {
     if (!window.jspdf) {
       alert("A biblioteca de PDF não foi carregada corretamente. Verifique sua conexão ou recarregue a página.");
@@ -2616,7 +2663,7 @@ function exportarPDF() {
     let y = marginT;
 
     function renderHeaderFooter(pageNum, totalPages) {
-      // Logo em todas as paginas
+      // Logo esquerda em todas as paginas
       if (logoBase64 && logoNaturalH > 0) {
         try {
           var fmt = logoBase64.split(';')[0].split('/')[1].toUpperCase();
@@ -2624,7 +2671,19 @@ function exportarPDF() {
           var b64 = logoBase64.split(',')[1];
           var lRatio = logoNaturalW / logoNaturalH;
           var lH = 18, lW = lH * lRatio;
-          doc.addImage(b64, fmt, marginL, 8, lW, lH); // logo no cabecalho: 8mm do topo, 18mm altura, termina em 26mm (dentro dos 38mm)
+          doc.addImage(b64, fmt, marginL, 8, lW, lH, 'logo1', 'NONE');
+        } catch(e) {}
+      }
+      // Logo direita em todas as paginas
+      if (logo2Base64 && logo2Base64.indexOf('data:') === 0) {
+        try {
+          var fmt2 = logo2Base64.split(';')[0].split('/')[1].toUpperCase();
+          if (fmt2 === 'JPG') fmt2 = 'JPEG';
+          var b642 = logo2Base64.split(',')[1];
+          var lH2 = 18;
+          var lRatio2 = (logo2NaturalW > 0 && logo2NaturalH > 0) ? (logo2NaturalW / logo2NaturalH) : 1;
+          var lW2 = lH2 * lRatio2;
+          doc.addImage(b642, fmt2, pageW - marginR - lW2, 8, lW2, lH2, 'logo2', 'NONE');
         } catch(e) {}
       }
       // Numero de pagina centralizado dentro da margem inferior
